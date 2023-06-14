@@ -31,7 +31,7 @@ interface TableProps {
 type DeleteTableProps = {
 	currentTable: string;
 	setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
-  tables: TableProps[];
+  	tables: TableProps[];
 	setCurrentTable: React.Dispatch<string>;
 	setColumns: React.Dispatch<React.SetStateAction<Column[]>>
 };
@@ -95,13 +95,13 @@ const DeleteTable: React.FC<DeleteTableProps> = ({ currentTable, setRerenderSign
 	}
 	return (
 		<>
-			<img className='h-1/2 cursor-pointer' 
+			{currentTable && <img className='h-1/2 cursor-pointer' 
 				src={process.env.PUBLIC_URL + '/icon-trash.svg'}
 				alt="Trash Icon"
 				onClick={performDelete}
-			></img>
+			></img>}
 			{isDeleteModalOpen && 
-				<div className="w-screen h-screen bg-black bg-opacity-30 absolute top-0 left-0 flex justify-center items-center">
+				<div className="w-screen h-screen bg-black bg-opacity-30 absolute top-0 left-0 flex justify-center items-center z-10">
 					<div className="bg-white rounded-md">
 						<div className="p-6 text-center">
 							<p>

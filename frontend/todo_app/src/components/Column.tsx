@@ -31,35 +31,6 @@ interface TaskData {
 
 const Column: React.FC<ColumnProps> = ({ columns, setColumns, setRerenderSignal, currentTable }) => {
 
-	const [isDeleteColumnModalOpen, setIsDeleteColumnModalOpen] = useState(false)
-	const [columnSelectedToDelete, setColumnSelectedToDelete] = useState("")
-	const [deleteColumnMessage, setDeleteColumnMessage] = useState("");
-
-	const openDeleteColumnModalOpen = (event: React.MouseEvent<HTMLElement>, columnId: string, columnTitle: string) => {
-		setIsDeleteColumnModalOpen (!isDeleteColumnModalOpen)
-		setColumnSelectedToDelete(columnId);
-		setDeleteColumnMessage(columnTitle)
-	}
-
-	const closeDeleteColumnModal = () => {
-		setIsDeleteColumnModalOpen (!isDeleteColumnModalOpen)
-		setColumnSelectedToDelete("");
-		setDeleteColumnMessage("");
-	}
-
-
-	const performColumnDelete = (columnId: string) => {
-		setColumns((prevColumns) => {
-			return prevColumns.filter((column) => column._id !== columnId);
-		  });
-	}
-
-	const deleteColumn = (columnId: string) => {
-		performColumnDelete(columnId);
-		closeDeleteColumnModal();
-	  };
-
-
 	const handleColumnTitleChange = (event: React.ChangeEvent<HTMLParagraphElement>, id:string) => {
 		const { innerText } = event.currentTarget;
 		const sanitizedValue = innerText.replace(/(\r\n|\n|\r)/gm, '');
@@ -187,20 +158,12 @@ const Column: React.FC<ColumnProps> = ({ columns, setColumns, setRerenderSignal,
 						}}
 						>{column.title}
 						</div>
-							<button className='absolute top-0 right-0 pl-2 pr-2 cursor-pointer'
-							onClick={(event)=> {
-								event.preventDefault();
-								openDeleteColumnModalOpen(event, column._id, column.title)
-							}}
-							>&#8943;</button>
-							{isDeleteColumnModalOpen && 
-							<DeleteColumn 
-							closeDeleteColumnModal={closeDeleteColumnModal}
-							columnSelectedToDelete={columnSelectedToDelete}
-							deleteColumnMessage={deleteColumnMessage}
-							columns={columns}
-							deleteColumn={deleteColumn}
-							/>}
+								<DeleteColumn 
+									columns={columns}
+									columnTitle={column.title}
+									columnId={column._id}
+									setRerenderSignal={setRerenderSignal}
+								/>
 						<AddTask addTask={addTask} columnId={column._id} setRerenderSignal={setRerenderSignal}/>
 						<Droppable droppableId={`${column._id}-pending`}>
 								{(provided) => (
