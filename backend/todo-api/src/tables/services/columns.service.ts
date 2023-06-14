@@ -1,0 +1,44 @@
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Column, Table } from '../tables.model';
+import { BadRequestException } from '@nestjs/common/exceptions';
+import * as bcrypt from 'bcrypt';
+import * as mongoose from 'mongoose'
+
+import { MongoServerError } from 'mongodb';
+
+@Injectable()
+export class ColumnsService {
+  constructor(
+    @InjectModel('column') private readonly columnModel: Model<Column>,
+    @InjectModel('table') private readonly tableModel: Model<Table>
+    ) {}
+  async insertColumn(title: string, tableId: string): Promise<Column> {
+    try{
+      // Creating new column
+      const newColumn = new this.columnModel({
+        title: title,
+        tasks: [],
+      });
+      await newColumn.save();
+
+      //find the table and update its column array with new column ID
+      const table = await this.tableModel.findById(tableId);
+      if (!table) {
+        throw new Error("No table with given ID")
+      }
+      console.log(newColumn)
+      table.columns.push(newColumn._id);
+      await table.save();
+
+      return newColumn;
+      } catch (error) {
+        console.log(error)
+    //   if (error.name==='MongoServerError' && error.code === 11000) {
+    //     throw new BadRequestException('Email already exists.')
+    //   }
+      throw error;
+    }
+  }
+}
