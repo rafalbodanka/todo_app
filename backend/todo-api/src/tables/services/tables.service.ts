@@ -1,20 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Table } from '../tables.model';
+import { Table, Column, Task } from '../tables.model';
 import { BadRequestException } from '@nestjs/common/exceptions';
-import * as bcrypt from 'bcrypt';
 import * as mongoose from 'mongoose'
 
 import { MongoServerError } from 'mongodb';
 
 @Injectable()
 export class TablesService {
-  constructor(@InjectModel('table') private readonly setModel: Model<Table>,) {}
+  constructor(@InjectModel('table') private readonly tableModel: Model<Table>,
+  @InjectModel('column') private readonly columnModel: Model<Column>,
+  @InjectModel('task') private readonly taskModel: Model<Task>
+  ) {}
   async insertTable(title: string, user: mongoose.Types.ObjectId): Promise<Table> {
     try{
       // Creating new set
-      const newTable = new this.setModel({
+      const newTable = new this.tableModel({
         title: title,
         columns: [],
         users: [user],
@@ -32,7 +34,7 @@ export class TablesService {
 
   async getUserTables(requestUser: mongoose.Types.ObjectId): Promise<Table[]> {
     console.log(requestUser)
-    const userTable = await this.setModel.find({users: requestUser})
+    const userTable = await this.tableModel.find({users: requestUser})
         .populate({
             path: 'columns',
             populate: {
@@ -43,5 +45,34 @@ export class TablesService {
         })
         .exec();
     return userTable;
+  }
+
+  async deleteTable(tableId: string, userId: string): Promise<boolean> {
+    const table = await this.tableModel.findOne({ _id: tableId, users: userId })
+
+    // Return false if no table with given id or user is unauthorized
+    if (!table) {
+      return false;
+    }
+  
+    // Delete the table
+    await table.deleteOne();
+  
+    // Delete associated columns and tasks
+    await Promise.all(
+      table.columns.map(async (columnId) => {
+        await this.deleteColumn(columnId.toString());
+      })
+    );
+  
+    return true;
+  }
+
+  async deleteColumn(columnId: string): Promise<void> {
+    // Delete the column
+    await this.columnModel.deleteOne({ _id: columnId }).exec();
+
+    // Delete associated tasks
+    await this.taskModel.deleteMany({ column: columnId }).exec();
   }
 }

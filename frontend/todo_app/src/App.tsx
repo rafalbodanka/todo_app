@@ -15,6 +15,7 @@ import Auth from './components/Auth';
 import Column from './components/Column';
 import Set from './components/Set';
 import { table } from 'console';
+import DeleteTable from './components/DeleteTable';
 
 type ColumnData = {
   _id: string,
@@ -93,13 +94,15 @@ const App: React.FC = () => {
                         </div>
                       </div>
                         <div className='col-span-1 flex justify-center items-center'>
-                          <img className='h-1/2' src={process.env.PUBLIC_URL + '/icon-trash.svg'} alt="Trash Icon"></img>
+                          <DeleteTable currentTable={currentTable} setRerenderSignal={setRerenderSignal} tables={tables} setCurrentTable={setCurrentTable} setColumns={setColumns}></DeleteTable>
                         </div>
                     </div>
                   </div>
-                  <div className="flex flex-nowrap overflow-x-auto max-w-full">
-                    <Column columns={columns} setColumns={setColumns} setRerenderSignal={setRerenderSignal} currentTable={currentTable}/>
-                  </div>
+                  {currentTable &&
+                    <div className="flex flex-nowrap overflow-x-auto max-w-full">
+                      <Column columns={columns} setColumns={setColumns} setRerenderSignal={setRerenderSignal} currentTable={currentTable}/>
+                    </div>
+                  }
                 </div>
               </div>
           </Auth>

@@ -7,6 +7,7 @@ import {
 	HttpStatus,
 	UseGuards,
 	Request,
+	Param,
 	Res,
 } from '@nestjs/common';
 import * as mongoose from "mongoose"
@@ -46,10 +47,29 @@ export class TablesController {
 		return userTables;
 	}
 
-	 //delete set - to do in the future (happens when user deletes his account)
-	// @Get('/logout')
-	// 	logout(@Request() req): any {
-	// 		req.session.destroy();
-	// 		return { msg: 'The user session has ended' }
-	// 	}
+	//delete table
+	@UseGuards(AuthenticatedGuard)
+	@Post('/delete/:id')
+	async deleteTable(
+		@Param('id') id: string,
+		@Request() req,
+		@Res() res,
+	) {
+		const userId: mongoose.Types.ObjectId = req.user.id
+		const result = await this.tablesService.deleteTable(
+      id,
+			userId.toString(),
+			);
+
+		if (result) {
+			return res.status(HttpStatus.OK).json({
+				message: 'Table deleted successfully',
+				data: result,
+			});
+		} else {
+			return res.status(HttpStatus.NOT_FOUND).json({
+				message: 'Table not found',
+			});
+		}
+	}
 }
