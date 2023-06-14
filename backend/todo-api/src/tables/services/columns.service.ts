@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Column, Table } from '../tables.model';
+import { Column, Table, Task } from '../tables.model';
 import { BadRequestException } from '@nestjs/common/exceptions';
 import * as bcrypt from 'bcrypt';
 import * as mongoose from 'mongoose'
@@ -12,7 +12,8 @@ import { MongoServerError } from 'mongodb';
 export class ColumnsService {
   constructor(
     @InjectModel('column') private readonly columnModel: Model<Column>,
-    @InjectModel('table') private readonly tableModel: Model<Table>
+    @InjectModel('table') private readonly tableModel: Model<Table>,
+    @InjectModel('task') private readonly taskModel: Model<Task>
     ) {}
   async insertColumn(title: string, tableId: string): Promise<Column> {
     try{
@@ -40,5 +41,32 @@ export class ColumnsService {
     //   }
       throw error;
     }
+  }
+
+  async deleteColumn(columnId: string): Promise<boolean> {
+    const column = await this.columnModel.findOne({ _id: columnId })
+
+    // Return false if no column with given id
+    if (!column) {
+      return false;
+    }
+  
+    // Delete the column
+    await column.deleteOne();
+  
+    // Delete associated tasks
+    await this.taskModel.deleteMany({ column: columnId }).exec();
+
+    // Delete column from parent table array
+    const parentTable = await this.tableModel.findOneAndUpdate(
+      { columns: columnId },
+      { $pull: { columns: columnId } },
+      { new: true }
+    );
+
+    if (!parentTable) {
+      throw new Error('Parent table not found');
+    }
+    return true;
   }
 }

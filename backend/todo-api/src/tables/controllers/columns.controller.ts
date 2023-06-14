@@ -4,7 +4,10 @@ import {
 	Get,
 	Post,
 	HttpCode,
+	HttpStatus,
 	UseGuards,
+	Param,
+	Res,
 	Request,
 } from '@nestjs/common';
 import * as mongoose from "mongoose"
@@ -22,7 +25,7 @@ export class ColumnsController {
         @Body('tableId') tableId: string,
 	) {
 		const result = await this.columnsService.insertColumn(
-            title,
+      title,
 			tableId,
 		);
 
@@ -30,6 +33,30 @@ export class ColumnsController {
 			msg: 'Column successfully created',
             title: result.title,
 		};
+	}
+
+	//delete column
+	@UseGuards(AuthenticatedGuard)
+	@Post('/delete/:id')
+	async deleteColumn(
+		@Param('id') id: string,
+		@Res() res,
+	) {
+		console.log(id)
+		const result = await this.columnsService.deleteColumn(
+				id,
+				);
+	
+			if (result) {
+				return res.status(HttpStatus.OK).json({
+					message: 'Column deleted successfully',
+					data: result,
+				});
+			} else {
+				return res.status(HttpStatus.NOT_FOUND).json({
+					message: 'Column not found',
+				});
+			}
 	}
 
 	//Get all table's columns
