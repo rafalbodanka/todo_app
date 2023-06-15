@@ -37,14 +37,13 @@ const DeleteColumn: React.FC<DeleteColumnProps> = ({ columnId, columnTitle, colu
 			})
 
 			if (response.status === 200) {
-				console.log('gituwa')
 				setRerenderSignal(prevSignal => !prevSignal)
 			}
 		} catch (err: any) {
 			if (err.response && err.response.status === 404) {
-					console.log('Column not found');
+					// console.log('Column not found');
 			} else {
-					console.log(`Something went wrong, try again`);
+					// console.log(`Something went wrong, try again`);
 			}
 		}
   }
