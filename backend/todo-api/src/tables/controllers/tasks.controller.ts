@@ -4,8 +4,11 @@ import {
 	Get,
 	Post,
 	HttpCode,
+	HttpStatus,
 	UseGuards,
 	Request,
+	Param,
+	Res,
 } from '@nestjs/common';
 import * as mongoose from "mongoose"
 import { AuthenticatedGuard } from 'src/auth/authenticated.guard';
@@ -31,6 +34,28 @@ export class TasksController {
 			msg: 'Task successfully created',
             title: result.title,
 		};
+	}
+
+	@UseGuards(AuthenticatedGuard)
+	@Post('/delete/:id')
+	async deleteTask(
+		@Param('id') id: string,
+		@Res() res,
+	) {
+		const result = await this.tasksService.deleteTask(
+			id,
+			);
+
+		if (result) {
+			return res.status(HttpStatus.OK).json({
+				message: 'Task deleted successfully',
+				data: result,
+			});
+		} else {
+			return res.status(HttpStatus.NOT_FOUND).json({
+				message: 'Task not found',
+			});
+		}
 	}
 
 	//Get all table's columns
