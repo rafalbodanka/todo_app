@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 import EditTask from './EditTask';
 
@@ -32,40 +33,28 @@ interface ColumnData {
 	}
 
 
-	const toggleTaskStatus = (editedTask: TaskData) => {
-		// setColumns((prevColumns) => {
-		// 	const updatedColumns = prevColumns.map((column) => {
-		// 		if (column.tasks.some((task) => task._id === editedTask._id)) {
-		// 			const updatedTasks = column.tasks.map((task) => {
-		// 				if (editedTask._id === task._id) {
-		// 					return {
-		// 						...task,
-		// 						completed: !task.completed,
-		// 					};
-		// 				}
-		// 				return task;
-		// 			});
-	
-		// 			const index = updatedTasks.findIndex((task) => task._id === editedTask._id);
-		// 			const taskToMove = updatedTasks.splice(index, 1)[0];
-					
-		// 			if (taskToMove.completed) {
-		// 				const completedIndex = updatedTasks.findIndex((task) => task.completed);
-		// 				updatedTasks.splice(completedIndex !== -1 ? completedIndex : updatedTasks.length, 0, taskToMove);
-		// 			} else {
-		// 				updatedTasks.unshift(taskToMove);
-		// 			}
-	
-		// 			return {
-		// 				...column,
-		// 				tasks: updatedTasks,
-		// 			};
-		// 		}
-		// 		return column;
-		// 	});
-	
-		// 	return updatedColumns;
-		// });
+	const toggleTaskStatus = async (taskId: string) => {
+		try {
+			const response = await axios.post(`http://localhost:5000/tasks/${taskId}/status`, {},
+			{
+					withCredentials: true,
+					headers: {
+							'Access-Control-Allow-Origin': '*',
+							'Content-Type': 'application/json'
+					}
+			})
+
+			if (response.status === 200) {
+				console.log('gituwa')
+				setRerenderSignal(prevSignal => !prevSignal)
+			}
+		} catch (err: any) {
+			if (err.response && err.response.status === 404) {
+					console.log('Task not found');
+			} else {
+					console.log(`Something went wrong, try again`);
+			}
+		}
 	};
 
 	return (
@@ -76,7 +65,7 @@ interface ColumnData {
 				className='w-6 max-h-6'
 				onClick={(event) => {
 					event.stopPropagation();
-					toggleTaskStatus(task)}
+					toggleTaskStatus(task._id)}
 				}/>
 				<div className="ml-2 min-w-1">
 					{task.title}

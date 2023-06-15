@@ -26,7 +26,6 @@ export class TablesController {
 		@Res() res,
 	) {
 		const userId: mongoose.Types.ObjectId = req.user.id
-		console.log(req)
 		const result = await this.tablesService.insertTable(
             title,
 			userId,

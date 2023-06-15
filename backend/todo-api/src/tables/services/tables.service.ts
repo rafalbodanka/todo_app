@@ -24,7 +24,6 @@ export class TablesService {
       await newTable.save();
       return newTable;
       } catch (error) {
-        console.log(error)
     //   if (error.name==='MongoServerError' && error.code === 11000) {
     //     throw new BadRequestException('Email already exists.')
     //   }
@@ -33,7 +32,6 @@ export class TablesService {
   }
 
   async getUserTables(requestUser: mongoose.Types.ObjectId): Promise<Table[]> {
-    console.log(requestUser)
     const userTable = await this.tableModel.find({users: requestUser})
         .populate({
             path: 'columns',

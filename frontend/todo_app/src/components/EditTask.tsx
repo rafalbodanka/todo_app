@@ -59,7 +59,7 @@ const EditTask: React.FC<EditTaskProps> = ({ task, isEditTaskModalOpen, setIsEdi
 
 	  const handleDelete = async (taskId: string) => {
 		try {
-			const response = await axios.post(`http://localhost:5000/tasks/delete/${taskId}`, {},
+			const response = await axios.post(`http://localhost:5000/tasks/${taskId}/delete`, {},
 			{
 					withCredentials: true,
 					headers: {

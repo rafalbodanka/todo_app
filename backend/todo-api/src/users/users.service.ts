@@ -33,7 +33,6 @@ export class UsersService {
       }
   
       if (password.length < 8 || password.length > 30) {
-        console.log(userEmail, password)
         throw new BadRequestException('Password must be between 8 and 30 characters.');
       }
   
@@ -49,7 +48,6 @@ export class UsersService {
       await newUser.save();
       return newUser;
       } catch (error) {
-        console.log(error)
       if (error.name==='MongoServerError' && error.code === 11000) {
         throw new BadRequestException('Email already exists.')
       }
