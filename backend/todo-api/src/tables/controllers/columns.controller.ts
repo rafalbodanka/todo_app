@@ -42,7 +42,6 @@ export class ColumnsController {
 		@Param('id') id: string,
 		@Res() res,
 	) {
-		console.log(id)
 		const result = await this.columnsService.deleteColumn(
 				id,
 				);
@@ -57,6 +56,26 @@ export class ColumnsController {
 					message: 'Column not found',
 				});
 			}
+	}
+
+	@UseGuards(AuthenticatedGuard)
+	@Post('/:id/status')
+	async toggleCompletedTaskStatus(
+		@Param('id') id: string,
+		@Res() res,
+	) {
+		const result = await this.columnsService.toggleCompletedTaskStatus(id);
+
+		if (result) {
+			return res.status(HttpStatus.OK).json({
+				message: 'Column show completed tasks status changed successfully',
+				data: result,
+			});
+		} else {
+			return res.status(HttpStatus.NOT_FOUND).json({
+				message: 'Column not found',
+			});
+		}
 	}
 
 	//Get all table's columns

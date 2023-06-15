@@ -29,13 +29,11 @@ export class ColumnsService {
       if (!table) {
         throw new Error("No table with given ID")
       }
-      console.log(newColumn)
       table.columns.push(newColumn._id);
       await table.save();
 
       return newColumn;
       } catch (error) {
-        console.log(error)
     //   if (error.name==='MongoServerError' && error.code === 11000) {
     //     throw new BadRequestException('Email already exists.')
     //   }
@@ -69,4 +67,20 @@ export class ColumnsService {
     }
     return true;
   }
+
+  async toggleCompletedTaskStatus(columnId: string): Promise<boolean> {
+    const column = await this.columnModel.findOne ({ _id: columnId })
+
+    // Return false if no column with given id
+    if (!column) {
+      return false;
+    }
+    
+    // Toggle the task's status
+    column.showCompletedTasks = !column.showCompletedTasks;
+
+    // Save the updated column
+    await column.save();
+    return true;
+    }
 }

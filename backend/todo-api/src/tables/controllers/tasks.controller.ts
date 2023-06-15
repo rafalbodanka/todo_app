@@ -37,18 +37,36 @@ export class TasksController {
 	}
 
 	@UseGuards(AuthenticatedGuard)
-	@Post('/delete/:id')
+	@Post('/:id/delete')
 	async deleteTask(
 		@Param('id') id: string,
 		@Res() res,
 	) {
-		const result = await this.tasksService.deleteTask(
-			id,
-			);
+		const result = await this.tasksService.deleteTask(id);
 
 		if (result) {
 			return res.status(HttpStatus.OK).json({
 				message: 'Task deleted successfully',
+				data: result,
+			});
+		} else {
+			return res.status(HttpStatus.NOT_FOUND).json({
+				message: 'Task not found',
+			});
+		}
+	}
+
+	@UseGuards(AuthenticatedGuard)
+	@Post('/:id/status')
+	async toggleTaskStatus(
+		@Param('id') id: string,
+		@Res() res,
+	) {
+		const result = await this.tasksService.toggleTaskStatus(id);
+
+		if (result) {
+			return res.status(HttpStatus.OK).json({
+				message: 'Task status changed successfully',
 				data: result,
 			});
 		} else {
