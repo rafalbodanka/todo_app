@@ -17,16 +17,12 @@ interface ColumnData {
 
 	interface TaskProps {
 		task: TaskData;
-		columns: ColumnData[];
-		setColumns: React.Dispatch<React.SetStateAction<ColumnData[]>>;
-		columnId: string;
+		setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 	}
 
 	const Task: React.FC<TaskProps> = ({
 		task,
-		columns,
-		setColumns,
-		columnId,
+		setRerenderSignal
 	}) => {
 
 	const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
@@ -37,39 +33,39 @@ interface ColumnData {
 
 
 	const toggleTaskStatus = (editedTask: TaskData) => {
-		setColumns((prevColumns) => {
-			const updatedColumns = prevColumns.map((column) => {
-				if (column.tasks.some((task) => task._id === editedTask._id)) {
-					const updatedTasks = column.tasks.map((task) => {
-						if (editedTask._id === task._id) {
-							return {
-								...task,
-								completed: !task.completed,
-							};
-						}
-						return task;
-					});
+		// setColumns((prevColumns) => {
+		// 	const updatedColumns = prevColumns.map((column) => {
+		// 		if (column.tasks.some((task) => task._id === editedTask._id)) {
+		// 			const updatedTasks = column.tasks.map((task) => {
+		// 				if (editedTask._id === task._id) {
+		// 					return {
+		// 						...task,
+		// 						completed: !task.completed,
+		// 					};
+		// 				}
+		// 				return task;
+		// 			});
 	
-					const index = updatedTasks.findIndex((task) => task._id === editedTask._id);
-					const taskToMove = updatedTasks.splice(index, 1)[0];
+		// 			const index = updatedTasks.findIndex((task) => task._id === editedTask._id);
+		// 			const taskToMove = updatedTasks.splice(index, 1)[0];
 					
-					if (taskToMove.completed) {
-						const completedIndex = updatedTasks.findIndex((task) => task.completed);
-						updatedTasks.splice(completedIndex !== -1 ? completedIndex : updatedTasks.length, 0, taskToMove);
-					} else {
-						updatedTasks.unshift(taskToMove);
-					}
+		// 			if (taskToMove.completed) {
+		// 				const completedIndex = updatedTasks.findIndex((task) => task.completed);
+		// 				updatedTasks.splice(completedIndex !== -1 ? completedIndex : updatedTasks.length, 0, taskToMove);
+		// 			} else {
+		// 				updatedTasks.unshift(taskToMove);
+		// 			}
 	
-					return {
-						...column,
-						tasks: updatedTasks,
-					};
-				}
-				return column;
-			});
+		// 			return {
+		// 				...column,
+		// 				tasks: updatedTasks,
+		// 			};
+		// 		}
+		// 		return column;
+		// 	});
 	
-			return updatedColumns;
-		});
+		// 	return updatedColumns;
+		// });
 	};
 
 	return (
@@ -88,11 +84,9 @@ interface ColumnData {
 			</div>
 			<EditTask
 			task={task}
-			columnId={columnId}
-			columns={columns}
-			setColumns={setColumns}
 			isEditTaskModalOpen={isEditTaskModalOpen}
 			setIsEditTaskModalOpen={setIsEditTaskModalOpen}
+			setRerenderSignal={setRerenderSignal}
 			/>
 		</div>    
 	)
