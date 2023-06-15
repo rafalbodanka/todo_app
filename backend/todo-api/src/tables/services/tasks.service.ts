@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task, Column } from '../tables.model';
 import { BadRequestException } from '@nestjs/common/exceptions';
-import * as bcrypt from 'bcrypt';
 import * as mongoose from 'mongoose'
 
 import { MongoServerError } from 'mongodb';
@@ -38,5 +37,31 @@ export class TasksService {
     //   }
       throw error;
     }
+  }
+
+  async deleteTask(taskId: string): Promise<boolean> {
+    const task = await this.taskModel.findOne({ _id: taskId })
+
+    // Return false if no task with given id
+    if (!task) {
+      return false;
+    }
+    // Get task's column id
+    const columnId = task.column;
+  
+    // Delete the task
+    await task.deleteOne();
+
+    // Delete task from parent column array
+    const parentColumn = await this.columnModel.findOneAndUpdate(
+      { tasks: taskId },
+      { $pull: { tasks: taskId } },
+      { new: true }
+    );
+
+    if (!parentColumn) {
+      throw new Error('Parent table not found');
+    }
+    return true;
   }
 }

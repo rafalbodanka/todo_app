@@ -180,10 +180,8 @@ const Column: React.FC<ColumnProps> = ({ columns, setColumns, setRerenderSignal,
 															style={getStyle(provided.draggableProps.style, snapshot)}
 														>
 															<Task
-																columns={columns}
-																setColumns={setColumns}
 																task={task}
-																columnId={column._id}
+																setRerenderSignal={setRerenderSignal}
 															/>
 														</div>
 													)}
@@ -224,10 +222,8 @@ const Column: React.FC<ColumnProps> = ({ columns, setColumns, setRerenderSignal,
 															style={getStyle(provided.draggableProps.style, snapshot)}
 														>
 															<Task
-																columns={columns}
-																setColumns={setColumns}
 																task={task}
-																columnId={column._id}
+																setRerenderSignal={setRerenderSignal}
 															/>
 														</div>
 													)}
