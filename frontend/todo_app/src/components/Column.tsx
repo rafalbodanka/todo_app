@@ -3,6 +3,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { DraggableLocation, DropResult } from '@hello-pangea/dnd';
 import { DraggableStateSnapshot } from '@hello-pangea/dnd';
 import { CSSProperties } from 'react';
+import axios from 'axios';
 
 import Task from './Task';
 import AddTask from './AddTask';
@@ -71,18 +72,28 @@ const Column: React.FC<ColumnProps> = ({ columns, setColumns, setRerenderSignal,
 			});
 	}
 
-  const toggleShowCompletedTasks = (columnId: string) => {
-    setColumns((prevColumns) => {
-      return prevColumns.map((column) => {
-        if (column._id === columnId) {
-          return {
-            ...column,
-            showCompletedTasks: !column.showCompletedTasks,
-          };
-        }
-        return column;
-      });
-    });
+  const toggleShowCompletedTasks = async (columnId: string) => {
+		try {
+			const response = await axios.post(`http://localhost:5000/columns/${columnId}/status`, {},
+			{
+					withCredentials: true,
+					headers: {
+							'Access-Control-Allow-Origin': '*',
+							'Content-Type': 'application/json'
+					}
+			})
+
+			if (response.status === 200) {
+				console.log('gituwa')
+				setRerenderSignal(prevSignal => !prevSignal)
+			}
+		} catch (err: any) {
+			if (err.response && err.response.status === 404) {
+					console.log('Column not found');
+			} else {
+					console.log(`Something went wrong, try again`);
+			}
+		}
   };
 
 	interface ResultProps {
