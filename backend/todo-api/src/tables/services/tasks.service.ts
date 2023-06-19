@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task, Column } from '../tables.model';
 import { BadRequestException } from '@nestjs/common/exceptions';
-import * as mongoose from 'mongoose'
+import * as mongoose from 'mongoose';
 
 import { MongoServerError } from 'mongodb';
 
@@ -12,13 +12,13 @@ export class TasksService {
   constructor(
     @InjectModel('task') private readonly taskModel: Model<Task>,
     @InjectModel('column') private readonly columnModel: Model<Column>,
-    ) {}
+  ) {}
   async insertTask(title: string, columnId: string): Promise<Task> {
-    try{
+    try {
       // Creating new column
       const newTask = new this.taskModel({
         title: title,
-        // complete status is false as default 
+        // complete status is false as default
         column: columnId,
       });
       await newTask.save();
@@ -26,20 +26,20 @@ export class TasksService {
       //find the table and update its column array with new column ID
       const column = await this.columnModel.findById(columnId);
       // new task is always at 0 index within the column's task array
-      column.tasks.unshift(newTask._id);
+      column.pendingTasks.unshift(newTask._id);
       await column.save();
 
       return newTask;
-      } catch (error) {
-    //   if (error.name==='MongoServerError' && error.code === 11000) {
-    //     throw new BadRequestException('Email already exists.')
-    //   }
+    } catch (error) {
+      //   if (error.name==='MongoServerError' && error.code === 11000) {
+      //     throw new BadRequestException('Email already exists.')
+      //   }
       throw error;
     }
   }
 
   async deleteTask(taskId: string): Promise<boolean> {
-    const task = await this.taskModel.findOne({ _id: taskId })
+    const task = await this.taskModel.findOne({ _id: taskId });
 
     // Return false if no task with given id
     if (!task) {
@@ -47,25 +47,35 @@ export class TasksService {
     }
     // Get task's column id
     const columnId = task.column;
-  
-    // Delete the task
-    await task.deleteOne();
 
-    // Delete task from parent column array
-    const parentColumn = await this.columnModel.findOneAndUpdate(
-      { tasks: taskId },
-      { $pull: { tasks: taskId } },
-      { new: true }
-    );
+    let parentColumn: mongoose.Types.ObjectId;
+
+    if (task.completed) {
+      parentColumn = await this.columnModel.findOneAndUpdate(
+        { completedTasks: taskId },
+        { $pull: { completedTasks: taskId } },
+        { new: true },
+      );
+    } else {
+      parentColumn = await this.columnModel.findOneAndUpdate(
+        { pendingTasks: taskId },
+        { $pull: { pendingTasks: taskId } },
+        { new: true },
+      );
+    }
 
     if (!parentColumn) {
       throw new Error('Parent table not found');
     }
+
+    // Delete the task
+    await task.deleteOne();
+
     return true;
   }
 
   async toggleTaskStatus(taskId: string): Promise<boolean> {
-    const task = await this.taskModel.findOne ({ _id: taskId })
+    const task = await this.taskModel.findOne({ _id: taskId });
 
     // Return false if no task with given id
     if (!task) {
@@ -82,23 +92,22 @@ export class TasksService {
       throw new Error('Parent table not found');
     }
 
-    // Find the index of the task within the column's tasks array
-    const taskIndex = column.tasks.findIndex((t) => t._id.equals(task._id));
+    if (task.completed) {
+      const taskIndex = column.completedTasks.findIndex(
+        (task) => task._id.toString() === taskId,
+      );
+      const taskToMove = column.completedTasks.splice(taskIndex, 1)[0];
+      column.pendingTasks.unshift(taskToMove);
+    }
 
-    // Return false if the task is not found in the column's tasks array
-    if (taskIndex === -1) {
-      return false;
+    if (!task.completed) {
+      const taskIndex = column.pendingTasks.findIndex(
+        (task) => task._id.toString() === taskId,
+      );
+      const taskToMove = column.pendingTasks.splice(taskIndex, 1)[0];
+      column.completedTasks.unshift(taskToMove);
     }
-    
-    // Move the task to the appropriate index based on its status
-    const taskToMove = column.tasks.splice(taskIndex, 1)[0];
-    if (taskToMove.completed) {
-      const completedIndex = column.tasks.findIndex((task) => task.completed);
-      column.tasks.splice(completedIndex !== -1 ? completedIndex : column.tasks.length, 0, taskToMove);
-    } else {
-      column.tasks.unshift(taskToMove);
-    }
-    
+
     // Toggle the task's status
     task.completed = !task.completed;
 
@@ -106,5 +115,5 @@ export class TasksService {
     await task.save();
     await column.save();
     return true;
-    }
   }
+}
