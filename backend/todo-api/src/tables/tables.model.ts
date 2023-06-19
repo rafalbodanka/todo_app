@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { User } from '../users/users.model'
+import { User } from '../users/users.model';
 
 export const TableSchema = new mongoose.Schema({
   title: {
@@ -12,10 +12,12 @@ export const TableSchema = new mongoose.Schema({
       ref: 'Column',
     },
   ],
-  users: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  }],
+  users: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
 });
 
 export const ColumnSchema = new mongoose.Schema({
@@ -23,7 +25,13 @@ export const ColumnSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  tasks: [
+  pendingTasks: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Task',
+    },
+  ],
+  completedTasks: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Task',
@@ -54,7 +62,7 @@ export const TaskSchema = new mongoose.Schema({
 });
 
 export interface Table extends Document {
-	_id: string;
+  _id: string;
   title: string;
   columns: mongoose.Types.DocumentArray<Column>;
   users: mongoose.Types.Array<User['_id']>;
@@ -62,7 +70,8 @@ export interface Table extends Document {
 
 export interface Column extends Document {
   title: string;
-  tasks: mongoose.Types.DocumentArray<Task>;
+  pendingTasks: mongoose.Types.DocumentArray<Task>;
+  completedTasks: mongoose.Types.DocumentArray<Task>;
   showCompletedTasks: boolean;
 }
 
@@ -71,4 +80,3 @@ export interface Task extends Document {
   completed: boolean;
   column: mongoose.Types.ObjectId;
 }
-
