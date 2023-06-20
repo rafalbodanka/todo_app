@@ -32,6 +32,7 @@ interface TableProps {
 
 type EditTableProps = {
   tableId: string;
+  currentTable: string;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   tables: TableProps[];
   setCurrentTable: React.Dispatch<string>;
@@ -41,6 +42,7 @@ type EditTableProps = {
 
 const EditTable: React.FC<EditTableProps> = ({
   tableId,
+  currentTable,
   setRerenderSignal,
   tables,
   setCurrentTable,
@@ -92,7 +94,7 @@ const EditTable: React.FC<EditTableProps> = ({
   };
 
   const openEditTaskModal = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+    event: React.MouseEvent<HTMLElement, MouseEvent>
   ) => {
     event.stopPropagation();
     if (event.target === event.currentTarget) {
@@ -113,8 +115,14 @@ const EditTable: React.FC<EditTableProps> = ({
   return (
     <div className="flex item-center">
       <img
-        className="w-4 cursor-pointer"
-        src="./edit-symbol.svg"
+        className={`w-4 cursor-pointer ${
+          currentTable === tableId ? "fill-white" : ""
+        }`}
+        src={
+          currentTable === tableId
+            ? "./edit-symbol-white.svg"
+            : "./edit-symbol.svg"
+        }
         onClick={openEditTaskModal}
       ></img>
       {isEditTableModalOpen && (

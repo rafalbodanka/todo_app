@@ -9,6 +9,8 @@ import {
 } from "react-router-dom";
 import axios from "axios";
 
+import { Button } from "@material-tailwind/react";
+
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Auth from "./components/Auth";
@@ -16,6 +18,7 @@ import Column from "./components/Column";
 import Set from "./components/Set";
 import { table } from "console";
 import EditTable from "./components/EditTable";
+import UserNav from "./components/UserNav";
 
 type ColumnData = {
   _id: string;
@@ -101,7 +104,7 @@ const App: React.FC = () => {
                           </div>
                         </div>
                         <div className="col-span-2 p-6 flex justify-center">
-                          <div>{username}</div>
+                          <UserNav username={username}></UserNav>
                         </div>
                       </div>
                     </div>

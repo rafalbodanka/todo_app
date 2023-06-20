@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@hello-pangea/dnd": "^16.2.0",
+    "@material-tailwind/react": "^2.0.4",
     "@types/react-beautiful-dnd": "^13.1.4",
     "install": "^0.13.0",
     "npm": "^9.6.7",
