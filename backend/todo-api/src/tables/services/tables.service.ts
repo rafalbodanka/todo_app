@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Table, Column, Task } from '../tables.model';
-import { BadRequestException } from '@nestjs/common/exceptions';
 import * as mongoose from 'mongoose';
-
-import { MongoServerError } from 'mongodb';
 
 @Injectable()
 export class TablesService {
@@ -28,9 +25,6 @@ export class TablesService {
       await newTable.save();
       return newTable;
     } catch (error) {
-      //   if (error.name==='MongoServerError' && error.code === 11000) {
-      //     throw new BadRequestException('Email already exists.')
-      //   }
       throw error;
     }
   }
@@ -48,6 +42,28 @@ export class TablesService {
       })
       .exec();
     return userTable;
+  }
+
+  async renameTable(
+    tableId: string,
+    userId: string,
+    newTitle: string,
+  ): Promise<boolean> {
+    const table = await this.tableModel.findOneAndUpdate(
+      {
+        _id: tableId,
+        users: userId,
+      },
+      {
+        title: newTitle,
+      },
+    );
+
+    // Return false if no table with given id or user is unauthorized
+    if (!table) {
+      return false;
+    }
+    return true;
   }
 
   async deleteTable(tableId: string, userId: string): Promise<boolean> {
@@ -74,6 +90,7 @@ export class TablesService {
     return true;
   }
 
+  //Helper function for deleting table with its items
   async deleteColumn(columnId: string): Promise<void> {
     // Delete the column
     await this.columnModel.deleteOne({ _id: columnId }).exec();

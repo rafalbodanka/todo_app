@@ -9,6 +9,7 @@ import Task from "./Task";
 import AddTask from "./AddTask";
 import DeleteColumn from "./DeleteColumn";
 import AddColumn from "./AddColumn";
+import EditColumn from "./EditColumn";
 
 interface ColumnProps {
   columns: ColumnData[];
@@ -37,30 +38,6 @@ const Column: React.FC<ColumnProps> = ({
   setRerenderSignal,
   currentTable,
 }) => {
-  const handleColumnTitleChange = (
-    event: React.ChangeEvent<HTMLParagraphElement>,
-    id: string
-  ) => {
-    const { innerText } = event.currentTarget;
-    const sanitizedValue = innerText.replace(/(\r\n|\n|\r)/gm, "");
-    const truncatedValue = sanitizedValue.substring(0, 25);
-    updateColumnName(id, truncatedValue);
-  };
-
-  const updateColumnName = (columnId: string, newTitle: string) => {
-    setColumns((prevColumns) => {
-      return prevColumns.map((column) => {
-        if (column._id === columnId) {
-          return {
-            ...column,
-            title: newTitle,
-          };
-        }
-        return column;
-      });
-    });
-  };
-
   const addTask = (columnId: string) => {
     setColumns((prevColumns) => {
       return prevColumns.map((column) => {
@@ -139,7 +116,6 @@ const Column: React.FC<ColumnProps> = ({
       changeStatus = false;
     }
 
-    // column.tasks.splice(destinationIndex, 0, movedTask);
     let draggedTask;
     if (source.droppableId.endsWith("completed")) {
       draggedTask = column.completedTasks[sourceIndex];
@@ -154,9 +130,7 @@ const Column: React.FC<ColumnProps> = ({
     }
 
     const sourceColumn = source.droppableId.split("-")[1];
-    const destinationColumn = destination.droppableId.split("-")[1];
     const draggedTaskId = draggedTask._id;
-    // const newTasksArray = column.tasks.map((task) => task._id);
     const completed = draggedTask.completed;
 
     try {
@@ -165,9 +139,7 @@ const Column: React.FC<ColumnProps> = ({
         {
           movedTaskId: draggedTaskId,
           sourceColumn: sourceColumn,
-          destinationColumn: destinationColumn,
           destinationColumnId: destinationColumnId,
-          sourceIndex: sourceIndex,
           destinationIndex: destinationIndex,
           completed: completed,
           changeStatus: changeStatus,
@@ -211,34 +183,10 @@ const Column: React.FC<ColumnProps> = ({
         {columns.map((column) => (
           <div key={column._id} className="tasks_container">
             <div className="relative">
-              <div
-                contentEditable
-                suppressContentEditableWarning={true}
-                className="focus:bg-gray-200 outline-0 mr-8"
-                onChange={(event: React.ChangeEvent<HTMLParagraphElement>) =>
-                  handleColumnTitleChange(event, column._id)
-                }
-                onKeyDown={(
-                  event: React.KeyboardEvent<HTMLParagraphElement>
-                ) => {
-                  if (
-                    event.key === "Backspace" ||
-                    event.key === "Delete" ||
-                    event.key === "ArrowLeft" ||
-                    event.key === "ArrowRight"
-                  ) {
-                  } else if (
-                    event.currentTarget.textContent &&
-                    event.currentTarget.textContent.length > 60
-                  ) {
-                    event.preventDefault();
-                  } else if (event.key === "Enter" || event.key === "Escape") {
-                    event.currentTarget.blur();
-                  }
-                }}
-              >
-                {column.title}
-              </div>
+              <EditColumn
+                column={column}
+                setRerenderSignal={setRerenderSignal}
+              ></EditColumn>
               <DeleteColumn
                 columns={columns}
                 columnTitle={column.title}
@@ -256,11 +204,11 @@ const Column: React.FC<ColumnProps> = ({
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                     className={
-                      column.pendingTasks.length +
-                        column.completedTasks.length <
-                      1
+                      column.completedTasks.length < 1
                         ? "h-screen"
-                        : ""
+                        : column.pendingTasks.length < 1
+                        ? "h-8"
+                        : "h-auto"
                     }
                   >
                     {column.pendingTasks.map((task, index) => (
@@ -280,6 +228,7 @@ const Column: React.FC<ColumnProps> = ({
                             )}
                           >
                             <Task
+                              taskIndex={index}
                               task={task}
                               setRerenderSignal={setRerenderSignal}
                             />
@@ -297,7 +246,7 @@ const Column: React.FC<ColumnProps> = ({
                     <div
                       {...provided.droppableProps}
                       ref={provided.innerRef}
-                      className="h-screen"
+                      className="h-full"
                     >
                       <div
                         className="cursor-pointer grid grid-cols-3 mt-4"
@@ -337,6 +286,7 @@ const Column: React.FC<ColumnProps> = ({
                                 )}
                               >
                                 <Task
+                                  taskIndex={index}
                                   task={task}
                                   setRerenderSignal={setRerenderSignal}
                                 />

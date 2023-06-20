@@ -33,6 +33,30 @@ export class TasksController {
     };
   }
 
+  //rename task
+  @UseGuards(AuthenticatedGuard)
+  @Post('/:id/name')
+  async renameTable(
+    @Param('id') id: string,
+    @Request() req,
+    @Body('newTitle') newTitle: string,
+    @Res() res,
+  ) {
+    const userId: mongoose.Types.ObjectId = req.user.id;
+    const result = await this.tasksService.renameTask(id, newTitle);
+
+    if (result) {
+      return res.status(HttpStatus.OK).json({
+        message: 'Task renamed successfully',
+        data: result,
+      });
+    } else {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Task not found',
+      });
+    }
+  }
+
   @UseGuards(AuthenticatedGuard)
   @Post('/:id/delete')
   async deleteTask(@Param('id') id: string, @Res() res) {
@@ -66,21 +90,4 @@ export class TasksController {
       });
     }
   }
-
-  //Get all table's columns
-  // @UseGuards(AuthenticatedGuard)
-  // @Get('/columns')
-  // async getTableColumns(@Request() req): Promise<any> {
-  //     @Body('column_id') columnId: string,
-  // 	const TableId: mongoose.Types.ObjectId = req.user._id;
-  // 	const TableColumns = await this.columnsService.getTableColumns(columnId);
-  // 	return TableColumns;
-  // }
-
-  //delete set - to do in the future (happens when user deletes his account)
-  // @Get('/logout')
-  // 	logout(@Request() req): any {
-  // 		req.session.destroy();
-  // 		return { msg: 'The user session has ended' }
-  // 	}
 }

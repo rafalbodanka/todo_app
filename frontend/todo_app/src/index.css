@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .tasks_container {
   @apply pl-6 pr-6 border-r-1 border-black border-opacity-20 h-screen min-w-2 max-w-2;
 }
@@ -11,26 +10,25 @@
   @apply mt-4 mb-8 p-2 pb-6 border-1 border-gray-200 shadow-md rounded-md cursor-pointer hover:shadow-xl duration-200 w-full break-words;
 }
 
-
 .add_task {
   @apply mt-4 p-2 border-1 border-gray-200 shadow-md rounded-md cursor-pointer hover:shadow-xl;
 }
 
-/* .toggleTasks {
-  @apply 
-} */
-
 .expand_btn {
-  @apply duration-200
+  @apply duration-200;
 }
 
 .hidden_tasks {
-  @apply rotate-180
+  @apply rotate-180;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loader {
