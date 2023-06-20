@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { table } from "console";
 
 interface Task {
   _id: string;
@@ -30,7 +29,8 @@ interface TableProps {
 }
 
 type DeleteTableProps = {
-  currentTable: string;
+  tableId: string;
+  tableTitle: string;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   tables: TableProps[];
   setCurrentTable: React.Dispatch<string>;
@@ -38,22 +38,25 @@ type DeleteTableProps = {
 };
 
 const DeleteTable: React.FC<DeleteTableProps> = ({
-  currentTable,
+  tableId,
+  tableTitle,
   setRerenderSignal,
   tables,
   setCurrentTable,
   setColumns,
 }) => {
   const [deleteModalMessage, setDeleteModalMessage] = useState("");
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleteResponseModalOpen, setIsDeleteResponseModalOpen] =
+    useState(false);
   const [deleteModalAction, setDeleteModalAction] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleDeleteModalAction = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     if (deleteModalAction) {
       // Perform the action and update the current table and rerender
       setRerenderSignal((prevSignal) => !prevSignal);
-      if (currentTable !== tables[0]._id) {
+      if (tableId !== tables[0]._id) {
         setCurrentTable(tables[0]._id);
       } else {
         setCurrentTable(tables.length > 1 ? tables[1]._id : "");
@@ -61,15 +64,22 @@ const DeleteTable: React.FC<DeleteTableProps> = ({
     }
 
     // Close the modal and reset the action state
-    setIsDeleteModalOpen(false);
+    setIsDeleteResponseModalOpen(false);
     setDeleteModalAction(false);
   };
 
+  const openDeleteTableModal = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteTableModal = () => {
+    setIsDeleteModalOpen(false);
+  };
+
   const performDelete = async () => {
-    const tableId = currentTable;
     console.log(tableId);
 
-    if (!currentTable) {
+    if (!tableId) {
       return;
     }
 
@@ -88,32 +98,59 @@ const DeleteTable: React.FC<DeleteTableProps> = ({
 
       if (response.status === 200) {
         setDeleteModalMessage("Table deleted succesfully");
-        setIsDeleteModalOpen(true);
+        setIsDeleteResponseModalOpen(true);
         setDeleteModalAction(true);
       }
     } catch (err: any) {
       if (err.response && err.response.status === 404) {
         setDeleteModalMessage("Table not found");
-        setIsDeleteModalOpen(true);
+        setIsDeleteResponseModalOpen(true);
         setDeleteModalAction(false);
       } else {
         setDeleteModalMessage(`Something went wrong, try again`);
-        setIsDeleteModalOpen(true);
+        setIsDeleteResponseModalOpen(true);
         setDeleteModalAction(false);
       }
     }
   };
   return (
     <>
-      {currentTable && (
-        <img
-          className="h-1/2 cursor-pointer"
-          src={process.env.PUBLIC_URL + "/icon-trash.svg"}
-          alt="Trash Icon"
-          onClick={performDelete}
-        ></img>
-      )}
+      <img
+        className="w-1/6 cursor-pointer"
+        src={process.env.PUBLIC_URL + "/icon-trash.svg"}
+        alt="Trash Icon"
+        onClick={openDeleteTableModal}
+      ></img>
       {isDeleteModalOpen && (
+        <div
+          className="w-screen h-screen bg-black bg-opacity-30 absolute top-0 left-0 flex justify-center items-center z-10"
+          onClick={closeDeleteTableModal}
+        >
+          <div className="bg-white rounded-md">
+            <div className="p-6 text-center">
+              <p className="font-400">
+                Do you want to delete table{" "}
+                <span className="font-700">{tableTitle}</span>?
+              </p>
+              <div className="grid grid-cols-2 mt-6 gap-12">
+                <button
+                  onClick={performDelete}
+                  className="bg-purple-400 p-2 pl-6 pr-6 rounded-md mt-4"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={closeDeleteTableModal}
+                  className="bg-purple-400 p-2 pl-6 pr-6 rounded-md mt-4"
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {isDeleteResponseModalOpen && (
         <div className="w-screen h-screen bg-black bg-opacity-30 absolute top-0 left-0 flex justify-center items-center z-10">
           <div className="bg-white rounded-md">
             <div className="p-6 text-center">

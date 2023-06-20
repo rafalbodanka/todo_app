@@ -5,6 +5,8 @@ import { DraggableLocation, DropResult } from "@hello-pangea/dnd";
 import { DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { CSSProperties } from "react";
 import AddTable from "./AddTable";
+import DeleteColumn from "./DeleteColumn";
+import EditTable from "./EditTable";
 
 interface Task {
   _id: string;
@@ -60,12 +62,24 @@ const Set: React.FC<SetProps> = ({
           return (
             <div
               key={table._id}
-              className={`cursor-pointer p-2 pl-4 pr-4 hover:shadow-sm hover:bg-slate-200 rounded-md ${
+              className={`cursor-pointer p-2 pl-4 pr-4 hover:shadow-sm hover:bg-slate-200 rounded-md grid grid-col-2 grid-flow-col gap-4 ${
                 currentTable === table._id ? "bg-slate-200" : ""
               }`}
-              onClick={() => switchTable(table._id, table.columns)}
+              onClick={() => {
+                if (currentTable !== table._id) {
+                  switchTable(table._id, table.columns);
+                }
+              }}
             >
               {table.title}
+              <EditTable
+                tableTitle={table.title}
+                tableId={table._id}
+                setRerenderSignal={setRerenderSignal}
+                tables={tables}
+                setCurrentTable={setCurrentTable}
+                setColumns={setColumns}
+              ></EditTable>
             </div>
           );
         })}

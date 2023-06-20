@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task, Column } from '../tables.model';
-import { BadRequestException } from '@nestjs/common/exceptions';
 import * as mongoose from 'mongoose';
-
-import { MongoServerError } from 'mongodb';
 
 @Injectable()
 export class TasksService {
@@ -13,29 +10,43 @@ export class TasksService {
     @InjectModel('task') private readonly taskModel: Model<Task>,
     @InjectModel('column') private readonly columnModel: Model<Column>,
   ) {}
-  async insertTask(title: string, columnId: string): Promise<Task> {
+  async insertTask(title: string, taskId: string): Promise<Task> {
     try {
       // Creating new column
       const newTask = new this.taskModel({
         title: title,
-        // complete status is false as default
-        column: columnId,
+        // complete status is false by default
+        column: taskId,
       });
       await newTask.save();
 
-      //find the table and update its column array with new column ID
-      const column = await this.columnModel.findById(columnId);
-      // new task is always at 0 index within the column's task array
+      // find the table and update its column array with new column ID
+      const column = await this.columnModel.findById(taskId);
+      // new task is always at index 0 within the column's task array
       column.pendingTasks.unshift(newTask._id);
       await column.save();
 
       return newTask;
     } catch (error) {
-      //   if (error.name==='MongoServerError' && error.code === 11000) {
-      //     throw new BadRequestException('Email already exists.')
-      //   }
       throw error;
     }
+  }
+
+  async renameTask(taskId: string, newTitle: string): Promise<boolean> {
+    const task = await this.taskModel.findOneAndUpdate(
+      {
+        _id: taskId,
+      },
+      {
+        title: newTitle,
+      },
+    );
+
+    // Return false if no task with given id or user is unauthorized
+    if (!task) {
+      return false;
+    }
+    return true;
   }
 
   async deleteTask(taskId: string): Promise<boolean> {
@@ -92,17 +103,19 @@ export class TasksService {
       throw new Error('Parent table not found');
     }
 
+    // moving completed task back to pending tasks array
     if (task.completed) {
       const taskIndex = column.completedTasks.findIndex(
-        (task) => task._id.toString() === taskId,
+        (completedTask) => completedTask._id.toString() === taskId,
       );
       const taskToMove = column.completedTasks.splice(taskIndex, 1)[0];
       column.pendingTasks.unshift(taskToMove);
     }
 
+    // moving pending task to completed tasks array
     if (!task.completed) {
       const taskIndex = column.pendingTasks.findIndex(
-        (task) => task._id.toString() === taskId,
+        (pendingTask) => pendingTask._id.toString() === taskId,
       );
       const taskToMove = column.pendingTasks.splice(taskIndex, 1)[0];
       column.completedTasks.unshift(taskToMove);

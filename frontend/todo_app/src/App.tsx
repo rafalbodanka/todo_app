@@ -15,7 +15,7 @@ import Auth from "./components/Auth";
 import Column from "./components/Column";
 import Set from "./components/Set";
 import { table } from "console";
-import DeleteTable from "./components/DeleteTable";
+import EditTable from "./components/EditTable";
 
 type ColumnData = {
   _id: string;
@@ -87,12 +87,9 @@ const App: React.FC = () => {
               <Auth setUsername={setUsername}>
                 <div className="w-screen h-screen font-Roboto font-500">
                   <div className="">
-                    <div className="mt-4 mb-4">
+                    <div className="p-4">
                       <div className="grid grid-cols-8">
-                        <div className="col-span-2 p-6">
-                          <div>{username}</div>
-                        </div>
-                        <div className="col-span-5 items-end">
+                        <div className="col-span-6 items-end">
                           <div className="scrollable-container overflow-x-auto whitespace-nowrap h-full">
                             <Set
                               tables={tables}
@@ -103,19 +100,13 @@ const App: React.FC = () => {
                             ></Set>
                           </div>
                         </div>
-                        <div className="col-span-1 flex justify-center items-center">
-                          <DeleteTable
-                            currentTable={currentTable}
-                            setRerenderSignal={setRerenderSignal}
-                            tables={tables}
-                            setCurrentTable={setCurrentTable}
-                            setColumns={setColumns}
-                          ></DeleteTable>
+                        <div className="col-span-2 p-6 flex justify-center">
+                          <div>{username}</div>
                         </div>
                       </div>
                     </div>
                     {currentTable && (
-                      <div className="flex flex-nowrap overflow-x-auto max-w-full">
+                      <div className="flex max-w-full">
                         <Column
                           columns={columns}
                           setColumns={setColumns}

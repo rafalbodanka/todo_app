@@ -27,9 +27,33 @@ export class ColumnsController {
     const result = await this.columnsService.insertColumn(title, tableId);
 
     return {
-      msg: 'Column successfully created',
+      msg: 'Column created successfully',
       title: result.title,
     };
+  }
+
+  //rename column
+  @UseGuards(AuthenticatedGuard)
+  @Post('/:id/name')
+  async renameTable(
+    @Param('id') id: string,
+    @Request() req,
+    @Body('newTitle') newTitle: string,
+    @Res() res,
+  ) {
+    const userId: mongoose.Types.ObjectId = req.user.id;
+    const result = await this.columnsService.renameColumn(id, newTitle);
+
+    if (result) {
+      return res.status(HttpStatus.OK).json({
+        message: 'Column renamed successfully',
+        data: result,
+      });
+    } else {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Column not found',
+      });
+    }
   }
 
   //delete column
@@ -50,6 +74,7 @@ export class ColumnsController {
     }
   }
 
+  //toggle show completed tasks
   @UseGuards(AuthenticatedGuard)
   @Post('/:id/status')
   async toggleCompletedTaskStatus(@Param('id') id: string, @Res() res) {
@@ -67,15 +92,14 @@ export class ColumnsController {
     }
   }
 
+  //drag and drop tasks
   @UseGuards(AuthenticatedGuard)
   @Post('/:id/ids')
   async moveTaskWithinColumn(
     @Param('id') id: string,
     @Body('movedTaskId') movedTaskId: string,
     @Body('sourceColumn') sourceColumn: string,
-    @Body('destinationColumn') destinationColumn: string,
     @Body('destinationColumnId') destinationColumnId: string,
-    @Body('sourceIndex') sourceIndex: string,
     @Body('destinationIndex') destinationIndex: string,
     @Body('completed') completed: boolean,
     @Body('changeStatus') changeStatus: boolean,
@@ -85,9 +109,7 @@ export class ColumnsController {
       id,
       movedTaskId,
       sourceColumn,
-      destinationColumn,
       destinationColumnId,
-      sourceIndex,
       destinationIndex,
       completed,
       changeStatus,
@@ -95,7 +117,7 @@ export class ColumnsController {
 
     if (result) {
       return res.status(HttpStatus.OK).json({
-        message: 'Task moved successfully',
+        message: 'Column moved successfully',
         data: result,
       });
     } else {
@@ -104,11 +126,4 @@ export class ColumnsController {
       });
     }
   }
-
-  //delete set - to do in the future (happens when user deletes his account)
-  // @Get('/logout')
-  // 	logout(@Request() req): any {
-  // 		req.session.destroy();
-  // 		return { msg: 'The user session has ended' }
-  // 	}
 }

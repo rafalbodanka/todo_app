@@ -2,13 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Column, Table, Task } from '../tables.model';
-import { BadRequestException } from '@nestjs/common/exceptions';
-import * as bcrypt from 'bcrypt';
-import * as mongoose from 'mongoose';
-
 import { TasksService } from './tasks.service';
-
-import { MongoServerError } from 'mongodb';
+import * as mongoose from 'mongoose';
 
 @Injectable()
 export class ColumnsService {
@@ -38,11 +33,25 @@ export class ColumnsService {
 
       return newColumn;
     } catch (error) {
-      //   if (error.name==='MongoServerError' && error.code === 11000) {
-      //     throw new BadRequestException('Email already exists.')
-      //   }
       throw error;
     }
+  }
+
+  async renameColumn(columnId: string, newTitle: string): Promise<boolean> {
+    const column = await this.columnModel.findOneAndUpdate(
+      {
+        _id: columnId,
+      },
+      {
+        title: newTitle,
+      },
+    );
+
+    // Return false if no column with given id or user is unauthorized
+    if (!column) {
+      return false;
+    }
+    return true;
   }
 
   async deleteColumn(columnId: string): Promise<boolean> {
@@ -72,6 +81,7 @@ export class ColumnsService {
     return true;
   }
 
+  //show/hide completed tasks
   async toggleCompletedTaskStatus(columnId: string): Promise<boolean> {
     const column = await this.columnModel.findOne({ _id: columnId });
 
@@ -88,13 +98,12 @@ export class ColumnsService {
     return true;
   }
 
+  //drag and drop tasks
   async moveTaskWithinColumn(
     columnId: string,
     movedtaskId: string,
     sourceColumn: string,
-    destinationColumn: string,
     destinationColumnId: string,
-    sourceIndex: string,
     destinationIndex: string,
     completed: boolean,
     changeStatus: boolean,
@@ -133,7 +142,13 @@ export class ColumnsService {
 
     // Check column ID and switch if different
     if (columnId !== destinationColumnId) {
+      task.column = new mongoose.Types.ObjectId(destinationColumnId);
+      await task.save();
+
       if (completed) {
+        const sourceIndex = column.completedTasks.findIndex(
+          (completedTask) => completedTask._id.toString() === movedtaskId,
+        );
         taskToMove = column.completedTasks.splice(Number(sourceIndex), 1)[0];
         if (changeStatus) {
           destinationColumnObj.pendingTasks.splice(
@@ -149,6 +164,9 @@ export class ColumnsService {
           );
         }
       } else {
+        const sourceIndex = column.pendingTasks.findIndex(
+          (pendingTask) => pendingTask._id.toString() === movedtaskId,
+        );
         taskToMove = column.pendingTasks.splice(Number(sourceIndex), 1)[0];
         if (changeStatus) {
           destinationColumnObj.completedTasks.splice(
@@ -167,6 +185,9 @@ export class ColumnsService {
     } else {
       //Moving tasks within the column
       if (completed) {
+        const sourceIndex = column.completedTasks.findIndex(
+          (completedTask) => completedTask._id.toString() === movedtaskId,
+        );
         taskToMove = column.completedTasks.splice(Number(sourceIndex), 1)[0];
         if (changeStatus) {
           column.pendingTasks.splice(Number(destinationIndex), 0, taskToMove);
@@ -174,6 +195,9 @@ export class ColumnsService {
           column.completedTasks.splice(Number(destinationIndex), 0, taskToMove);
         }
       } else {
+        const sourceIndex = column.pendingTasks.findIndex(
+          (pendingTask) => pendingTask._id.toString() === movedtaskId,
+        );
         taskToMove = column.pendingTasks.splice(Number(sourceIndex), 1)[0];
         if (changeStatus) {
           column.completedTasks.splice(Number(destinationIndex), 0, taskToMove);
