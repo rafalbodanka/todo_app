@@ -62,8 +62,8 @@ const Set: React.FC<SetProps> = ({
           return (
             <div
               key={table._id}
-              className={`cursor-pointer p-2 pl-4 pr-4 hover:shadow-sm hover:bg-slate-200 rounded-md grid grid-col-2 grid-flow-col gap-4 ${
-                currentTable === table._id ? "bg-slate-200" : ""
+              className={`cursor-pointer p-2 pl-4 pr-4 hover:shadow-lg hover:bg-slate-200 rounded-md grid grid-col-2 grid-flow-col gap-4 ${
+                currentTable === table._id ? "bg-purple-900 text-white" : ""
               }`}
               onClick={() => {
                 if (currentTable !== table._id) {
@@ -75,6 +75,7 @@ const Set: React.FC<SetProps> = ({
               <EditTable
                 tableTitle={table.title}
                 tableId={table._id}
+                currentTable={currentTable}
                 setRerenderSignal={setRerenderSignal}
                 tables={tables}
                 setCurrentTable={setCurrentTable}

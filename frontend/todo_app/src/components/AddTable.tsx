@@ -107,8 +107,8 @@ const AddTable: React.FC<SetProps> = ({ setRerenderSignal }) => {
 
   return (
     <div
-      className={`cursor-pointer p-2 pl-4 pr-4 hover:shadow-sm hover:bg-slate-200 rounded-md ${
-        showInput && "bg-slate-200 shadow-sm"
+      className={`cursor-pointer p-2 pl-4 pr-4 hover:shadow-lg hover:bg-slate-200 rounded-md ${
+        showInput && "bg-slate-200 shadow-lg"
       }`}
       onClick={addNewTable}
       ref={inputRef}
