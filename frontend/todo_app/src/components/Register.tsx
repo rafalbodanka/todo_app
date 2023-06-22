@@ -3,6 +3,12 @@ import axios, { AxiosError } from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
+  const [isFirstNameInputFocused, setIsFirstNameInputFocused] = useState(false);
+  const [firstNameInputValue, setFirstNameInputValue] = useState("");
+  const [isFirstNameInputHovered, setIsFirstNameInputHovered] = useState(false);
+  const [isLastNameInputFocused, setIsLastNameInputFocused] = useState(false);
+  const [lastNameInputValue, setLastNameInputValue] = useState("");
+  const [isLastNameInputHovered, setIsLastNameInputHovered] = useState(false);
   const [isEmailInputFocused, setIsEmailInputFocused] = useState(false);
   const [emailInputValue, setEmailInputValue] = useState("");
   const [isEmailInputHovered, setIsEmailInputHovered] = useState(false);
@@ -10,8 +16,15 @@ const Register = () => {
   const [passwordInputValue, setPasswordInputValue] = useState("");
   const [isPasswordInputHovered, setIsPasswordInputHovered] = useState(false);
 
+  const [isFirstNameValid, setIsFirstNameValid] = useState(true);
+  const [isLastNameValid, setIsLastNameValid] = useState(true);
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
+  const [invalidFirstNameMessage, setInvalidFirstNameMessage] =
+    useState("Invalid first name");
+  const [invalidLastNameMessage, setInvalidLastNameMessage] = useState(
+    "Last name must have 8-30 characters"
+  );
   const [invalidEmailMessage, setInvalidEmailMessage] =
     useState("Invalid email");
   const [invalidPasswordMessage, setInvalidPasswordMessage] = useState(
@@ -22,6 +35,19 @@ const Register = () => {
 
   const navigate = useNavigate();
 
+  const handleFirstNameInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setFirstNameInputValue(e.target.value);
+    setIsFirstNameValid(true);
+  };
+
+  const handleLastNameInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setLastNameInputValue(e.target.value);
+    setIsLastNameValid(true);
+  };
   const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmailInputValue(e.target.value);
     setIsEmailValid(true);
@@ -34,6 +60,37 @@ const Register = () => {
     setIsPasswordValid(true);
   };
 
+  const handleFirstNameInputFocus = () => {
+    setIsFirstNameInputFocused(true);
+  };
+
+  const handleFirstNameInputBlur = () => {
+    setIsFirstNameInputFocused(false);
+  };
+
+  const handleFirstNameInputMouseEnter = () => {
+    setIsFirstNameInputHovered(true);
+  };
+
+  const handleFirstNameInputMouseLeave = () => {
+    setIsFirstNameInputHovered(false);
+  };
+
+  const handleLastNameInputFocus = () => {
+    setIsLastNameInputFocused(true);
+  };
+
+  const handleLastNameInputBlur = () => {
+    setIsLastNameInputFocused(false);
+  };
+
+  const handleLastNameInputMouseEnter = () => {
+    setIsLastNameInputHovered(true);
+  };
+
+  const handleLastNameInputMouseLeave = () => {
+    setIsLastNameInputHovered(false);
+  };
   const handleEmailInputFocus = () => {
     setIsEmailInputFocused(true);
   };
@@ -67,8 +124,38 @@ const Register = () => {
   };
 
   // register form validation
-  const validateRegisterData = (email: string, password: string) => {
+  const validateRegisterData = (
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string
+  ) => {
     let isValid = true;
+
+    //first name validation
+    if (!/^[A-Za-z]+$/.test(firstName)) {
+      setInvalidFirstNameMessage("First name should contain only letters");
+      setIsFirstNameValid(false);
+      isValid = false;
+    }
+    if (firstName.length > 46) {
+      setInvalidFirstNameMessage("First name is too long.");
+      setIsFirstNameValid(false);
+      isValid = false;
+    }
+    //last name validation
+    if (!/^[A-Za-z]+$/.test(lastName)) {
+      setInvalidLastNameMessage("Last name should contain only letters");
+      setIsLastNameValid(false);
+      isValid = false;
+    }
+
+    if (lastName.length > 46) {
+      setInvalidLastNameMessage("First name is too long.");
+      setIsLastNameValid(false);
+      isValid = false;
+    }
+    //email validation
     if (
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
       email.length < 5 ||
@@ -78,6 +165,8 @@ const Register = () => {
       setIsEmailValid(false);
       isValid = false;
     }
+
+    //password validation
     if (password.length < 8 || password.length > 30) {
       setInvalidPasswordMessage(
         "Password must have 8-30 characters, one number and one special character"
@@ -99,12 +188,16 @@ const Register = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const isRegisterDataValid = validateRegisterData(
+      firstNameInputValue,
+      lastNameInputValue,
       emailInputValue,
       passwordInputValue
     );
     if (!isRegisterDataValid) return;
     try {
       const response = await axios.post("http://localhost:5000/users/signup", {
+        firstName: firstNameInputValue,
+        lastName: lastNameInputValue,
         email: emailInputValue,
         password: passwordInputValue,
       });
@@ -128,6 +221,76 @@ const Register = () => {
         {!isRegisteredSuccesfully ? (
           <>
             <form className="">
+              <div
+                className="relative"
+                onMouseEnter={handleFirstNameInputMouseEnter}
+                onMouseLeave={handleFirstNameInputMouseLeave}
+              >
+                <input
+                  id="text"
+                  autoComplete="given-name"
+                  type="text"
+                  className="mb-5 h-14 pl-2 font-Roboto font-700 rounded-lg w-300 focus:outline-none shadow-lg"
+                  value={firstNameInputValue}
+                  onChange={(e) => handleFirstNameInputChange(e)}
+                  onFocus={handleFirstNameInputFocus}
+                  onBlur={handleFirstNameInputBlur}
+                />
+                <div
+                  className={`absolute uppercase select-none ${
+                    isFirstNameInputFocused ||
+                    isFirstNameInputHovered ||
+                    firstNameInputValue
+                      ? "top-0 left-2"
+                      : "top-5 left-4"
+                  } ${
+                    isFirstNameValid ? "text-slate-500" : "text-red-500"
+                  } font-700 ${
+                    isFirstNameInputFocused ||
+                    isFirstNameInputHovered ||
+                    firstNameInputValue
+                      ? "text-10"
+                      : "text-xs"
+                  } transition-all duration-500`}
+                >
+                  {isFirstNameValid ? "First name" : invalidFirstNameMessage}
+                </div>
+              </div>
+              <div
+                className="relative"
+                onMouseEnter={handleLastNameInputMouseEnter}
+                onMouseLeave={handleLastNameInputMouseLeave}
+              >
+                <input
+                  id="lastName"
+                  autoComplete="family-name"
+                  type="text"
+                  className="mb-5 h-14 pl-2 font-Roboto font-700 rounded-lg w-300 focus:outline-none shadow-lg"
+                  value={lastNameInputValue}
+                  onChange={(e) => handleLastNameInputChange(e)}
+                  onFocus={handleLastNameInputFocus}
+                  onBlur={handleLastNameInputBlur}
+                />
+                <div
+                  className={`absolute uppercase select-none ${
+                    isLastNameInputFocused ||
+                    isLastNameInputHovered ||
+                    lastNameInputValue
+                      ? "top-0 left-2"
+                      : "top-5 left-4"
+                  } ${
+                    isLastNameValid ? "text-slate-500" : "text-red-500"
+                  } font-700 ${
+                    isLastNameInputFocused ||
+                    isLastNameInputHovered ||
+                    lastNameInputValue
+                      ? "text-10"
+                      : "text-xs"
+                  } transition-all duration-500`}
+                >
+                  {isLastNameValid ? "last name" : invalidLastNameMessage}
+                </div>
+              </div>
               <div
                 className="relative"
                 onMouseEnter={handleEmailInputMouseEnter}

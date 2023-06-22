@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
-const Login = () => {
+type LoginProps = {
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Login: React.FC<LoginProps> = ({ setIsLoggedIn }) => {
   const [isEmailInputFocused, setIsEmailInputFocused] = useState(false);
   const [emailInputValue, setEmailInputValue] = useState("");
   const [isEmailInputHovered, setIsEmailInputHovered] = useState(false);
@@ -102,6 +106,7 @@ const Login = () => {
         { withCredentials: true }
       );
       if (response.status === 200) {
+        setIsLoggedIn(true);
         navigate("/");
       }
     } catch (err: any) {
@@ -185,7 +190,7 @@ const Login = () => {
           </div>
           <div className="flex justify-center items-center">
             <button
-              className="bg-purple-400 p-2 pl-5 pr-5 rounded-lg hover:bg-purple-500 text-white duration-200 font-700"
+              className="bg-purple-900 p-2 pl-5 pr-5 rounded-lg hover:bg-purple-800 text-white duration-200 font-700"
               onClick={(e) => handleLogin(e)}
             >
               Log in
@@ -195,7 +200,7 @@ const Login = () => {
         <div className="flex justify-center mt-4">
           <p className="mb-0 text-base">
             Don't have an account yet?{" "}
-            <span className="text-purple-500 font-700 cursor-pointer">
+            <span className="text-purple-900 font-700 cursor-pointer">
               {" "}
               <Link to="/signup">Sign up</Link>
             </span>
