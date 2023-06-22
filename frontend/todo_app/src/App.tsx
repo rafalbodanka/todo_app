@@ -12,6 +12,7 @@ import AuthenticatedRoutes from "./components/AuthenticatedRoutes";
 
 const App: React.FC = () => {
   const [user, setUser] = useState({
+    id: "",
     email: "",
     firstName: "",
     lastName: "",

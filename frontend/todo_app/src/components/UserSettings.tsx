@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { Button, Input, Avatar, Popover } from "@material-tailwind/react";
 
@@ -367,6 +368,9 @@ const UserSettings: React.FC<userSettingsProps> = ({ user }) => {
             {!isEmailValid && (
               <p className="text-sm text-red-400">{invalidEmailMessage}</p>
             )}
+          </div>
+          <div className="text-purple-900 mt-4 cursor-pointer">
+            <Link to="/changepassword">Change password</Link>
           </div>
           <div className="flex justify-center">
             <Button

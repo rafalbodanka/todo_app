@@ -10,6 +10,7 @@ import Column from "./Column";
 import UserNav from "./UserNav";
 import Auth from "./Auth";
 import Unauthorized from "./Unauthorized";
+import ChangePassword from "./ChangePassword";
 
 type ColumnData = {
   _id: string;
@@ -109,6 +110,16 @@ const AuthenticatedRoutes = ({
           element={
             isLoggedIn ? (
               <UserSettings user={user} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        <Route
+          path="/changepassword"
+          element={
+            isLoggedIn ? (
+              <ChangePassword userId={user.id} />
             ) : (
               <Navigate to="/" replace />
             )

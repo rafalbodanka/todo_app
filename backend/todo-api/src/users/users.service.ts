@@ -96,6 +96,47 @@ export class UsersService {
     }
   }
 
+  //change password
+  async changePassword(
+    userId: mongoose.Types.ObjectId,
+    oldPassword: string,
+    newPassword: string,
+    confirmedNewPassword: string,
+  ) {
+    try {
+      //Get user
+      const user = (await this.userModel.findOne({ _id: userId })) as User;
+      if (!user) {
+        throw new Error('Could not find the user');
+      }
+
+      //Compare old password
+      const passwordValid = await bcrypt.compare(oldPassword, user.password);
+      if (!passwordValid) {
+        throw new Error('Incorrect password');
+      }
+
+      // New password validation
+      validatePassword(newPassword);
+
+      if (newPassword !== confirmedNewPassword) {
+        throw new Error("New passwords don't match.");
+      }
+
+      // New password encryption
+      const saltOrRounds = 10;
+      const hashedPassword = await bcrypt.hash(newPassword, saltOrRounds);
+
+      // Update user's password
+      user.password = hashedPassword;
+      await user.save();
+
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   //get user for authentication
   async getUser(email: string) {
     const userEmail = email.toLowerCase();
@@ -114,6 +155,7 @@ export class UsersService {
     try {
       const user = (await this.userModel.findOne({ email: userEmail })) as User;
       return {
+        id: user._id,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
