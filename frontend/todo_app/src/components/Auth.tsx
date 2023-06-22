@@ -8,6 +8,7 @@ import {
 import axios from "axios";
 
 type UserData = {
+  id: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -72,7 +73,9 @@ const Auth: React.FC<AuthProps> = ({
         });
         if (response.status === 200) {
           setIsLoggedIn(true);
+          console.log(response.data);
           setUser({
+            id: response.data.id,
             email: response.data.email,
             firstName: response.data.firstName,
             lastName: response.data.lastName,

@@ -93,6 +93,28 @@ export class UsersController {
     return { result, HttpCode: 200, msg: 'User edited succesfully' };
   }
 
+  //Change password
+  @UseGuards(AuthenticatedGuard)
+  @Patch('/user/changepassword')
+  @HttpCode(200)
+  async changePassword(
+    @Request() req,
+    @Body('oldPassword') oldPassword: string,
+    @Body('newPassword') newPassword: string,
+    @Body('confirmedNewPassword') confirmedNewPassword: string,
+  ) {
+    const userId: mongoose.Types.ObjectId = req.user.id;
+
+    const result = await this.usersService.changePassword(
+      userId,
+      oldPassword,
+      newPassword,
+      confirmedNewPassword,
+    );
+
+    return { result, HttpCode: 200, msg: 'Password changed succesfully' };
+  }
+
   //Get / logout
   @Get('/logout')
   logout(@Request() req): any {
