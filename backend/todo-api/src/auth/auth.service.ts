@@ -10,13 +10,13 @@ export class AuthService {
     if (!user) {
       throw new NotAcceptableException('Could not find the user');
     }
-    const passwordValid = await bcrypt.compare(password, user.password)
+    const passwordValid = await bcrypt.compare(password, user.password);
     if (!passwordValid) {
-      throw new NotAcceptableException('Incorrect password')
+      throw new NotAcceptableException('Incorrect password');
     }
     if (user && passwordValid) {
       return {
-        id: user.id,
+        id: user._id,
         email: user.email,
       };
     }

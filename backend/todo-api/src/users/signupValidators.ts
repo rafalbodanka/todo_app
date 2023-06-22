@@ -1,13 +1,26 @@
+import { BadRequestException } from '@nestjs/common';
+
+export function validateName(firstName: string, lastName: string): boolean {
+  if (firstName.length > 46 || lastName.length > 46) {
+    throw new BadRequestException("Name can't be longer that 46 characters.");
+  }
+  return;
+}
+
 export function validateEmail(email: string): boolean {
-  // Implement your email validation logic here
-  // You can use regular expressions or any other method to validate the email format
-  // Return true if the email is valid, false otherwise
+  if (email.length < 5 || email.length > 100) {
+    throw new BadRequestException(
+      'Email must be between 5 and 100 characters.',
+    );
+  }
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export function validatePassword(password: string): boolean {
-  // Implement your password validation logic here
-  // Check the length, symbols, or any other requirements for a valid password
-  // Return true if the password is valid, false otherwise
+  if (password.length < 8 || password.length > 30) {
+    throw new BadRequestException(
+      'Password must be between 8 and 30 characters.',
+    );
+  }
   return /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password);
 }

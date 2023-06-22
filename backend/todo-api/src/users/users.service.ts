@@ -4,63 +4,124 @@ import { Model } from 'mongoose';
 import { User } from './users.model';
 import { BadRequestException } from '@nestjs/common/exceptions';
 import * as bcrypt from 'bcrypt';
-
-import { validateEmail, validatePassword} from './signupValidators'
-import { MongoServerError } from 'mongodb';
+import * as mongoose from 'mongoose';
+import {
+  validateName,
+  validateEmail,
+  validatePassword,
+} from './signupValidators';
+import { first } from 'rxjs';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel('user') private readonly userModel: Model<User>) {}
-  async insertUser(email: string, password: string) {
-    try{
+  async insertUser(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+  ) {
+    try {
       const userEmail = email.toLowerCase();
-  
+
       // Validation
-      if (!userEmail || !password) {
-        throw new BadRequestException('Email and password are required.');
-      }
-  
-      if (!validateEmail(userEmail)) {
-        throw new BadRequestException('Invalid email address.');
-      }
-  
-      if (userEmail.length < 5 || userEmail.length > 100) {
-        throw new BadRequestException('Email must be between 5 and 100 characters.');
-      }
-  
-      if (!validatePassword(password)) {
-        throw new BadRequestException('Password must contain at least one special character, capitalized letter and a number.');
-      }
-  
-      if (password.length < 8 || password.length > 30) {
-        throw new BadRequestException('Password must be between 8 and 30 characters.');
-      }
-  
+      validateEmail(email);
+      validatePassword(password);
+      validateName(firstName, lastName);
+
       // Password encryption
       const saltOrRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltOrRounds);
-  
+
       // Creating new user
       const newUser = new this.userModel({
+        firstName: firstName,
+        lastName: lastName,
         email: userEmail,
         password: hashedPassword,
       });
       await newUser.save();
       return newUser;
-      } catch (error) {
-      if (error.name==='MongoServerError' && error.code === 11000) {
-        throw new BadRequestException('Email already exists.')
+    } catch (error) {
+      if (error.name === 'MongoServerError' && error.code === 11000) {
+        throw new BadRequestException('Email already exists.');
       }
       throw error;
     }
   }
+
+  //update user data
+  async updateUserData(
+    userId: mongoose.Types.ObjectId,
+    firstName: string,
+    lastName: string,
+    email: string,
+    level: string,
+    userIconId: number,
+  ) {
+    try {
+      const userEmail = email.toLowerCase();
+
+      // Validation
+      validateEmail(email);
+      validateName(firstName, lastName);
+
+      const updatedUser = await this.userModel
+        .findOneAndUpdate(
+          { _id: userId },
+          {
+            $set: {
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              level: level,
+              userIconId: userIconId,
+            },
+          },
+          { new: true },
+        )
+        .exec();
+
+      if (!updatedUser) {
+        throw new Error('User not found.');
+      }
+
+      await updatedUser.save();
+      return updatedUser;
+    } catch (error) {
+      if (error.name === 'MongoServerError' && error.code === 11000) {
+        throw new BadRequestException('Email already exists.');
+      }
+      throw error;
+    }
+  }
+
+  //get user for authentication
   async getUser(email: string) {
     const userEmail = email.toLowerCase();
     try {
-      const user = await this.userModel.findOne({ email: userEmail });
+      const user = (await this.userModel.findOne({ email: userEmail })) as User;
+
       return user;
     } catch (err) {
-      throw new Error('dupka')
+      throw new Error('Something went wrong.');
+    }
+  }
+
+  //get user data for client
+  async getUserData(email: string) {
+    const userEmail = email.toLowerCase();
+    try {
+      const user = (await this.userModel.findOne({ email: userEmail })) as User;
+      return {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        level: user.level,
+        iconId: user.userIconId,
+      };
+    } catch (err) {
+      throw new Error('Something went wrong.');
     }
   }
 
