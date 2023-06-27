@@ -3,16 +3,17 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { Button, Input, Avatar, Popover } from "@material-tailwind/react";
 
-type UserData = {
+interface User {
+  _id: string;
   email: string;
   firstName: string;
   lastName: string;
   level?: string;
-  iconId: number;
-};
+  userIconId: number;
+}
 
 type userSettingsProps = {
-  user: UserData;
+  user: User;
 };
 
 const UserSettings: React.FC<userSettingsProps> = ({ user }) => {
@@ -54,7 +55,7 @@ const UserSettings: React.FC<userSettingsProps> = ({ user }) => {
       setFirstName(user.firstName);
       setLastName(user.lastName);
       setEmail(user.email);
-      setUserIconId(user.iconId);
+      setUserIconId(user.userIconId);
       if (user.level) {
         setlevel(user.level);
       }
@@ -74,7 +75,7 @@ const UserSettings: React.FC<userSettingsProps> = ({ user }) => {
 
   const handleSetUserImage = (icon: string) => {
     setUserIconId(Number(icon));
-    if (Number(icon) !== user.iconId) {
+    if (Number(icon) !== user.userIconId) {
       setIsEdited(true);
     } else {
       setIsEdited(false);
@@ -134,7 +135,7 @@ const UserSettings: React.FC<userSettingsProps> = ({ user }) => {
     let isValid = true;
 
     //first name validation
-    if (!/^[A-Za-z]+$/.test(firstName)) {
+    if (!/^[\p{L}'][ \p{L}'-]*[\p{L}]$/u.test(firstName)) {
       setInvalidFirstNameMessage("First name should contain only letters");
       setIsFirstNameValid(false);
       isValid = false;
@@ -145,7 +146,7 @@ const UserSettings: React.FC<userSettingsProps> = ({ user }) => {
       isValid = false;
     }
     //last name validation
-    if (!/^[A-Za-z]+$/.test(lastName)) {
+    if (!/^[\p{L}'][ \p{L}'-]*[\p{L}]$/u.test(lastName)) {
       setInvalidLastNameMessage("Last name should contain only letters");
       setIsLastNameValid(false);
       isValid = false;
@@ -221,7 +222,7 @@ const UserSettings: React.FC<userSettingsProps> = ({ user }) => {
   };
 
   return (
-    <div className="p-16">
+    <div className="p-16 text-black">
       <a href="/" className="inline-block text-md no-underline">
         <Button className="bg-purple-900 flex items-center shadow-gray-400 hover:shadow-gray-400">
           <img src="./arrow-left.svg"></img>

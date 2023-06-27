@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { SetsModule } from './sets/sets.module';
 import { TablesModule } from './tables/tables.module';
+import { InvitationsModule } from './invitations/invitations.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -18,6 +19,7 @@ dotenv.config();
     AuthModule,
     SetsModule,
     TablesModule,
+    InvitationsModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService],

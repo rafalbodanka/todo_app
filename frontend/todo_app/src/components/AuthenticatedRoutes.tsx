@@ -11,6 +11,7 @@ import UserNav from "./UserNav";
 import Auth from "./Auth";
 import Unauthorized from "./Unauthorized";
 import ChangePassword from "./ChangePassword";
+import UserInvitations from "./UserInvitations";
 
 type ColumnData = {
   _id: string;
@@ -26,9 +27,18 @@ type Task = {
   completed: boolean;
 };
 
+interface User {
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  level?: string;
+  userIconId: number;
+}
+
 type AuthenticatedRoutesProps = {
-  user: any;
-  setUser: any;
+  user: User;
+  setUser: React.Dispatch<React.SetStateAction<User>>;
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   rerenderSignal: boolean;
@@ -116,10 +126,16 @@ const AuthenticatedRoutes = ({
           }
         />
         <Route
+          path="/invitations"
+          element={
+            isLoggedIn ? <UserInvitations /> : <Navigate to="/" replace />
+          }
+        />
+        <Route
           path="/changepassword"
           element={
             isLoggedIn ? (
-              <ChangePassword userId={user.id} />
+              <ChangePassword userId={user._id} />
             ) : (
               <Navigate to="/" replace />
             )
@@ -138,6 +154,7 @@ const AuthenticatedRoutes = ({
                       <div className="col-span-6 items-end">
                         <div className="scrollable-container overflow-x-auto whitespace-nowrap h-full">
                           <Set
+                            user={user}
                             tables={tables}
                             setColumns={setColumns}
                             setRerenderSignal={setRerenderSignal}

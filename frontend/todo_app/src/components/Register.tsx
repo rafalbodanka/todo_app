@@ -133,7 +133,7 @@ const Register = () => {
     let isValid = true;
 
     //first name validation
-    if (!/^[A-Za-z]+$/.test(firstName)) {
+    if (!/^[\p{L}'][ \p{L}'-]*[\p{L}]$/u.test(firstName)) {
       setInvalidFirstNameMessage("First name should contain only letters");
       setIsFirstNameValid(false);
       isValid = false;
@@ -144,7 +144,7 @@ const Register = () => {
       isValid = false;
     }
     //last name validation
-    if (!/^[A-Za-z]+$/.test(lastName)) {
+    if (!/^[\p{L}'][ \p{L}'-]*[\p{L}]$/u.test(lastName)) {
       setInvalidLastNameMessage("Last name should contain only letters");
       setIsLastNameValid(false);
       isValid = false;

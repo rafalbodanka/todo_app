@@ -88,17 +88,10 @@ const EditTask: React.FC<EditTaskProps> = ({
       );
 
       if (response.status === 200) {
-        console.log("gituwa");
         setRerenderSignal((prevSignal) => !prevSignal);
         setIsEditTaskModalOpen(false);
       }
-    } catch (err: any) {
-      if (err.response && err.response.status === 404) {
-        console.log("Task not found");
-      } else {
-        console.log(`Something went wrong, try again`);
-      }
-    }
+    } catch (err: any) {}
   };
 
   const closeEditTaskModal = (

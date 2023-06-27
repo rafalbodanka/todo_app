@@ -7,18 +7,18 @@ import {
 } from "react-router-dom";
 import axios from "axios";
 
-type UserData = {
-  id: string;
+interface User {
+  _id: string;
   email: string;
   firstName: string;
   lastName: string;
-  level: string;
-  iconId: number;
-};
+  level?: string;
+  userIconId: number;
+}
 
 type AuthProps = {
   children: React.ReactNode;
-  setUser: React.Dispatch<React.SetStateAction<UserData>>;
+  setUser: React.Dispatch<React.SetStateAction<User>>;
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -73,14 +73,13 @@ const Auth: React.FC<AuthProps> = ({
         });
         if (response.status === 200) {
           setIsLoggedIn(true);
-          console.log(response.data);
           setUser({
-            id: response.data.id,
+            _id: response.data.id,
             email: response.data.email,
             firstName: response.data.firstName,
             lastName: response.data.lastName,
             level: response.data.level,
-            iconId: response.data.iconId,
+            userIconId: response.data.iconId,
           });
         }
       } catch (err) {

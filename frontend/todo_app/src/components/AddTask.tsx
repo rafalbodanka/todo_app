@@ -60,7 +60,6 @@ const AddTask: React.FC<AddTaskProps> = ({ columnId, setRerenderSignal }) => {
           },
         }
       );
-      console.log(response);
       if (response.status === 201) {
         setInputValue("");
         setShowInput(false);
