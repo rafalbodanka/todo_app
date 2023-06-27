@@ -13,6 +13,7 @@ import {
 import * as mongoose from 'mongoose';
 import { AuthenticatedGuard } from 'src/auth/authenticated.guard';
 import { TablesService } from '../services/tables.service';
+import { get } from 'http';
 
 @Controller('tables')
 export class TablesController {
@@ -82,6 +83,84 @@ export class TablesController {
     } else {
       return res.status(HttpStatus.NOT_FOUND).json({
         message: 'Table not found',
+      });
+    }
+  }
+
+  //remove member
+  @UseGuards(AuthenticatedGuard)
+  @Post('/:id/remove-member')
+  async removeMember(
+    @Param('id') id: string,
+    @Body('memberId') memberId: string,
+    @Request() req,
+    @Res() res,
+  ) {
+    const result = await this.tablesService.removeMember(id, memberId);
+
+    if (result) {
+      return res.status(HttpStatus.OK).json({
+        message: 'Member removed successfully',
+        data: result,
+      });
+    } else {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Member not found',
+      });
+    }
+  }
+
+  //get table members
+  @UseGuards(AuthenticatedGuard)
+  @Get('/:id/members')
+  async getTableMembers(@Param('id') id: string, @Request() req, @Res() res) {
+    const result = await this.tablesService.getTableMembers(id);
+
+    if (result) {
+      return res.status(HttpStatus.OK).json({
+        message: 'Table members fetched successfully',
+        data: result,
+      });
+    } else {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Table not found',
+      });
+    }
+  }
+
+  @Post('/users')
+  async insertUser(
+    @Body('userId') userId: string,
+    @Body('tableId') tableId: string,
+    @Res() res,
+  ) {
+    try {
+      const result = await this.tablesService.insertUser(userId, tableId);
+      return res.status(HttpStatus.OK).json({
+        message: 'User inserted successfully',
+        data: result,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: 'Failed to insert user',
+        error: error.message,
+      });
+    }
+  }
+
+  //testing tables
+  @Get('/alltables')
+  async getAllTables(@Res() res) {
+    try {
+      const tables = await this.tablesService.getAllTables();
+      return res.status(HttpStatus.OK).json({
+        message: 'Tables retrieved successfully',
+        data: tables,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: 'Failed to retrieve tables',
+        error: error.message,
       });
     }
   }

@@ -94,7 +94,6 @@ const AddTable: React.FC<SetProps> = ({ setRerenderSignal }) => {
           },
         }
       );
-      console.log(response);
       if (response.status === 201) {
         setInputValue("");
         setShowInput(false);

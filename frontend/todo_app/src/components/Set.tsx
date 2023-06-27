@@ -16,7 +16,11 @@ interface Task {
 
 interface User {
   _id: string;
-  __v: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  level?: string;
+  userIconId: number;
 }
 
 interface Column {
@@ -36,6 +40,7 @@ interface TableProps {
 }
 
 interface SetProps {
+  user: User;
   tables: TableProps[];
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,6 +49,7 @@ interface SetProps {
 }
 
 const Set: React.FC<SetProps> = ({
+  user,
   tables,
   setColumns,
   setRerenderSignal,
@@ -73,8 +79,8 @@ const Set: React.FC<SetProps> = ({
             >
               {table.title}
               <EditTable
-                tableTitle={table.title}
-                tableId={table._id}
+                user={user}
+                table={table}
                 currentTable={currentTable}
                 setRerenderSignal={setRerenderSignal}
                 tables={tables}

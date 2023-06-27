@@ -119,12 +119,8 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ userId }) => {
         },
       });
       if (response.status === 200) {
-        // setIsLoggedIn(true);
-        // setUsername(response.data.email);
       }
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   return (

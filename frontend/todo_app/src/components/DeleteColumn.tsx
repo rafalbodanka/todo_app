@@ -29,7 +29,6 @@ const DeleteColumn: React.FC<DeleteColumnProps> = ({
 
   const deleteColumn = async (e: any) => {
     e.preventDefault();
-    console.log(columns);
 
     try {
       const response = await axios.post(

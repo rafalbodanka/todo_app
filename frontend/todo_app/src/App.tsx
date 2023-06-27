@@ -1,23 +1,26 @@
 import "./App.css";
-import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  Navigate,
-} from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import AuthenticatedRoutes from "./components/AuthenticatedRoutes";
 
+interface User {
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  level?: string;
+  userIconId: number;
+}
+
 const App: React.FC = () => {
-  const [user, setUser] = useState({
-    id: "",
+  const [user, setUser] = useState<User>({
+    _id: "",
     email: "",
     firstName: "",
     lastName: "",
     level: "",
-    iconId: 0,
+    userIconId: 0,
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [rerenderSignal, setRerenderSignal] = useState(false);

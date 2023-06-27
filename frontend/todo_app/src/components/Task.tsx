@@ -37,7 +37,6 @@ const Task: React.FC<TaskProps> = ({ task, taskIndex, setRerenderSignal }) => {
       );
 
       if (response.status === 200) {
-        console.log("gituwa");
         setRerenderSignal((prevSignal) => !prevSignal);
       }
     } catch (err: any) {

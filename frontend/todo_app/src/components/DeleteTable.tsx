@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 
+import { Button } from "@material-tailwind/react";
+
 interface Task {
   _id: string;
   title: string;
@@ -9,7 +11,11 @@ interface Task {
 
 interface User {
   _id: string;
-  __v: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  level?: string;
+  userIconId: number;
 }
 
 interface Column {
@@ -77,8 +83,6 @@ const DeleteTable: React.FC<DeleteTableProps> = ({
   };
 
   const performDelete = async () => {
-    console.log(tableId);
-
     if (!tableId) {
       return;
     }
@@ -115,36 +119,36 @@ const DeleteTable: React.FC<DeleteTableProps> = ({
   };
   return (
     <>
-      <img
-        className="w-1/6 cursor-pointer"
-        src={process.env.PUBLIC_URL + "/icon-trash.svg"}
-        alt="Trash Icon"
+      <div
+        className="flex justify-center items-center cursor-pointer text-black"
         onClick={openDeleteTableModal}
-      ></img>
+      >
+        <p className="hover:text-red-400">Delete table</p>
+      </div>
       {isDeleteModalOpen && (
         <div
           className="w-screen h-screen bg-black bg-opacity-30 absolute top-0 left-0 flex justify-center items-center z-10"
           onClick={closeDeleteTableModal}
         >
-          <div className="bg-white rounded-md">
+          <div className="bg-white rounded-md text-black">
             <div className="p-6 text-center">
               <p className="font-400">
                 Do you want to delete table{" "}
                 <span className="font-700">{tableTitle}</span>?
               </p>
               <div className="grid grid-cols-2 mt-6 gap-12">
-                <button
+                <Button
                   onClick={performDelete}
-                  className="bg-purple-400 p-2 pl-6 pr-6 rounded-md mt-4"
+                  className="bg-purple-900 p-2 pl-6 pr-6 rounded-md mt-4 text-white shadow-gray-400 hover:shadow-gray-400"
                 >
                   Yes
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={closeDeleteTableModal}
-                  className="bg-purple-400 p-2 pl-6 pr-6 rounded-md mt-4"
+                  className="bg-purple-900 p-2 pl-6 pr-6 rounded-md mt-4 text-white shadow-gray-400 hover:shadow-gray-400"
                 >
                   No
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -153,14 +157,14 @@ const DeleteTable: React.FC<DeleteTableProps> = ({
       {isDeleteResponseModalOpen && (
         <div className="w-screen h-screen bg-black bg-opacity-30 absolute top-0 left-0 flex justify-center items-center z-10">
           <div className="bg-white rounded-md">
-            <div className="p-6 text-center">
+            <div className="p-6 text-center text-black">
               <p>{deleteModalMessage}</p>
-              <button
+              <Button
                 onClick={(e) => handleDeleteModalAction(e)}
-                className="bg-purple-400 p-2 pl-6 pr-6 rounded-md mt-4"
+                className="bg-purple-900 p-2 pl-6 pr-6 rounded-md mt-4 text-white shadow-gray-400 hover:shadow-gray-400"
               >
                 OK
-              </button>
+              </Button>
             </div>
           </div>
         </div>

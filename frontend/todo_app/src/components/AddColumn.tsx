@@ -43,7 +43,6 @@ const AddColumn: React.FC<{
     }
 
     try {
-      console.log(currentTable);
       const response = await axios.post(
         "http://localhost:5000/columns/create",
         {
@@ -58,7 +57,6 @@ const AddColumn: React.FC<{
           },
         }
       );
-      console.log(response);
       if (response.status === 201) {
         setInputValue("");
         setShowInput(false);
