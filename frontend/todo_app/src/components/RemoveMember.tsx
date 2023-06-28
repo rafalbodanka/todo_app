@@ -47,18 +47,24 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
 }) => {
   const [isRemoveMemberModalOpen, setIsRemoveMemberModalOpen] = useState(false);
   const [isRemovePossible, setIsRemovePossible] = useState(true);
+  const [isLastLeavingUser, setIsLastLeavingUser] = useState(false);
 
   const openRemoveMemberModalOpen = () => {
     // Check if this is the last admin of the table - last admin before leaving the table
     // has to nominate new admin before leaving
+    setIsRemovePossible(true);
+    setIsLastLeavingUser(false);
     if (
       isAdmin &&
       memberPermission === "admin" &&
       members.filter((member) => member.permission === "admin").length === 1
     ) {
       setIsRemovePossible(false);
-    } else {
+    }
+
+    if (members.length === 1) {
       setIsRemovePossible(true);
+      setIsLastLeavingUser(true);
     }
     setIsRemoveMemberModalOpen(true);
   };
@@ -69,6 +75,7 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
 
   const removeMember = async (e: any) => {
     e.preventDefault();
+
     try {
       const response = await axios.post(
         `http://localhost:5000/tables/${tableId}/remove-member/`,
@@ -91,7 +98,11 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
         throw err;
       }
     } finally {
-      setMembersRerenderSignal((prevSignal) => !prevSignal);
+      if (isLastLeavingUser) {
+        window.location.reload();
+      } else {
+        setMembersRerenderSignal((prevSignal) => !prevSignal);
+      }
       setIsRemoveMemberModalOpen(false);
     }
   };
@@ -113,7 +124,36 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
             className="bg-white p-6 rounded-md"
             onClick={(event) => event.stopPropagation()}
           >
-            {isRemovePossible ? (
+            {isLastLeavingUser ? (
+              <div>
+                <p className="font-400 flex justify-center">
+                  <span>
+                    Do you want to leave table&nbsp;
+                    <span className="font-700">{tableName}</span>?
+                  </span>
+                </p>
+                <p className="font-400 mt-2">
+                  This table will be removed, because you are the only member.
+                  Are you sure?
+                </p>
+                <div className="flex justify-center">
+                  <div className="grid grid-cols-2 mt-2 gap-8 w-64">
+                    <Button
+                      className="bg-purple-900 shadow-gray-400 hover:shadow-gray-400 p-2 pl-6 pr-6 rounded-md mt-4"
+                      onClick={(e) => removeMember(e)}
+                    >
+                      Yes
+                    </Button>
+                    <Button
+                      className="bg-purple-900 shadow-gray-400 hover:shadow-gray-400 p-2 pl-6 pr-6 rounded-md mt-4"
+                      onClick={closeRemoveMemberModal}
+                    >
+                      No
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : isRemovePossible ? (
               <div>
                 <p className="font-400">
                   {currentUser._id === memberId ? (

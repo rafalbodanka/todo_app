@@ -57,6 +57,12 @@ export class TablesService {
         return false;
       }
 
+      // Check if the updated table has no more users
+      if (table.users.length === 0) {
+        // Call the deleteTable method passing the tableId
+        await this.deleteTable(tableId);
+      }
+
       return true;
     } catch (error) {
       throw error;
@@ -84,7 +90,7 @@ export class TablesService {
     return true;
   }
 
-  async deleteTable(tableId: string, userId: string): Promise<boolean> {
+  async deleteTable(tableId: string): Promise<boolean> {
     const table = await this.tableModel.findOne({
       _id: tableId,
     });
