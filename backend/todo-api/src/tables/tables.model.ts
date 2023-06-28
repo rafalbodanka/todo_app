@@ -14,8 +14,15 @@ export const TableSchema = new mongoose.Schema({
   ],
   users: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      permission: {
+        type: String,
+        enum: ['admin', 'invite', 'none'],
+        default: 'none',
+      },
     },
   ],
 });
@@ -65,7 +72,10 @@ export interface Table extends Document {
   _id: string;
   title: string;
   columns: mongoose.Types.DocumentArray<Column>;
-  users: mongoose.Types.Array<User['_id']>;
+  users: Array<{
+    user: mongoose.Types.ObjectId;
+    permission: 'admin' | 'invite' | 'none';
+  }>;
 }
 
 export interface Column extends Document {

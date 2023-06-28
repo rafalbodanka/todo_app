@@ -9,6 +9,7 @@ import {
   Request,
   Param,
   Res,
+  Req,
 } from '@nestjs/common';
 import * as mongoose from 'mongoose';
 import { AuthenticatedGuard } from 'src/auth/authenticated.guard';
@@ -128,6 +129,7 @@ export class TablesController {
     }
   }
 
+  @UseGuards(AuthenticatedGuard)
   @Post('/users')
   async insertUser(
     @Body('userId') userId: string,
@@ -148,6 +150,36 @@ export class TablesController {
     }
   }
 
+  //update permissions
+  @UseGuards(AuthenticatedGuard)
+  @Post('/:id/permissions')
+  async changeMemberPermission(
+    @Param('id') tableId: string,
+    @Body('userId') userId: string,
+    @Body('newPermission') newPermission: string,
+    @Req() req,
+    @Res() res,
+  ) {
+    const updaterId = req.user.id;
+    try {
+      const result = await this.tablesService.changeMemberPermission(
+        tableId,
+        userId,
+        updaterId,
+        newPermission,
+      );
+      return res.status(HttpStatus.OK).json({
+        message: 'Permissions changed successfully',
+        data: result,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: 'Failed to change permissions',
+        error: error.message,
+      });
+    }
+  }
+
   //testing tables
   @Get('/alltables')
   async getAllTables(@Res() res) {
@@ -159,8 +191,8 @@ export class TablesController {
       });
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: 'Failed to retrieve tables',
-        error: error.message,
+        message: 'Failed to change permissions',
+        error: error.message || 'An error occurred',
       });
     }
   }

@@ -6,6 +6,7 @@ import { Input } from "@material-tailwind/react";
 import DeleteTable from "./DeleteTable";
 import InviteUser from "./InviteUser";
 import TablePermissions from "./TablePermissions";
+import MembersPagination from "./MembersPagination";
 
 interface Task {
   _id: string;
@@ -61,6 +62,8 @@ const EditTable: React.FC<EditTableProps> = ({
   const [EditTableModalMessage, setEditTableModalMessage] = useState("");
   const [prevTableName, setPrevTableName] = useState(table.title);
   const [tableName, setTableName] = useState(table.title);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [canInvite, setCanInvite] = useState(false);
 
   const [tableMembers, setTableMembers] = useState<string[]>([]);
 
@@ -146,16 +149,18 @@ const EditTable: React.FC<EditTableProps> = ({
               onClick={(event) => event.stopPropagation()}
             >
               <div className="">
-                <div className="flex justify-end">
-                  <DeleteTable
-                    tableId={table._id}
-                    tableTitle={table.title}
-                    setRerenderSignal={setRerenderSignal}
-                    tables={tables}
-                    setCurrentTable={setCurrentTable}
-                    setColumns={setColumns}
-                  ></DeleteTable>
-                </div>
+                {isAdmin && (
+                  <div className="flex justify-end">
+                    <DeleteTable
+                      tableId={table._id}
+                      tableTitle={table.title}
+                      setRerenderSignal={setRerenderSignal}
+                      tables={tables}
+                      setCurrentTable={setCurrentTable}
+                      setColumns={setColumns}
+                    ></DeleteTable>
+                  </div>
+                )}
                 <div className="relative flex w-full max-w-[24rem]">
                   <Input
                     color="deep-purple"
@@ -173,14 +178,20 @@ const EditTable: React.FC<EditTableProps> = ({
                   ></Input>
                 </div>
               </div>
-              <InviteUser
-                tableMembers={tableMembers}
-                user={user}
-                tableId={table._id}
-                tableName={table.title}
-              ></InviteUser>
+              {(isAdmin || canInvite) && (
+                <InviteUser
+                  tableMembers={tableMembers}
+                  user={user}
+                  tableId={table._id}
+                  tableName={table.title}
+                ></InviteUser>
+              )}
               <TablePermissions
                 user={user}
+                isAdmin={isAdmin}
+                setIsAdmin={setIsAdmin}
+                canInvite={canInvite}
+                setCanInvite={setCanInvite}
                 tableId={table._id}
                 tableName={table.title}
                 tableUsersIds={table.users}
