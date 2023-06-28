@@ -10,13 +10,18 @@ interface User {
   userIconId: number;
 }
 
+interface Member {
+  user: User;
+  permission: string;
+}
+
 interface MembersPaginationProps {
   totalPages: number;
   setTotalPages: React.Dispatch<React.SetStateAction<number>>;
   currentPage: number;
   pageSize: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-  members: User[];
+  members: Member[];
   setMembersRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 

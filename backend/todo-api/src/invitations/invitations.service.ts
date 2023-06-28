@@ -29,9 +29,26 @@ export class InvitationsService {
       //getting inviter's data
       const invitersData = await this.userModel.findById(inviterObjId).exec();
       if (!invitersData) {
-        console.log('Inviter not found:', inviterObjId);
         throw new Error('Inviter not found');
       }
+
+      // Check if the inviter's permission is "admin" or "invite"
+      const inviterPermission = await this.tableModel
+        .findOne({ _id: tableObjId, 'users.user': inviterObjId })
+        .exec();
+
+      if (!inviterPermission || !inviterPermission.users[0]) {
+        throw new Error('Permission not found');
+      }
+
+      const inviterUser = inviterPermission.users[0];
+      if (
+        inviterUser.permission !== 'admin' &&
+        inviterUser.permission !== 'invite'
+      ) {
+        throw new Error('Inviter does not have sufficient permission');
+      }
+
       //getting invitee's data
       const inviteesData = await this.userModel
         .findOne({ email: inviteeEmail.toLowerCase() })
@@ -103,7 +120,10 @@ export class InvitationsService {
         throw new Error('Table not found');
       }
 
-      table.users.push(invitedUser._id);
+      table.users.push({
+        user: new mongoose.Types.ObjectId(invitedUser._id),
+        permission: 'none',
+      });
       await table.save();
 
       // Find and delete the invitation - temporary
@@ -125,11 +145,9 @@ export class InvitationsService {
   async getInvitersInvitations(requestUser: string): Promise<Invitation[]> {
     try {
       const requestUserId = new mongoose.Types.ObjectId(requestUser);
-      console.log('Request User ID:', requestUserId);
       const userInvitations = await this.invitationModel
         .find({ inviter: requestUserId })
         .exec();
-      console.log('User sent invitations:', userInvitations);
       return userInvitations;
     } catch (err) {
       throw err;
@@ -140,11 +158,9 @@ export class InvitationsService {
   async getInviteesInvitations(requestUser: string): Promise<Invitation[]> {
     try {
       const requestUserId = new mongoose.Types.ObjectId(requestUser);
-      console.log('Request User ID:', requestUserId);
       const userInvitations = await this.invitationModel
         .find({ invitee: requestUserId })
         .exec();
-      console.log('User received invitations:', userInvitations);
       return userInvitations;
     } catch (err) {
       throw err;

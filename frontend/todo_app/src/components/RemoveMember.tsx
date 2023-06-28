@@ -2,10 +2,29 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Button } from "@material-tailwind/react";
 
+interface User {
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  level?: string;
+  userIconId: number;
+}
+
+interface Member {
+  user: User;
+  permission: string;
+}
+
 type RemoveMemberProps = {
+  user: User;
+  currentUser: User;
+  members: Member[];
   memberId: string;
   memberName: string;
   memberEmail: string;
+  memberPermission: string;
+  isAdmin: Boolean;
   tableId: string;
   tableName: string;
   membersRerenderSignal: boolean;
@@ -13,17 +32,34 @@ type RemoveMemberProps = {
 };
 
 const RemoveMember: React.FC<RemoveMemberProps> = ({
+  user,
+  currentUser,
+  members,
   memberId,
   memberName,
   memberEmail,
+  memberPermission,
+  isAdmin,
   tableId,
   tableName,
   membersRerenderSignal,
   setMembersRerenderSignal,
 }) => {
   const [isRemoveMemberModalOpen, setIsRemoveMemberModalOpen] = useState(false);
+  const [isRemovePossible, setIsRemovePossible] = useState(true);
 
   const openRemoveMemberModalOpen = () => {
+    // Check if this is the last admin of the table - last admin before leaving the table
+    // has to nominate new admin before leaving
+    if (
+      isAdmin &&
+      memberPermission === "admin" &&
+      members.filter((member) => member.permission === "admin").length === 1
+    ) {
+      setIsRemovePossible(false);
+    } else {
+      setIsRemovePossible(true);
+    }
     setIsRemoveMemberModalOpen(true);
   };
 
@@ -77,30 +113,58 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
             className="bg-white p-6 rounded-md"
             onClick={(event) => event.stopPropagation()}
           >
-            <p className="font-400">
-              Do you want to remove&nbsp;
-              <span className="font-700">
-                {memberName.length > 1 ? memberName : memberEmail}
-              </span>
-              &nbsp;from table&nbsp;
-              <span className="font-700">{tableName}</span>?
-            </p>
-            <div className="flex justify-center">
-              <div className="grid grid-cols-2 mt-2 gap-8 w-64">
-                <Button
-                  className="bg-purple-900 shadow-gray-400 hover:shadow-gray-400 p-2 pl-6 pr-6 rounded-md mt-4"
-                  onClick={(e) => removeMember(e)}
-                >
-                  Yes
-                </Button>
-                <Button
-                  className="bg-purple-900 shadow-gray-400 hover:shadow-gray-400 p-2 pl-6 pr-6 rounded-md mt-4"
-                  onClick={closeRemoveMemberModal}
-                >
-                  No
-                </Button>
+            {isRemovePossible ? (
+              <div>
+                <p className="font-400">
+                  {currentUser._id === memberId ? (
+                    <>
+                      Do you want to leave table&nbsp;
+                      <span className="font-700">{tableName}</span>?
+                    </>
+                  ) : (
+                    <>
+                      Do you want to remove&nbsp;
+                      <span className="font-700">
+                        {memberName.length > 1 ? memberName : memberEmail}
+                      </span>
+                      &nbsp;from table&nbsp;
+                      <span className="font-700">{tableName}</span>?
+                    </>
+                  )}
+                </p>
+                <div className="flex justify-center">
+                  <div className="grid grid-cols-2 mt-2 gap-8 w-64">
+                    <Button
+                      className="bg-purple-900 shadow-gray-400 hover:shadow-gray-400 p-2 pl-6 pr-6 rounded-md mt-4"
+                      onClick={(e) => removeMember(e)}
+                    >
+                      Yes
+                    </Button>
+                    <Button
+                      className="bg-purple-900 shadow-gray-400 hover:shadow-gray-400 p-2 pl-6 pr-6 rounded-md mt-4"
+                      onClick={closeRemoveMemberModal}
+                    >
+                      No
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div>
+                <p className="font-400">
+                  The only admin has to nominate new admin before leaving the
+                  table.
+                </p>
+                <div className="flex justify-center">
+                  <Button
+                    className="bg-purple-900 shadow-gray-400 hover:shadow-gray-400 p-2 pl-6 pr-6 rounded-md mt-4"
+                    onClick={closeRemoveMemberModal}
+                  >
+                    OK
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Post,
   Param,
   UseGuards,
@@ -24,17 +26,21 @@ export class InvitationsController {
     @Body('tableId') tableId: string,
     @Body('tableName') tableName: string,
   ) {
-    const result = await this.invitationsService.inviteUser(
-      inviteeEmail,
-      inviterId,
-      tableId,
-      tableName,
-    );
+    try {
+      const result = await this.invitationsService.inviteUser(
+        inviteeEmail,
+        inviterId,
+        tableId,
+        tableName,
+      );
 
-    return {
-      result,
-      msg: 'User invited successfully.',
-    };
+      return {
+        result,
+        msg: 'User invited successfully.',
+      };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   //Accept invitation
