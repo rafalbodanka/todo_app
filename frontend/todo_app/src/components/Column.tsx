@@ -30,6 +30,7 @@ interface TaskData {
   _id: string;
   title: string;
   completed: boolean;
+  column: string;
 }
 
 const Column: React.FC<ColumnProps> = ({
@@ -38,30 +39,14 @@ const Column: React.FC<ColumnProps> = ({
   setRerenderSignal,
   currentTable,
 }) => {
-  const addTask = (columnId: string) => {
-    setColumns((prevColumns) => {
-      return prevColumns.map((column) => {
-        if (column._id === columnId) {
-          const newTask = {
-            _id: "20",
-            title: "new task",
-            completed: false,
-          };
-          return {
-            ...column,
-            pendingTasks: [newTask, ...column.pendingTasks],
-          };
-        }
-        return column;
-      });
-    });
-  };
-
-  const toggleShowCompletedTasks = async (columnId: string) => {
+  const toggleShowCompletedTasks = async (
+    columnId: string,
+    showCompletedTasks: boolean
+  ) => {
     try {
       const response = await axios.post(
         `http://localhost:5000/columns/${columnId}/status`,
-        {},
+        { showCompletedTasks: showCompletedTasks },
         {
           withCredentials: true,
           headers: {
@@ -133,12 +118,86 @@ const Column: React.FC<ColumnProps> = ({
     const draggedTaskId = draggedTask._id;
     const completed = draggedTask.completed;
 
+    //optimistic UI columns update
+    const isChangingStatus =
+      source.droppableId.split("-")[1] !==
+      destination.droppableId.split("-")[1];
+
+    setColumns((prevColumns) => {
+      let draggedTask;
+      if (source.droppableId.endsWith("completed")) {
+        draggedTask = column.completedTasks[sourceIndex];
+      }
+
+      if (source.droppableId.endsWith("pending")) {
+        draggedTask = column.pendingTasks[sourceIndex];
+      }
+
+      const sourceColumnIndex = prevColumns.findIndex(
+        (column) => column._id === sourceColumnId
+      );
+      const destinationColumnIndex = prevColumns.findIndex(
+        (column) => column._id === destinationColumnId
+      );
+
+      //moving within the same column
+      if (!isChangingStatus) {
+        if (draggedTask?.completed) {
+          const taskToMove = prevColumns[
+            sourceColumnIndex
+          ].completedTasks.splice(sourceIndex, 1)[0];
+          prevColumns[destinationColumnIndex].completedTasks.splice(
+            destinationIndex,
+            0,
+            taskToMove
+          );
+        }
+        if (!draggedTask?.completed) {
+          const taskToMove = prevColumns[sourceColumnIndex].pendingTasks.splice(
+            sourceIndex,
+            1
+          )[0];
+          prevColumns[destinationColumnIndex].pendingTasks.splice(
+            destinationIndex,
+            0,
+            taskToMove
+          );
+        }
+      }
+      if (isChangingStatus) {
+        if (!draggedTask) return prevColumns;
+        if (!draggedTask.completed) {
+          const taskToMove = prevColumns[sourceColumnIndex].pendingTasks.splice(
+            sourceIndex,
+            1
+          )[0];
+          prevColumns[destinationColumnIndex].completedTasks.splice(
+            destinationIndex,
+            0,
+            taskToMove
+          );
+        }
+        if (draggedTask.completed) {
+          const taskToMove = prevColumns[
+            sourceColumnIndex
+          ].completedTasks.splice(sourceIndex, 1)[0];
+          prevColumns[destinationColumnIndex].pendingTasks.splice(
+            destinationIndex,
+            0,
+            taskToMove
+          );
+        }
+        draggedTask.completed = !draggedTask.completed;
+      }
+      return prevColumns;
+    });
+
+    // updating columns in database
     try {
       const response = await axios.post(
         `http://localhost:5000/columns/${sourceColumnId}/ids`,
         {
           movedTaskId: draggedTaskId,
-          sourceColumn: sourceColumn,
           destinationColumnId: destinationColumnId,
           destinationIndex: destinationIndex,
           completed: completed,
@@ -194,7 +253,6 @@ const Column: React.FC<ColumnProps> = ({
                 setRerenderSignal={setRerenderSignal}
               />
               <AddTask
-                addTask={addTask}
                 columnId={column._id}
                 setRerenderSignal={setRerenderSignal}
               />
@@ -251,7 +309,10 @@ const Column: React.FC<ColumnProps> = ({
                       <div
                         className="cursor-pointer grid grid-cols-3 mt-4"
                         onClick={() => {
-                          toggleShowCompletedTasks(column._id);
+                          toggleShowCompletedTasks(
+                            column._id,
+                            column.showCompletedTasks
+                          );
                         }}
                       >
                         <div className="">Completed</div>

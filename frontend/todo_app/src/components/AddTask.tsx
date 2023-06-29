@@ -3,7 +3,6 @@ import axios from "axios";
 
 interface AddTaskProps {
   columnId: string;
-  addTask: (columnId: string) => void;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 

@@ -76,8 +76,17 @@ export class TasksController {
 
   @UseGuards(AuthenticatedGuard)
   @Post('/:id/status')
-  async toggleTaskStatus(@Param('id') id: string, @Res() res) {
-    const result = await this.tasksService.toggleTaskStatus(id);
+  async toggleTaskStatus(
+    @Param('id') id: string,
+    @Body('taskCompleted') taskCompleted: boolean,
+    @Body('taskColumn') taskColumn: string,
+    @Res() res,
+  ) {
+    const result = await this.tasksService.toggleTaskStatus(
+      id,
+      taskCompleted,
+      taskColumn,
+    );
 
     if (result) {
       return res.status(HttpStatus.OK).json({

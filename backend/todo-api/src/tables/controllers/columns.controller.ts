@@ -77,8 +77,15 @@ export class ColumnsController {
   //toggle show completed tasks
   @UseGuards(AuthenticatedGuard)
   @Post('/:id/status')
-  async toggleCompletedTaskStatus(@Param('id') id: string, @Res() res) {
-    const result = await this.columnsService.toggleCompletedTaskStatus(id);
+  async toggleCompletedTaskStatus(
+    @Param('id') id: string,
+    @Body('showCompletedTasks') showCompletedTasks: boolean,
+    @Res() res,
+  ) {
+    const result = await this.columnsService.toggleCompletedTaskStatus(
+      id,
+      showCompletedTasks,
+    );
 
     if (result) {
       return res.status(HttpStatus.OK).json({
@@ -108,7 +115,6 @@ export class ColumnsController {
     const result = await this.columnsService.moveTaskWithinColumn(
       id,
       movedTaskId,
-      sourceColumn,
       destinationColumnId,
       destinationIndex,
       completed,

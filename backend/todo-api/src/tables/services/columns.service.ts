@@ -82,7 +82,10 @@ export class ColumnsService {
   }
 
   //show/hide completed tasks
-  async toggleCompletedTaskStatus(columnId: string): Promise<boolean> {
+  async toggleCompletedTaskStatus(
+    columnId: string,
+    showCompletedTasks: boolean,
+  ): Promise<boolean> {
     const column = await this.columnModel.findOne({ _id: columnId });
 
     // Return false if no column with given id
@@ -91,7 +94,7 @@ export class ColumnsService {
     }
 
     // Toggle the task's status
-    column.showCompletedTasks = !column.showCompletedTasks;
+    column.showCompletedTasks = !showCompletedTasks;
 
     // Save the updated column
     await column.save();
@@ -102,124 +105,110 @@ export class ColumnsService {
   async moveTaskWithinColumn(
     columnId: string,
     movedtaskId: string,
-    sourceColumn: string,
     destinationColumnId: string,
     destinationIndex: string,
     completed: boolean,
     changeStatus: boolean,
   ): Promise<boolean> {
-    //source column
-    const column = await this.columnModel.findOne({ _id: columnId });
-
-    // Return false if no source column with the given id
-    if (!column) {
-      return false;
-    }
-
-    const task = await this.taskModel.findOne({ _id: movedtaskId });
-
-    // Return false if no task with the given id
+    // Find the task being moved
+    const task = await this.taskModel.findById(movedtaskId);
     if (!task) {
-      return false;
+      return false; // Return false if the task is not found
     }
 
-    const destinationColumnObj = await this.columnModel.findById(
+    // Find the source column
+    const sourceColumn = await this.columnModel.findById(task.column);
+    if (!sourceColumn) {
+      return false; // Return false if the source column is not found
+    }
+
+    // Find the destination column
+    const destinationColumn = await this.columnModel.findById(
       destinationColumnId,
     );
-
-    // Return false if no destination column with the given id
-    if (!destinationColumnObj) {
-      return false;
+    if (!destinationColumn) {
+      return false; // Return false if the destination column is not found
     }
 
-    if (changeStatus) {
-      // Update the completed status of the task
-      task.completed = !task.completed;
-      await task.save();
+    let sourceTasks, destinationTasks;
+
+    if (task.completed) {
+      sourceTasks = sourceColumn.completedTasks;
+    } else {
+      sourceTasks = sourceColumn.pendingTasks;
     }
 
-    let taskToMove;
+    if (sourceColumn._id.toString() === destinationColumn._id.toString()) {
+      if (completed && changeStatus) {
+      }
+      destinationTasks = sourceColumn.pendingTasks;
+      task.completed = false;
+      if (completed && !changeStatus) {
+        destinationTasks = sourceColumn.completedTasks;
+        task.completed = true;
+      }
 
-    // Check column ID and switch if different
-    if (columnId !== destinationColumnId) {
-      task.column = new mongoose.Types.ObjectId(destinationColumnId);
-      await task.save();
+      if (!completed && changeStatus) {
+        destinationTasks = sourceColumn.completedTasks;
+        task.completed = true;
+      }
 
-      if (completed) {
-        const sourceIndex = column.completedTasks.findIndex(
-          (completedTask) => completedTask._id.toString() === movedtaskId,
-        );
-        taskToMove = column.completedTasks.splice(Number(sourceIndex), 1)[0];
-        if (changeStatus) {
-          destinationColumnObj.pendingTasks.splice(
-            Number(destinationIndex),
-            0,
-            taskToMove,
-          );
-        } else {
-          destinationColumnObj.completedTasks.splice(
-            Number(destinationIndex),
-            0,
-            taskToMove,
-          );
-        }
-      } else {
-        const sourceIndex = column.pendingTasks.findIndex(
-          (pendingTask) => pendingTask._id.toString() === movedtaskId,
-        );
-        taskToMove = column.pendingTasks.splice(Number(sourceIndex), 1)[0];
-        if (changeStatus) {
-          destinationColumnObj.completedTasks.splice(
-            Number(destinationIndex),
-            0,
-            taskToMove,
-          );
-        } else {
-          destinationColumnObj.pendingTasks.splice(
-            Number(destinationIndex),
-            0,
-            taskToMove,
-          );
-        }
+      if (!completed && !changeStatus) {
+        task.completed = false;
+        destinationTasks = sourceColumn.pendingTasks;
       }
     } else {
-      //Moving tasks within the column
-      if (completed) {
-        const sourceIndex = column.completedTasks.findIndex(
-          (completedTask) => completedTask._id.toString() === movedtaskId,
-        );
-        taskToMove = column.completedTasks.splice(Number(sourceIndex), 1)[0];
-        if (changeStatus) {
-          column.pendingTasks.splice(Number(destinationIndex), 0, taskToMove);
-        } else {
-          column.completedTasks.splice(Number(destinationIndex), 0, taskToMove);
-        }
-      } else {
-        const sourceIndex = column.pendingTasks.findIndex(
-          (pendingTask) => pendingTask._id.toString() === movedtaskId,
-        );
-        taskToMove = column.pendingTasks.splice(Number(sourceIndex), 1)[0];
-        if (changeStatus) {
-          column.completedTasks.splice(Number(destinationIndex), 0, taskToMove);
-        } else {
-          column.pendingTasks.splice(Number(destinationIndex), 0, taskToMove);
-        }
+      if (completed && changeStatus) {
+        task.completed = false;
+
+        destinationTasks = destinationColumn.pendingTasks;
+      }
+      if (completed && !changeStatus) {
+        destinationTasks = destinationColumn.completedTasks;
+        task.completed = true;
+      }
+
+      if (!completed && changeStatus) {
+        destinationTasks = destinationColumn.completedTasks;
+        task.completed = true;
+      }
+
+      if (!completed && !changeStatus) {
+        task.completed = false;
+        destinationTasks = destinationColumn.pendingTasks;
       }
     }
+
+    const movedTaskObjectId = new mongoose.Types.ObjectId(movedtaskId);
+
+    const sourceIndex = sourceTasks.findIndex((task) =>
+      task._id.equals(movedTaskObjectId),
+    );
+
+    if (sourceColumn._id.toString() === destinationColumn._id.toString()) {
+      const taskToMove = sourceTasks.splice(Number(sourceIndex), 1)[0];
+      destinationTasks.splice(Number(destinationIndex), 0, taskToMove);
+    } else {
+      // Move task to a different column
+      task.column = new mongoose.Types.ObjectId(destinationColumnId);
+
+      const taskToMove = sourceTasks.splice(Number(sourceIndex), 1)[0];
+      destinationTasks.splice(Number(destinationIndex), 0, taskToMove);
+    }
+
+    await task.save();
 
     // When source column is also a destination column
     // call save method only for one of them
-    if (column === destinationColumnObj) {
-      await column.save();
+    if (sourceColumn._id.toString() === destinationColumn._id.toString()) {
+      await sourceColumn.save();
     } else {
       // Call save method for both columns if they are different
       await Promise.all([
-        column.save().catch((error) => {
-          console.log('Error saving column:', error);
+        sourceColumn.save().catch((error) => {
           return false;
         }),
-        destinationColumnObj.save().catch((error) => {
-          console.log('Error saving destination column:', error);
+        destinationColumn.save().catch((error) => {
           return false;
         }),
       ]);
