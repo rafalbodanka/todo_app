@@ -25,6 +25,7 @@ type Task = {
   _id: string;
   title: string;
   completed: boolean;
+  column: string;
 };
 
 interface User {

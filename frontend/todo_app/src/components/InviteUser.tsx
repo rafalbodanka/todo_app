@@ -86,7 +86,7 @@ const InviteUser: React.FC<UserProps> = ({
           "You have no permission to invite. Refresh the page."
         );
       } else {
-        setResponseMessage("User not found");
+        setResponseMessage(err.response.data.message);
       }
     }
   };

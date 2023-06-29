@@ -85,7 +85,11 @@ export class TasksService {
     return true;
   }
 
-  async toggleTaskStatus(taskId: string): Promise<boolean> {
+  async toggleTaskStatus(
+    taskId: string,
+    taskCompleted: boolean,
+    taskColumn: string,
+  ): Promise<boolean> {
     const task = await this.taskModel.findOne({ _id: taskId });
 
     // Return false if no task with given id
@@ -103,30 +107,103 @@ export class TasksService {
       throw new Error('Parent table not found');
     }
 
-    // moving completed task back to pending tasks array
-    if (task.completed) {
-      const taskIndex = column.completedTasks.findIndex(
-        (completedTask) => completedTask._id.toString() === taskId,
-      );
-      const taskToMove = column.completedTasks.splice(taskIndex, 1)[0];
-      column.pendingTasks.unshift(taskToMove);
+    const destinationColumn = await this.columnModel.findById(taskColumn);
+    if (!destinationColumn) {
+      throw new Error('Destination table not found');
     }
 
-    // moving pending task to completed tasks array
-    if (!task.completed) {
-      const taskIndex = column.pendingTasks.findIndex(
+    const isTheSameColumn = destinationColumn._id === column._id;
+
+    // Moving completed task back to pending tasks array
+    if (!taskCompleted) {
+      const pendingTaskIndex = column.pendingTasks.findIndex(
         (pendingTask) => pendingTask._id.toString() === taskId,
       );
-      const taskToMove = column.pendingTasks.splice(taskIndex, 1)[0];
-      column.completedTasks.unshift(taskToMove);
+
+      if (pendingTaskIndex === -1) {
+        const taskIndex = column.completedTasks.findIndex(
+          (completedTask) => completedTask._id.toString() === taskId,
+        );
+
+        if (taskIndex !== -1) {
+          const taskToMove = column.completedTasks.splice(taskIndex, 1)[0];
+          isTheSameColumn
+            ? column.completedTasks.unshift(taskToMove)
+            : await this.columnModel.findOneAndUpdate(
+                { _id: destinationColumn._id },
+                {
+                  $push: {
+                    completedTasks: { $each: [taskToMove], $position: 0 },
+                  },
+                },
+              );
+        }
+      } else {
+        const taskToMove = column.pendingTasks.splice(pendingTaskIndex, 1)[0];
+        isTheSameColumn
+          ? column.completedTasks.unshift(taskToMove)
+          : await this.columnModel.findOneAndUpdate(
+              { _id: destinationColumn._id },
+              {
+                $push: {
+                  completedTasks: { $each: [taskToMove], $position: 0 },
+                },
+              },
+            );
+        task.completed = !taskCompleted;
+      }
     }
 
-    // Toggle the task's status
-    task.completed = !task.completed;
+    // Moving pending task to completed tasks array
+    if (taskCompleted) {
+      const completedTaskIndex = column.completedTasks.findIndex(
+        (completedTask) => completedTask._id.toString() === taskId,
+      );
+
+      if (completedTaskIndex === -1) {
+        const taskIndex = column.pendingTasks.findIndex(
+          (pendingTask) => pendingTask._id.toString() === taskId,
+        );
+
+        if (taskIndex !== -1) {
+          const taskToMove = column.pendingTasks.splice(taskIndex, 1)[0];
+          isTheSameColumn
+            ? column.pendingTasks.unshift(taskToMove)
+            : await this.columnModel.findOneAndUpdate(
+                { _id: destinationColumn._id },
+                {
+                  $push: {
+                    pendingTasks: { $each: [taskToMove], $position: 0 },
+                  },
+                },
+              );
+        }
+      } else {
+        const taskToMove = column.completedTasks.splice(
+          completedTaskIndex,
+          1,
+        )[0];
+        isTheSameColumn
+          ? column.pendingTasks.unshift(taskToMove)
+          : await this.columnModel.findOneAndUpdate(
+              { _id: destinationColumn._id },
+              {
+                $push: { pendingTasks: { $each: [taskToMove], $position: 0 } },
+              },
+            );
+        task.completed = !taskCompleted;
+      }
+    }
+
+    // Update task's column if it has changed
+    if (task.column.toString() !== taskColumn) {
+      task.column = new mongoose.Types.ObjectId(taskColumn);
+    }
 
     // Save the updated task and column
     await task.save();
     await column.save();
+    !isTheSameColumn && (await destinationColumn.save());
     return true;
   }
 }

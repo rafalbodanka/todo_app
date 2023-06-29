@@ -7,6 +7,7 @@ interface TaskData {
   _id: string;
   title: string;
   completed: boolean;
+  column: string;
 }
 
 interface TaskProps {
@@ -22,11 +23,17 @@ const Task: React.FC<TaskProps> = ({ task, taskIndex, setRerenderSignal }) => {
     setIsEditTaskModalOpen(true);
   };
 
-  const toggleTaskStatus = async (taskId: string, taskIndex: Number) => {
+  const toggleTaskStatus = async (
+    taskId: string,
+    taskIndex: Number,
+    taskCompleted: boolean,
+    taskColumn: string
+  ) => {
+    console.log(taskColumn);
     try {
       const response = await axios.post(
         `http://localhost:5000/tasks/${taskId}/status`,
-        {},
+        { taskCompleted: taskCompleted, taskColumn: taskColumn },
         {
           withCredentials: true,
           headers: {
@@ -57,7 +64,7 @@ const Task: React.FC<TaskProps> = ({ task, taskIndex, setRerenderSignal }) => {
           className="w-6 max-h-6"
           onClick={(event) => {
             event.stopPropagation();
-            toggleTaskStatus(task._id, taskIndex);
+            toggleTaskStatus(task._id, taskIndex, task.completed, task.column);
           }}
         />
         <div className="ml-2 min-w-1">{task.title}</div>
