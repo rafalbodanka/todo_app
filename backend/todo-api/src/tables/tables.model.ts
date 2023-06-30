@@ -51,22 +51,32 @@ export const ColumnSchema = new mongoose.Schema({
   },
 });
 
-export const TaskSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
+export const TaskSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    notes: {
+      type: String,
+      required: false,
+      default: '',
+    },
+    completed: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    column: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Column',
+      required: true,
+    },
   },
-  completed: {
-    type: Boolean,
-    required: true,
-    default: false,
+  {
+    timestamps: true,
   },
-  column: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Column',
-    required: true,
-  },
-});
+);
 
 export interface Table extends Document {
   _id: string;
@@ -87,6 +97,7 @@ export interface Column extends Document {
 
 export interface Task extends Document {
   title: string;
+  notes: string;
   completed: boolean;
   column: mongoose.Types.ObjectId;
 }

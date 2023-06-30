@@ -206,4 +206,29 @@ export class TasksService {
     !isTheSameColumn && (await destinationColumn.save());
     return true;
   }
+
+  async updateNotes(taskId: string, newNotes: string): Promise<boolean> {
+    // Check if the length exceeds the maximum allowed
+    const maxLength = 500;
+    if (newNotes.length > maxLength) {
+      throw new Error(
+        `Notes length exceeds the maximum allowed (${maxLength} characters).`,
+      );
+    }
+
+    const task = await this.taskModel.findOneAndUpdate(
+      {
+        _id: taskId,
+      },
+      {
+        notes: newNotes,
+      },
+      { new: true },
+    );
+
+    if (!task) {
+      throw new Error('Task not found');
+    }
+    return true;
+  }
 }

@@ -8,11 +8,14 @@ import InviteUser from "./InviteUser";
 import TablePermissions from "./TablePermissions";
 import MembersPagination from "./MembersPagination";
 
-interface Task {
+interface TaskData {
   _id: string;
   title: string;
   completed: boolean;
   column: string;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface User {
@@ -27,8 +30,8 @@ interface User {
 interface Column {
   _id: string;
   title: string;
-  pendingTasks: Task[];
-  completedTasks: Task[];
+  pendingTasks: TaskData[];
+  completedTasks: TaskData[];
   showCompletedTasks: boolean;
 }
 

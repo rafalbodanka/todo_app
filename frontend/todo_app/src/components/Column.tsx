@@ -31,6 +31,9 @@ interface TaskData {
   title: string;
   completed: boolean;
   column: string;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const Column: React.FC<ColumnProps> = ({
@@ -39,6 +42,8 @@ const Column: React.FC<ColumnProps> = ({
   setRerenderSignal,
   currentTable,
 }) => {
+  const [isDraggingPossible, setIsDraggingPossible] = useState(true);
+
   const toggleShowCompletedTasks = async (
     columnId: string,
     showCompletedTasks: boolean
@@ -274,6 +279,7 @@ const Column: React.FC<ColumnProps> = ({
                         key={task._id}
                         draggableId={task._id}
                         index={index}
+                        isDragDisabled={!isDraggingPossible}
                       >
                         {(provided, snapshot) => (
                           <div
@@ -289,6 +295,8 @@ const Column: React.FC<ColumnProps> = ({
                               taskIndex={index}
                               task={task}
                               setRerenderSignal={setRerenderSignal}
+                              isDraggingPossible={isDraggingPossible}
+                              setIsDraggingPossible={setIsDraggingPossible}
                             />
                           </div>
                         )}
@@ -335,6 +343,7 @@ const Column: React.FC<ColumnProps> = ({
                             key={task._id}
                             draggableId={task._id}
                             index={index}
+                            isDragDisabled={!isDraggingPossible}
                           >
                             {(provided, snapshot) => (
                               <div
@@ -350,6 +359,8 @@ const Column: React.FC<ColumnProps> = ({
                                   taskIndex={index}
                                   task={task}
                                   setRerenderSignal={setRerenderSignal}
+                                  isDraggingPossible={isDraggingPossible}
+                                  setIsDraggingPossible={setIsDraggingPossible}
                                 />
                               </div>
                             )}

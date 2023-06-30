@@ -99,4 +99,26 @@ export class TasksController {
       });
     }
   }
+
+  @UseGuards(AuthenticatedGuard)
+  @Post('/:id/notes')
+  async updateNotes(
+    @Param('id') id: string,
+    @Body('newNotes') newNotes: string,
+    @Res() res,
+  ) {
+    try {
+      const result = await this.tasksService.updateNotes(id, newNotes);
+
+      return res.status(HttpStatus.OK).json({
+        message: 'Task notes updated successfully',
+        data: result,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Task not found',
+        error: error.message,
+      });
+    }
+  }
 }

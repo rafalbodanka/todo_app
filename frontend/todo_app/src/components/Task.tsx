@@ -8,19 +8,30 @@ interface TaskData {
   title: string;
   completed: boolean;
   column: string;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface TaskProps {
   task: TaskData;
   taskIndex: Number;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
+  isDraggingPossible: boolean;
+  setIsDraggingPossible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Task: React.FC<TaskProps> = ({ task, taskIndex, setRerenderSignal }) => {
+const Task: React.FC<TaskProps> = ({
+  task,
+  taskIndex,
+  setRerenderSignal,
+  isDraggingPossible,
+  setIsDraggingPossible,
+}) => {
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
-
   const openEditTaskModal = () => {
     setIsEditTaskModalOpen(true);
+    setIsDraggingPossible(false);
   };
 
   const toggleTaskStatus = async (
@@ -29,7 +40,6 @@ const Task: React.FC<TaskProps> = ({ task, taskIndex, setRerenderSignal }) => {
     taskCompleted: boolean,
     taskColumn: string
   ) => {
-    console.log(taskColumn);
     try {
       const response = await axios.post(
         `http://localhost:5000/tasks/${taskId}/status`,
@@ -69,12 +79,15 @@ const Task: React.FC<TaskProps> = ({ task, taskIndex, setRerenderSignal }) => {
         />
         <div className="ml-2 min-w-1">{task.title}</div>
       </div>
-      <EditTask
-        task={task}
-        isEditTaskModalOpen={isEditTaskModalOpen}
-        setIsEditTaskModalOpen={setIsEditTaskModalOpen}
-        setRerenderSignal={setRerenderSignal}
-      />
+      {isEditTaskModalOpen && (
+        <EditTask
+          task={task}
+          isEditTaskModalOpen={isEditTaskModalOpen}
+          setIsEditTaskModalOpen={setIsEditTaskModalOpen}
+          setIsDraggingPossible={setIsDraggingPossible}
+          setRerenderSignal={setRerenderSignal}
+        />
+      )}
     </div>
   );
 };
