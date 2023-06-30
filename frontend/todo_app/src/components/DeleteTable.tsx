@@ -3,11 +3,14 @@ import axios, { AxiosError } from "axios";
 
 import { Button } from "@material-tailwind/react";
 
-interface Task {
+interface TaskData {
   _id: string;
   title: string;
   completed: boolean;
   column: string;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface User {
@@ -22,8 +25,8 @@ interface User {
 interface Column {
   _id: string;
   title: string;
-  pendingTasks: Task[];
-  completedTasks: Task[];
+  pendingTasks: TaskData[];
+  completedTasks: TaskData[];
   showCompletedTasks: boolean;
 }
 

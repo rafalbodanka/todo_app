@@ -16,16 +16,19 @@ import UserInvitations from "./UserInvitations";
 type ColumnData = {
   _id: string;
   title: string;
-  pendingTasks: Task[];
-  completedTasks: Task[];
+  pendingTasks: TaskData[];
+  completedTasks: TaskData[];
   showCompletedTasks: boolean;
 };
 
-type Task = {
+type TaskData = {
   _id: string;
   title: string;
   completed: boolean;
   column: string;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 interface User {
