@@ -57,6 +57,15 @@ export class InvitationsService {
         throw new Error('Invitee not found');
       }
 
+      //check if user is already in the table
+      const existingMember = await this.tableModel
+        .findOne({ _id: tableObjId, 'users.user': inviteesData._id })
+        .exec();
+
+      if (existingMember) {
+        throw new Error('User is already here.');
+      }
+
       // Check if the same invitation already exists
       const checkInvitation = await this.invitationModel
         .findOne({
