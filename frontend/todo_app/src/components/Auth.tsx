@@ -14,6 +14,8 @@ interface User {
   lastName: string;
   level?: string;
   userIconId: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 type AuthProps = {
@@ -80,6 +82,8 @@ const Auth: React.FC<AuthProps> = ({
             lastName: response.data.lastName,
             level: response.data.level,
             userIconId: response.data.iconId,
+            createdAt: response.data.createdAt,
+            updatedAt: response.data.updatedAt,
           });
         }
       } catch (err) {

@@ -72,6 +72,12 @@ export const TaskSchema = new mongoose.Schema(
       ref: 'Column',
       required: true,
     },
+    responsibleUsers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     timestamps: true,
@@ -100,4 +106,5 @@ export interface Task extends Document {
   notes: string;
   completed: boolean;
   column: mongoose.Types.ObjectId;
+  responsibleUsers: mongoose.Types.ObjectId[];
 }

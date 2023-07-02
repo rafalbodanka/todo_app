@@ -11,6 +11,7 @@ interface TaskData {
   notes: string;
   createdAt: string;
   updatedAt: string;
+  responsibleUsers: User[];
 }
 
 interface User {
@@ -20,6 +21,8 @@ interface User {
   lastName: string;
   level?: string;
   userIconId: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface Column {

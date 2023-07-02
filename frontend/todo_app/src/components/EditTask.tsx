@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+import EditTaskAssignUser from "./EditTaskAssignUser";
+
 interface TaskData {
   _id: string;
   title: string;
@@ -9,6 +11,7 @@ interface TaskData {
   notes: string;
   createdAt: string;
   updatedAt: string;
+  responsibleUsers: User[];
 }
 
 interface ColumnData {
@@ -18,12 +21,31 @@ interface ColumnData {
   showCompletedTasks: boolean;
 }
 
+interface User {
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  level?: string;
+  userIconId: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Member {
+  user: User;
+  permission: string;
+}
+
 interface EditTaskProps {
   task: TaskData;
   isEditTaskModalOpen: boolean;
   setIsEditTaskModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   setIsDraggingPossible: React.Dispatch<React.SetStateAction<boolean>>;
+  currentTableId: string;
+  responsibleUsers: User[];
+  setResponsibleUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }
 
 const EditTask: React.FC<EditTaskProps> = ({
@@ -32,6 +54,9 @@ const EditTask: React.FC<EditTaskProps> = ({
   setIsEditTaskModalOpen,
   setRerenderSignal,
   setIsDraggingPossible,
+  currentTableId,
+  responsibleUsers,
+  setResponsibleUsers,
 }) => {
   const [isDeleteTaskModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteTaskModalMessage, setDeleteTaskModalMessage] = useState("");
@@ -258,6 +283,12 @@ const EditTask: React.FC<EditTaskProps> = ({
                   className="shadow appearance-none border border-gray-500 rounded w-full h-24 py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline resize-none"
                 ></textarea>
               </div>
+              <EditTaskAssignUser
+                responsibleUsers={responsibleUsers}
+                setResponsibleUsers={setResponsibleUsers}
+                currentTableId={currentTableId}
+                task={task}
+              ></EditTaskAssignUser>
             </div>
           </div>
           {isDeleteTaskModalOpen && (

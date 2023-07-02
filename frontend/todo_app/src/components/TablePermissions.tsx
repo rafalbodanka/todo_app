@@ -37,6 +37,7 @@ type TablePermissionsProps = {
   tableName: string;
   tableUsersIds: User[];
   setTableMembers: React.Dispatch<React.SetStateAction<string[]>>;
+  setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const TablePermissions: React.FC<TablePermissionsProps> = ({
@@ -49,6 +50,7 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
   tableName,
   tableUsersIds,
   setTableMembers,
+  setRerenderSignal,
 }) => {
   const [members, setMembers] = useState<Member[]>([]);
   const [membersRerenderSignal, setMembersRerenderSignal] = useState(false);
@@ -249,7 +251,7 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {user.level}
+                            {user.level ? user.level : ""}
                           </Typography>
                         </div>
                       </td>
@@ -327,6 +329,7 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
                               setMembersRerenderSignal={
                                 setMembersRerenderSignal
                               }
+                              setRerenderSignal={setRerenderSignal}
                             />
                           )}
                         </div>
