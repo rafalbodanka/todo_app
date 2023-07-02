@@ -121,4 +121,70 @@ export class TasksController {
       });
     }
   }
+
+  @UseGuards(AuthenticatedGuard)
+  @Post('/:id/responsible-users')
+  async getResponsibleUsers(
+    @Param('id') id: string,
+    @Body('currentTableId') tableId: string,
+    @Res() res,
+  ) {
+    try {
+      const result = await this.tasksService.getResponsibleUsers(id, tableId);
+
+      return res.status(HttpStatus.OK).json({
+        message: 'Responsible users fetched successfully',
+        data: result,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Task not found',
+        error: error.message,
+      });
+    }
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Post('/:id/assign-user')
+  async assignUser(
+    @Param('id') id: string,
+    @Body('userId') userId: string,
+    @Res() res,
+  ) {
+    try {
+      const result = await this.tasksService.assignUser(id, userId);
+
+      return res.status(HttpStatus.OK).json({
+        message: 'User assigned successfully',
+        data: result,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Task not found',
+        error: error.message,
+      });
+    }
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Post('/:id/remove-user')
+  async removeUser(
+    @Param('id') id: string,
+    @Body('userId') userId: string,
+    @Res() res,
+  ) {
+    try {
+      const result = await this.tasksService.removeUser(id, userId);
+
+      return res.status(HttpStatus.OK).json({
+        message: 'User removed successfully',
+        data: result,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Task not found',
+        error: error.message,
+      });
+    }
+  }
 }

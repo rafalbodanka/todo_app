@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import { Input } from "@material-tailwind/react";
@@ -16,6 +16,7 @@ interface TaskData {
   notes: string;
   createdAt: string;
   updatedAt: string;
+  responsibleUsers: User[];
 }
 
 interface User {
@@ -25,6 +26,8 @@ interface User {
   lastName: string;
   level?: string;
   userIconId: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface Column {
@@ -200,6 +203,7 @@ const EditTable: React.FC<EditTableProps> = ({
                 tableName={table.title}
                 tableUsersIds={table.users}
                 setTableMembers={setTableMembers}
+                setRerenderSignal={setRerenderSignal}
               ></TablePermissions>
             </div>
           </div>

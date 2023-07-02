@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Task, Column } from '../tables.model';
+import { Task, Column, Table } from '../tables.model';
 import * as mongoose from 'mongoose';
 
 @Injectable()
@@ -9,6 +9,7 @@ export class TasksService {
   constructor(
     @InjectModel('task') private readonly taskModel: Model<Task>,
     @InjectModel('column') private readonly columnModel: Model<Column>,
+    @InjectModel('table') private readonly tableModel: Model<Table>,
   ) {}
   async insertTask(title: string, taskId: string): Promise<Task> {
     try {
@@ -229,6 +230,77 @@ export class TasksService {
     if (!task) {
       throw new Error('Task not found');
     }
+    return true;
+  }
+
+  async getResponsibleUsers(
+    taskId: string,
+    currentTableId: string,
+  ): Promise<any> {
+    try {
+      const task = await this.taskModel.findById(taskId);
+
+      if (!task) {
+        throw new Error('Task not found');
+      }
+
+      const userMembers = await this.tableModel
+        .findOne({ _id: currentTableId })
+        .populate({
+          path: 'users.user',
+          model: 'user',
+          select: '-password -id',
+        })
+        .select('users')
+        .exec();
+
+      const members = task.responsibleUsers.map((responsibleUserId: any) => {
+        return userMembers?.users.find(
+          (user: any) =>
+            user.user._id.toString() === responsibleUserId.toString(),
+        );
+      });
+
+      return members;
+    } catch (err) {
+      throw new Error('Failed to get responsible users');
+    }
+  }
+
+  async assignUser(taskId: string, userId: string): Promise<boolean> {
+    const task = await this.taskModel.findById(taskId);
+    if (!task) {
+      throw new Error('Task not found');
+    }
+
+    if (task.responsibleUsers.includes(new mongoose.Types.ObjectId(userId))) {
+      const userIndex = task.responsibleUsers.findIndex((user) =>
+        user.equals(new mongoose.Types.ObjectId(userId)),
+      );
+      const taskToMove = task.responsibleUsers.splice(userIndex, 1)[0];
+      task.responsibleUsers.unshift(taskToMove);
+    } else {
+      task.responsibleUsers.push(new mongoose.Types.ObjectId(userId));
+    }
+
+    await task.save();
+    return true;
+  }
+
+  async removeUser(taskId: string, userId: string): Promise<boolean> {
+    const task = await this.taskModel.findById(taskId);
+    if (!task) {
+      throw new Error('Task not found');
+    }
+
+    const userIndex = task.responsibleUsers.findIndex((user) =>
+      user.equals(new mongoose.Types.ObjectId(userId)),
+    );
+    if (userIndex !== -1) {
+      task.responsibleUsers.splice(userIndex, 1);
+    }
+
+    await task.save();
     return true;
   }
 }

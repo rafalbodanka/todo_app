@@ -35,12 +35,29 @@ export class TablesService {
       .populate({
         path: 'columns',
         populate: [
-          { path: 'pendingTasks', model: 'task' },
-          { path: 'completedTasks', model: 'task' },
+          {
+            path: 'pendingTasks',
+            model: 'task',
+            populate: {
+              path: 'responsibleUsers',
+              model: 'user',
+              select: '-password -id',
+            },
+          },
+          {
+            path: 'completedTasks',
+            model: 'task',
+            populate: {
+              path: 'responsibleUsers',
+              model: 'user',
+              select: '-password -id',
+            },
+          },
         ],
         model: 'column',
       })
       .exec();
+
     return userTable;
   }
 
@@ -61,6 +78,12 @@ export class TablesService {
       if (table.users.length === 0) {
         // Call the deleteTable method passing the tableId
         await this.deleteTable(tableId);
+      } else {
+        // Update the responsibleUsers array in each task
+        await this.taskModel.updateMany(
+          { column: { $in: table.columns } },
+          { $pull: { responsibleUsers: memberId } },
+        );
       }
 
       return true;

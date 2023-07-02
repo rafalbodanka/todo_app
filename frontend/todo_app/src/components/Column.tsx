@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { DraggableLocation, DropResult } from "@hello-pangea/dnd";
 import { DraggableStateSnapshot } from "@hello-pangea/dnd";
@@ -10,6 +10,17 @@ import AddTask from "./AddTask";
 import DeleteColumn from "./DeleteColumn";
 import AddColumn from "./AddColumn";
 import EditColumn from "./EditColumn";
+
+interface User {
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  level?: string;
+  userIconId: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface ColumnProps {
   columns: ColumnData[];
@@ -34,6 +45,7 @@ interface TaskData {
   notes: string;
   createdAt: string;
   updatedAt: string;
+  responsibleUsers: User[];
 }
 
 const Column: React.FC<ColumnProps> = ({
@@ -292,11 +304,13 @@ const Column: React.FC<ColumnProps> = ({
                             )}
                           >
                             <Task
+                              responsibleUsers={task.responsibleUsers}
                               taskIndex={index}
                               task={task}
                               setRerenderSignal={setRerenderSignal}
                               isDraggingPossible={isDraggingPossible}
                               setIsDraggingPossible={setIsDraggingPossible}
+                              currentTableId={currentTable}
                             />
                           </div>
                         )}
@@ -356,11 +370,13 @@ const Column: React.FC<ColumnProps> = ({
                                 )}
                               >
                                 <Task
+                                  responsibleUsers={task.responsibleUsers}
                                   taskIndex={index}
                                   task={task}
                                   setRerenderSignal={setRerenderSignal}
                                   isDraggingPossible={isDraggingPossible}
                                   setIsDraggingPossible={setIsDraggingPossible}
+                                  currentTableId={currentTable}
                                 />
                               </div>
                             )}

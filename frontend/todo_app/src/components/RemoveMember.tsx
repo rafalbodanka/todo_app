@@ -29,6 +29,7 @@ type RemoveMemberProps = {
   tableName: string;
   membersRerenderSignal: boolean;
   setMembersRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
+  setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const RemoveMember: React.FC<RemoveMemberProps> = ({
@@ -44,6 +45,7 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
   tableName,
   membersRerenderSignal,
   setMembersRerenderSignal,
+  setRerenderSignal,
 }) => {
   const [isRemoveMemberModalOpen, setIsRemoveMemberModalOpen] = useState(false);
   const [isRemovePossible, setIsRemovePossible] = useState(true);
@@ -102,6 +104,7 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
         window.location.reload();
       } else {
         setMembersRerenderSignal((prevSignal) => !prevSignal);
+        setRerenderSignal((prevSignal) => !prevSignal);
       }
       setIsRemoveMemberModalOpen(false);
     }

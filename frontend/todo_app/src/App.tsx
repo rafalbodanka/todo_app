@@ -11,6 +11,8 @@ interface User {
   lastName: string;
   level?: string;
   userIconId: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const App: React.FC = () => {
@@ -21,6 +23,8 @@ const App: React.FC = () => {
     lastName: "",
     level: "",
     userIconId: 0,
+    createdAt: "",
+    updatedAt: "",
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [rerenderSignal, setRerenderSignal] = useState(false);
