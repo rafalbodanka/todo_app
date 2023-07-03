@@ -2,8 +2,6 @@
 
 This is a simple to do app. Set up the table with your colleagues, workmates or family and start planning your responsibilities together.
 
-The app is deployed and can be accessed online at [your-deployment-link](https://www.example.com).
-
 ## Table of Contents
 
 - [Installation](#installation)
