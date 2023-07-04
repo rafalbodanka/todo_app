@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .tasks_container {
-  @apply pl-6 pr-6 border-r-1 border-black border-opacity-20 h-screen min-w-2 max-w-2;
+  @apply pl-6 pr-6 border-r-1 border-black border-opacity-20 min-w-2 max-w-2;
 }
 
 .task {
