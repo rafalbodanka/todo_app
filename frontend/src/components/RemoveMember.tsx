@@ -80,7 +80,7 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
 
     try {
       const response = await axios.post(
-        `https://todo-app-ten-ivory.vercel.app/tables/${tableId}/remove-member/`,
+        `http://localhost:5000/tables/${tableId}/remove-member/`,
         { memberId: memberId },
         {
           withCredentials: true,

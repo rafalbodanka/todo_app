@@ -18,7 +18,7 @@ const AcceptInvitation: React.FC<AcceptInvitationProps> = ({
   const handleAcceptInvitation = async () => {
     try {
       await axios.post(
-        `https://todo-app-ten-ivory.vercel.app/invitations/${invitationId}/accept`,
+        `http://localhost:5000/invitations/${invitationId}/accept`,
         { userId },
         {
           withCredentials: true,

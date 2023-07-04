@@ -97,7 +97,7 @@ const EditTask: React.FC<EditTaskProps> = ({
     }
     try {
       const response = await axios.post(
-        `https://todo-app-ten-ivory.vercel.app/tasks/${taskId}/name`,
+        `http://localhost:5000/tasks/${taskId}/name`,
         {
           newTitle: newTitle,
         },
@@ -138,7 +138,7 @@ const EditTask: React.FC<EditTaskProps> = ({
 
     try {
       const response = await axios.post(
-        `https://todo-app-ten-ivory.vercel.app/tasks/${taskId}/notes`,
+        `http://localhost:5000/tasks/${taskId}/notes`,
         {
           newNotes: formattedNotes,
         },
@@ -170,7 +170,7 @@ const EditTask: React.FC<EditTaskProps> = ({
   const handleDelete = async (taskId: string) => {
     try {
       const response = await axios.post(
-        `https://todo-app-ten-ivory.vercel.app/tasks/${taskId}/delete`,
+        `http://localhost:5000/tasks/${taskId}/delete`,
         {},
         {
           withCredentials: true,

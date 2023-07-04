@@ -90,7 +90,7 @@ const EditTable: React.FC<EditTableProps> = ({
     }
     try {
       const response = await axios.post(
-        `https://todo-app-ten-ivory.vercel.app/tables/${tableId}/name`,
+        `http://localhost:5000/tables/${tableId}/name`,
         {
           newTitle: newTitle,
         },

@@ -29,7 +29,7 @@ type userNavProps = {
 
 const handleLogout = async () => {
   try {
-    const response = await axios.get("https://todo-app-ten-ivory.vercel.app/users/logout", {
+    const response = await axios.get("http://localhost:5000/users/logout", {
       withCredentials: true,
       headers: {
         "Access-Control-Allow-Origin": "*",

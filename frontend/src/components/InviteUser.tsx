@@ -58,7 +58,7 @@ const InviteUser: React.FC<UserProps> = ({
     }
     try {
       const response = await axios.post(
-        `https://todo-app-ten-ivory.vercel.app/invitations/create`,
+        `http://localhost:5000/invitations/create`,
         {
           inviteeEmail: email,
           inviterId: user._id,

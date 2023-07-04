@@ -53,7 +53,7 @@ const Table: React.FC<TableProps> = ({
   const getUserSet = async () => {
     if (!user.email) return;
     try {
-      const response = await axios.get("https://todo-app-ten-ivory.vercel.app/tables/tables", {
+      const response = await axios.get("http://localhost:5000/tables/tables", {
         withCredentials: true,
         headers: {
           "Access-Control-Allow-Origin": "*",

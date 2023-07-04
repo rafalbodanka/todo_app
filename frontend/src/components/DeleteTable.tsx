@@ -96,7 +96,7 @@ const DeleteTable: React.FC<DeleteTableProps> = ({
 
     try {
       const response = await axios.post(
-        `https://todo-app-ten-ivory.vercel.app/tables/delete/${tableId}`,
+        `http://localhost:5000/tables/delete/${tableId}`,
         {},
         {
           withCredentials: true,
