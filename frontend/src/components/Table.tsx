@@ -87,7 +87,7 @@ const Table: React.FC<TableProps> = ({
   }, [user, rerenderSignal]);
 
   return (
-    <div className="w-screen h-screen font-Roboto font-500">
+    <div className="w-full h-full font-Roboto font-500">
       <div className="">
         <div className="p-4">
           <div className="grid grid-cols-8">
@@ -109,7 +109,7 @@ const Table: React.FC<TableProps> = ({
           </div>
         </div>
         {currentTable && (
-          <div className="flex max-w-full">
+          <div className="flex max-w-screen overflow-x-auto scrollbar-thin">
             <Column
               columns={columns}
               setColumns={setColumns}
