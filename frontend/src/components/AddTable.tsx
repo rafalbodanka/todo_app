@@ -82,7 +82,7 @@ const AddTable: React.FC<SetProps> = ({ setRerenderSignal }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/tables/create",
+        "https://todo-app-ten-ivory.vercel.app/tables/create",
         {
           title: inputValue,
         },

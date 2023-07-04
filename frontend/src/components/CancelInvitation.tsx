@@ -20,7 +20,7 @@ const CancelInvitation: React.FC<CancelInvitationProps> = ({
   const handleCancelInvitation = async () => {
     try {
       await axios.delete(
-        `http://localhost:5000/invitations/${invitationId}/cancel`,
+        `https://todo-app-ten-ivory.vercel.app/invitations/${invitationId}/cancel`,
         {
           withCredentials: true,
           headers: {

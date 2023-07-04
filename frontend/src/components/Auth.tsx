@@ -40,7 +40,7 @@ const Auth: React.FC<AuthProps> = ({
     const checkLoginStatus = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/users/protected",
+          "https://todo-app-ten-ivory.vercel.app/users/protected",
           {
             withCredentials: true,
             headers: {
@@ -66,7 +66,7 @@ const Auth: React.FC<AuthProps> = ({
     if (!isLoggedIn) return;
     const getUserData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/users/user", {
+        const response = await axios.get("https://todo-app-ten-ivory.vercel.app/users/user", {
           withCredentials: true,
           headers: {
             "Access-Control-Allow-Origin": "*",

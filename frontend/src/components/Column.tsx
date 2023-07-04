@@ -62,7 +62,7 @@ const Column: React.FC<ColumnProps> = ({
   ) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/columns/${columnId}/status`,
+        `https://todo-app-ten-ivory.vercel.app/columns/${columnId}/status`,
         { showCompletedTasks: showCompletedTasks },
         {
           withCredentials: true,
@@ -212,7 +212,7 @@ const Column: React.FC<ColumnProps> = ({
     // updating columns in database
     try {
       const response = await axios.post(
-        `http://localhost:5000/columns/${sourceColumnId}/ids`,
+        `https://todo-app-ten-ivory.vercel.app/columns/${sourceColumnId}/ids`,
         {
           movedTaskId: draggedTaskId,
           destinationColumnId: destinationColumnId,

@@ -195,7 +195,7 @@ const Register = () => {
     );
     if (!isRegisterDataValid) return;
     try {
-      const response = await axios.post("http://localhost:5000/users/signup", {
+      const response = await axios.post("https://todo-app-ten-ivory.vercel.app/users/signup", {
         firstName: firstNameInputValue,
         lastName: lastNameInputValue,
         email: emailInputValue,

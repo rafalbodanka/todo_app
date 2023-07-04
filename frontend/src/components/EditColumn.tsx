@@ -42,7 +42,7 @@ const EditColumn: React.FC<EditColumnProps> = ({
     }
     try {
       const response = await axios.post(
-        `http://localhost:5000/columns/${columnId}/name`,
+        `https://todo-app-ten-ivory.vercel.app/columns/${columnId}/name`,
         {
           newTitle: newTitle,
         },

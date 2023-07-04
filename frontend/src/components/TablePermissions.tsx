@@ -75,7 +75,7 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
     const fetchMembersData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/tables/${tableId}/members`,
+          `https://todo-app-ten-ivory.vercel.app/tables/${tableId}/members`,
           {
             withCredentials: true,
             headers: {
@@ -152,7 +152,7 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/tables/${tableId}/permissions/`,
+        `https://todo-app-ten-ivory.vercel.app/tables/${tableId}/permissions/`,
         { userId: userId, newPermission: newPermission },
         {
           withCredentials: true,

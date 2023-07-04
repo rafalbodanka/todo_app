@@ -32,7 +32,7 @@ const DeleteColumn: React.FC<DeleteColumnProps> = ({
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/columns/delete/${columnId}`,
+        `https://todo-app-ten-ivory.vercel.app/columns/delete/${columnId}`,
         {},
         {
           withCredentials: true,

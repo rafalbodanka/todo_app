@@ -66,7 +66,7 @@ const EditTaskAssignUser: React.FC<EditTaskAssignUserProps> = ({
     ) => {
       try {
         const response = await axios.post(
-          `http://localhost:5000/tasks/${taskId}/responsible-users`,
+          `https://todo-app-ten-ivory.vercel.app/tasks/${taskId}/responsible-users`,
           { currentTableId: currentTableId },
           {
             withCredentials: true,
@@ -91,7 +91,7 @@ const EditTaskAssignUser: React.FC<EditTaskAssignUserProps> = ({
     const fetchMembersData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/tables/${currentTableId}/members`,
+          `https://todo-app-ten-ivory.vercel.app/tables/${currentTableId}/members`,
           {
             withCredentials: true,
             headers: {
@@ -114,7 +114,7 @@ const EditTaskAssignUser: React.FC<EditTaskAssignUserProps> = ({
     //axios request
     try {
       const response = await axios.post(
-        `http://localhost:5000/tasks/${taskId}/assign-user`,
+        `https://todo-app-ten-ivory.vercel.app/tasks/${taskId}/assign-user`,
         { userId: userId },
         {
           withCredentials: true,
@@ -136,7 +136,7 @@ const EditTaskAssignUser: React.FC<EditTaskAssignUserProps> = ({
     //axios request
     try {
       const response = await axios.post(
-        `http://localhost:5000/tasks/${taskId}/remove-user`,
+        `https://todo-app-ten-ivory.vercel.app/tasks/${taskId}/remove-user`,
         { userId: userId },
         {
           withCredentials: true,

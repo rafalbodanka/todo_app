@@ -32,7 +32,7 @@ const UserInvitations: React.FC = () => {
     const getUsersReceivedInvitations = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/invitations/get/invitee`,
+          `https://todo-app-ten-ivory.vercel.app/invitations/get/invitee`,
           {
             withCredentials: true,
             headers: {
@@ -51,7 +51,7 @@ const UserInvitations: React.FC = () => {
     const getUsersSetInvitations = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/invitations/get/inviter`,
+          `https://todo-app-ten-ivory.vercel.app/invitations/get/inviter`,
           {
             withCredentials: true,
             headers: {

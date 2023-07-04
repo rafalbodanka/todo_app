@@ -69,7 +69,7 @@ const Task: React.FC<TaskProps> = ({
   ) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/tasks/${taskId}/status`,
+        `https://todo-app-ten-ivory.vercel.app/tasks/${taskId}/status`,
         { taskCompleted: taskCompleted, taskColumn: taskColumn },
         {
           withCredentials: true,

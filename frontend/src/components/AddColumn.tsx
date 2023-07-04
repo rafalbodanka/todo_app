@@ -44,7 +44,7 @@ const AddColumn: React.FC<{
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/columns/create",
+        "https://todo-app-ten-ivory.vercel.app/columns/create",
         {
           title: inputValue,
           tableId: currentTable,

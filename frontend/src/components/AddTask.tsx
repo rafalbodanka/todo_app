@@ -46,7 +46,7 @@ const AddTask: React.FC<AddTaskProps> = ({ columnId, setRerenderSignal }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/tasks/create",
+        "https://todo-app-ten-ivory.vercel.app/tasks/create",
         {
           title: inputValue,
           columnId: columnId,

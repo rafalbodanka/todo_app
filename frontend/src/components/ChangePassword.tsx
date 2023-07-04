@@ -82,7 +82,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ userId }) => {
       return;
     try {
       const response = await axios.patch(
-        "http://localhost:5000/users/user/changepassword",
+        "https://todo-app-ten-ivory.vercel.app/users/user/changepassword",
         {
           oldPassword: oldPassword,
           newPassword: newPassword,
@@ -111,7 +111,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ userId }) => {
   //loggin out user after successful password change
   const handleLogout = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/users/logout", {
+      const response = await axios.get("https://todo-app-ten-ivory.vercel.app/users/logout", {
         withCredentials: true,
         headers: {
           "Access-Control-Allow-Origin": "*",

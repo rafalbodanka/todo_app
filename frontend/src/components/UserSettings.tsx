@@ -188,7 +188,7 @@ const UserSettings: React.FC<userSettingsProps> = ({ user }) => {
     if (!isUpdateDataValid) return;
     try {
       const response = await axios.patch(
-        "http://localhost:5000/users/user/update",
+        "https://todo-app-ten-ivory.vercel.app/users/user/update",
         {
           firstName: firstName,
           lastName: lastName,
