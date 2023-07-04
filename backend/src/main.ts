@@ -13,7 +13,7 @@ async function bootstrap() {
   // Enable CORS
   app.use(
     cors({
-      origin: ['http://87.99.46.90', 'http://localhost:3000'],
+      origin: 'https://todo-app-frontend-bay.vercel.app',
       credentials: true,
       exposedHeaders: ['set-cookie'],
     }),
