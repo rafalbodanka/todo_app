@@ -54,6 +54,7 @@ type EditTableProps = {
   tables: TableProps[];
   setCurrentTable: React.Dispatch<string>;
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
+  isMobile: boolean;
 };
 
 const EditTable: React.FC<EditTableProps> = ({
@@ -64,6 +65,7 @@ const EditTable: React.FC<EditTableProps> = ({
   tables,
   setCurrentTable,
   setColumns,
+  isMobile
 }) => {
   const [isEditTableModalOpen, setIsEditTableOpen] = useState(false);
   const [EditTableModalMessage, setEditTableModalMessage] = useState("");
@@ -133,7 +135,7 @@ const EditTable: React.FC<EditTableProps> = ({
   };
 
   return (
-    <div className="flex item-center text-black">
+    <div className="flex item-center text-black w-4">
       <img
         className={`w-4 cursor-pointer ${
           currentTable === table._id ? "fill-white" : ""
@@ -152,12 +154,12 @@ const EditTable: React.FC<EditTableProps> = ({
             onMouseDown={closeEditTaskModal}
           >
             <div
-              className="bg-white p-6 rounded-md cursor-default w-1/2 min-h-1/2 min-w-[600px]"
+              className="bg-white p-6 rounded-md cursor-default md:w-1/2 md:min-h-1/2 md:min-w-[600px] w-screen"
               onClick={(event) => event.stopPropagation()}
             >
               <div className="">
                 {isAdmin && (
-                  <div className="flex justify-end">
+                  <div className="flex justify-end mb-6 md:mb-0">
                     <DeleteTable
                       tableId={table._id}
                       tableTitle={table.title}
@@ -204,6 +206,7 @@ const EditTable: React.FC<EditTableProps> = ({
                 tableUsersIds={table.users}
                 setTableMembers={setTableMembers}
                 setRerenderSignal={setRerenderSignal}
+                isMobile={isMobile}
               ></TablePermissions>
             </div>
           </div>

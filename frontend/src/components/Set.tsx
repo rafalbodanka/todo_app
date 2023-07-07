@@ -53,6 +53,7 @@ interface SetProps {
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   currentTable: string;
   setCurrentTable: React.Dispatch<string>;
+  isMobile: boolean;
 }
 
 const Set: React.FC<SetProps> = ({
@@ -62,6 +63,7 @@ const Set: React.FC<SetProps> = ({
   setRerenderSignal,
   currentTable,
   setCurrentTable,
+  isMobile
 }) => {
   const switchTable = (tableId: string, columns: Column[]) => {
     setColumns(columns);
@@ -75,7 +77,7 @@ const Set: React.FC<SetProps> = ({
           return (
             <div
               key={table._id}
-              className={`cursor-pointer p-2 pl-4 pr-4 hover:shadow-lg hover:bg-slate-200 rounded-md grid grid-col-2 grid-flow-col gap-4 ${
+              className={`cursor-pointer p-2 pl-4 pr-4 hover:shadow-lg hover:bg-slate-200 rounded-md grid grid-col-2 grid-flow-col gap-6 md:gap-4 ${
                 currentTable === table._id ? "bg-purple-900 text-white" : ""
               }`}
               onClick={() => {
@@ -84,7 +86,9 @@ const Set: React.FC<SetProps> = ({
                 }
               }}
             >
-              {table.title}
+              <div>
+                {table.title}
+              </div>
               <EditTable
                 user={user}
                 table={table}
@@ -93,6 +97,7 @@ const Set: React.FC<SetProps> = ({
                 tables={tables}
                 setCurrentTable={setCurrentTable}
                 setColumns={setColumns}
+                isMobile={isMobile}
               ></EditTable>
             </div>
           );

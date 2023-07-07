@@ -98,7 +98,7 @@ const InviteUser: React.FC<UserProps> = ({
   return (
     <>
       <p className="text-black mt-8">Members</p>
-      <div className="flex">
+      <div className="block md:flex">
         <div className="relative flex w-full max-w-[24rem] mt-2">
           <Input
             error={isEmailValid}
@@ -124,11 +124,11 @@ const InviteUser: React.FC<UserProps> = ({
         </div>
         {isInviteResponseVisible &&
           (inviteResponseStatusOK ? (
-            <div className="flex items-center mt-4 ml-4">
+            <div className="flex justify-center md:justify-start items-center mt-4 ml-4">
               <img src="./icons-checkmark.svg"></img>
             </div>
           ) : (
-            <p className="mt-4 ml-4 flex items-center text-red-400 text-sm">
+            <p className="mt-4 ml-4 flex justify-center md:justify-start items-center text-red-400 text-sm">
               {responseMessage}
             </p>
           ))}

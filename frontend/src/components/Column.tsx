@@ -27,6 +27,7 @@ interface ColumnProps {
   setColumns: React.Dispatch<React.SetStateAction<ColumnData[]>>;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   currentTable: string;
+  isMobile: boolean;
 }
 
 interface ColumnData {
@@ -53,6 +54,7 @@ const Column: React.FC<ColumnProps> = ({
   setColumns,
   setRerenderSignal,
   currentTable,
+  isMobile
 }) => {
   const [isDraggingPossible, setIsDraggingPossible] = useState(true);
 
@@ -311,6 +313,7 @@ const Column: React.FC<ColumnProps> = ({
                               isDraggingPossible={isDraggingPossible}
                               setIsDraggingPossible={setIsDraggingPossible}
                               currentTableId={currentTable}
+                              isMobile={isMobile}
                             />
                           </div>
                         )}
@@ -377,6 +380,7 @@ const Column: React.FC<ColumnProps> = ({
                                   isDraggingPossible={isDraggingPossible}
                                   setIsDraggingPossible={setIsDraggingPossible}
                                   currentTableId={currentTable}
+                                  isMobile={isMobile}
                                 />
                               </div>
                             )}

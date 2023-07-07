@@ -38,6 +38,7 @@ type TablePermissionsProps = {
   tableUsersIds: User[];
   setTableMembers: React.Dispatch<React.SetStateAction<string[]>>;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
+  isMobile: boolean;
 };
 
 const TablePermissions: React.FC<TablePermissionsProps> = ({
@@ -51,21 +52,29 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
   tableUsersIds,
   setTableMembers,
   setRerenderSignal,
+  isMobile
 }) => {
   const [members, setMembers] = useState<Member[]>([]);
   const [membersRerenderSignal, setMembersRerenderSignal] = useState(false);
-
+  
   const TABLE_HEAD = ["Member", "Level", "Permissions", "Remove"];
-  const ADMIN_TABLE_HEAD = ["Member", "Level", "Permissions", "Remove"];
-  const RENDER_HEAD = isAdmin ? ADMIN_TABLE_HEAD : TABLE_HEAD;
+  const MOBILE_TABLE_HEAD = ["Member", "Permissions", "Remove"];
+  const RENDER_HEAD = isMobile ? MOBILE_TABLE_HEAD : TABLE_HEAD;
   const currentUser = user;
+
   //pagination state
-  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = isMobile ? 3 : 5;
+  const [totalPages, setTotalPages] = useState(Math.ceil(members.length / pageSize));
   const [currentPage, setCurrentPage] = useState(1);
   // CONST PAGE SIZE
-  const pageSize = 5;
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
+
+  //on members change count total pages
+  useEffect(() => {
+      setTotalPages(Math.ceil(members.length / pageSize));
+      console.log(Math.ceil(members.length / pageSize))
+    }, [members]);
 
   const [isPermissionEditModalVisible, setIsPermissionEditModalVisible] =
     useState(false);
@@ -177,8 +186,8 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
 
   return (
     <>
-      <CardBody className="px-0">
-        <table className="w-full min-w-max table-auto text-left">
+      <CardBody className="px-0 md:p-0 pt-6 md:pt-6">
+        <table className="w-screen md:w-full min-w-max table-auto -translate-x-6 md:translate-x-0 text-left">
           <thead>
             <tr>
               {RENDER_HEAD.map((head) => (
@@ -241,20 +250,31 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
                             >
                               {user.email}
                             </Typography>
+                            {isMobile &&
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal opacity-70"
+                            >
+                              {user.level}
+                            </Typography>
+                            }
                           </div>
                         </div>
                       </td>
-                      <td className={classes}>
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {user.level ? user.level : ""}
-                          </Typography>
-                        </div>
-                      </td>
+                      {!isMobile && (
+                        <td className={classes}>
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {user.level ? user.level : ""}
+                            </Typography>
+                          </div>
+                        </td>
+                      )}
                       <td className={classes}>
                         {isAdmin ? (
                           <Select
