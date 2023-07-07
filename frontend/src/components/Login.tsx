@@ -123,7 +123,7 @@ const Login: React.FC<LoginProps> = ({ setIsLoggedIn }) => {
 
   return (
     <div className="flex justify-center items-center w-screen h-screen">
-      <div className="p-10 bg-slate-300 rounded-xl shadow-xl">
+      <div className="p-10 bg-slate-300 rounded-xl md:shadow-xl">
         <form className="">
           <div
             className="relative"

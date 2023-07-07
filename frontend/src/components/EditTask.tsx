@@ -46,6 +46,7 @@ interface EditTaskProps {
   currentTableId: string;
   responsibleUsers: User[];
   setResponsibleUsers: React.Dispatch<React.SetStateAction<User[]>>;
+  isMobile: boolean;
 }
 
 const EditTask: React.FC<EditTaskProps> = ({
@@ -57,6 +58,7 @@ const EditTask: React.FC<EditTaskProps> = ({
   currentTableId,
   responsibleUsers,
   setResponsibleUsers,
+  isMobile
 }) => {
   const [isDeleteTaskModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteTaskModalMessage, setDeleteTaskModalMessage] = useState("");
@@ -218,12 +220,12 @@ const EditTask: React.FC<EditTaskProps> = ({
           }}
         >
           <div
-            className="bg-white p-6 rounded-md cursor-default w-1/3 min-h-1/2"
+            className="bg-white p-6 rounded-md cursor-default w-screen lg:w-1/2 2xl:w-1/3 2xl:min-h-1/2"
             onClick={(event) => event.stopPropagation()}
           >
             <div>
-              <div className="grid grid-cols-2 font-400 text-xs text-gray-600">
-                <div>
+              <div className="grid grid-cols-10 font-400 text-xs text-gray-600">
+                <div className="col-span-9">
                   <p>
                     <span>Created on {createdAt}</span>
                   </p>
@@ -233,7 +235,7 @@ const EditTask: React.FC<EditTaskProps> = ({
                     )}
                   </p>
                 </div>
-                <div className="flex justify-end">
+                <div className="flex justify-end grid-cols-1">
                   <img
                     src={process.env.PUBLIC_URL + "/icon-trash.svg"}
                     alt="Trash Icon"
@@ -288,6 +290,7 @@ const EditTask: React.FC<EditTaskProps> = ({
                 setResponsibleUsers={setResponsibleUsers}
                 currentTableId={currentTableId}
                 task={task}
+                isMobile={isMobile}
               ></EditTaskAssignUser>
             </div>
           </div>

@@ -44,14 +44,9 @@ const MembersPagination: React.FC<MembersPaginationProps> = ({
     setCurrentPage((prevPage) => prevPage + 1);
   };
 
-  //on members change count total pages
-  useEffect(() => {
-    setTotalPages(Math.ceil(members.length / pageSize));
-  }, [members]);
-
   if (members.length > 0) {
     return (
-      <div className="flex justify-center">
+      <div className="flex justify-center mt-4">
         <div className="flex items-center gap-8">
           <IconButton
             size="sm"

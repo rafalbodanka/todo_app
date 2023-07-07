@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./Login";
@@ -38,6 +38,32 @@ const AuthenticatedRoutes = ({
   rerenderSignal,
   setRerenderSignal,
 }: AuthenticatedRoutesProps) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+
+    // Function to check if the window width corresponds to mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+  
+    // Add event listener for window resize
+    useEffect(() => {
+      // Initially check the mobile status
+      checkMobile();
+  
+      // Event listener for window resize
+      const handleResize = () => {
+        checkMobile();
+      };
+  
+      // Add event listener
+      window.addEventListener('resize', handleResize);
+  
+      // Clean up the event listener on component unmount
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }, []);
+
   return (
     <Auth
       setUser={setUser}
@@ -63,7 +89,7 @@ const AuthenticatedRoutes = ({
           path="/user"
           element={
             isLoggedIn ? (
-              <UserSettings user={user} />
+              <UserSettings user={user} isMobile={isMobile}/>
             ) : (
               <Navigate to="/" replace />
             )
@@ -72,7 +98,7 @@ const AuthenticatedRoutes = ({
         <Route
           path="/invitations"
           element={
-            isLoggedIn ? <UserInvitations /> : <Navigate to="/" replace />
+            isLoggedIn ? <UserInvitations isMobile={isMobile}/> : <Navigate to="/" replace />
           }
         />
         <Route
@@ -92,6 +118,7 @@ const AuthenticatedRoutes = ({
               <Unauthorized />
             ) : (
               <Table
+                isMobile={isMobile}
                 user={user}
                 rerenderSignal={rerenderSignal}
                 setRerenderSignal={setRerenderSignal}

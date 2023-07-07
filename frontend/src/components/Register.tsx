@@ -217,7 +217,7 @@ const Register = () => {
 
   return (
     <div className="flex justify-center items-center w-screen h-screen">
-      <div className="p-10 bg-slate-300 rounded-xl shadow-xl">
+      <div className="p-10 bg-slate-300 rounded-xl md:shadow-xl">
         {!isRegisteredSuccesfully ? (
           <>
             <form className="">
@@ -362,7 +362,7 @@ const Register = () => {
               </div>
               <div className="flex justify-center items-center">
                 <button
-                  className="bg-purple-400 p-2 pl-5 pr-5 rounded-lg hover:bg-purple-500 text-white duration-200 font-700"
+                  className="bg-purple-900 p-2 pl-5 pr-5 rounded-lg hover:bg-purple-500 text-white duration-200 font-700"
                   onClick={(e) => handleLogin(e)}
                 >
                   Sign up
@@ -372,7 +372,7 @@ const Register = () => {
             <div className="flex justify-center mt-4">
               <p className="mb-0 text-base">
                 Already have an account?{" "}
-                <span className="text-purple-500 font-700 cursor-pointer">
+                <span className="text-purple-900 font-700 cursor-pointer">
                   {" "}
                   <Link to="/login">Log in</Link>
                 </span>

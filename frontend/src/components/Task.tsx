@@ -39,6 +39,7 @@ interface TaskProps {
   setIsDraggingPossible: React.Dispatch<React.SetStateAction<boolean>>;
   currentTableId: string;
   responsibleUsers: User[];
+  isMobile: boolean;
 }
 
 const Task: React.FC<TaskProps> = ({
@@ -48,6 +49,7 @@ const Task: React.FC<TaskProps> = ({
   isDraggingPossible,
   setIsDraggingPossible,
   currentTableId,
+  isMobile
 }) => {
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [responsibleUsers, setResponsibleUsers] = useState(
@@ -174,6 +176,7 @@ const Task: React.FC<TaskProps> = ({
             currentTableId={currentTableId}
             responsibleUsers={responsibleUsers}
             setResponsibleUsers={setResponsibleUsers}
+            isMobile={isMobile}
           />
         )}
       </div>

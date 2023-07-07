@@ -36,7 +36,7 @@ const AcceptInvitation: React.FC<AcceptInvitationProps> = ({
   return (
     <Button
       onClick={handleAcceptInvitation}
-      className="bg-purple-900 shadow-gray-400 hover:shadow-gray-400"
+      className="invitation-btn bg-purple-900 shadow-gray-400 hover:shadow-gray-400"
     >
       Accept
     </Button>

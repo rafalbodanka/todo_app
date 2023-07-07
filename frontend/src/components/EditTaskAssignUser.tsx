@@ -46,6 +46,7 @@ interface EditTaskAssignUserProps {
   task: TaskData;
   responsibleUsers: User[];
   setResponsibleUsers: React.Dispatch<React.SetStateAction<User[]>>;
+  isMobile: boolean;
 }
 
 const EditTaskAssignUser: React.FC<EditTaskAssignUserProps> = ({
@@ -53,6 +54,7 @@ const EditTaskAssignUser: React.FC<EditTaskAssignUserProps> = ({
   task,
   responsibleUsers,
   setResponsibleUsers,
+  isMobile
 }) => {
   const [members, setMembers] = useState<Member[]>([]);
   const [responsibleUsersRerenderSignal, setResponsibleUsersRerenderSignal] =
@@ -157,7 +159,7 @@ const EditTaskAssignUser: React.FC<EditTaskAssignUserProps> = ({
       <p className="font-400">
         <span>Assigned users</span>
         <span>
-          <Popover placement="right">
+          <Popover placement={isMobile ? "top" : "right"}>
             <PopoverHandler>
               <Button
                 className="ml-2 p-2 h-8 w-8 text-xs hover:shadow-md"
@@ -167,7 +169,7 @@ const EditTaskAssignUser: React.FC<EditTaskAssignUserProps> = ({
               </Button>
             </PopoverHandler>
             <PopoverContent className="z-40 p-0">
-              <Card className="w-96 mt-2 max-h-64 overflow-y-auto scrollbar-none">
+              <Card className={`${isMobile ? "w-screen" : "w-96"} mt-2 max-h-64 overflow-y-auto scrollbar-none`}>
                 <List>
                   {members.map((member, index) => {
                     return (
@@ -205,8 +207,8 @@ const EditTaskAssignUser: React.FC<EditTaskAssignUserProps> = ({
         </span>
       </p>
       {responsibleUsers.length >= 1 && (
-        <Card className="w-96 mt-2 max-h-80 overflow-y-auto scrollbar-none">
-          <List>
+        <Card className="sm:w-96 mt-2 max-h-80 overflow-y-auto scrollbar-none">
+          <List className="">
             {responsibleUsers.map((member) => {
               return (
                 <ListItem

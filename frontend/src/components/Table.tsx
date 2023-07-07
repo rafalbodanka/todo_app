@@ -38,12 +38,14 @@ interface TableProps {
   user: User;
   rerenderSignal: boolean;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
+  isMobile: boolean;
 }
 
 const Table: React.FC<TableProps> = ({
   user,
   rerenderSignal,
   setRerenderSignal,
+  isMobile
 }) => {
   const [columns, setColumns] = useState<ColumnData[]>([]);
   const [currentTable, setCurrentTable] = useState("");
@@ -89,10 +91,10 @@ const Table: React.FC<TableProps> = ({
   return (
     <div className="w-full h-full font-Roboto font-500">
       <div className="">
-        <div className="p-4">
-          <div className="grid grid-cols-8">
-            <div className="col-span-6 items-end">
-              <div className="scrollable-container overflow-x-auto whitespace-nowrap h-full">
+        <div className="">
+          <div className="grid lg:grid-cols-8 grid-flow-row lg:grid-flow-col w-full">
+            <div className="lg:col-span-6 lg:items-end order-2 overflow-x-auto scrollbar-thin p-2">
+              <div className="scrollable-container whitespace-nowrap h-full">
                 <Set
                   user={user}
                   tables={tables}
@@ -100,17 +102,19 @@ const Table: React.FC<TableProps> = ({
                   setRerenderSignal={setRerenderSignal}
                   currentTable={currentTable}
                   setCurrentTable={setCurrentTable}
+                  isMobile={isMobile}
                 ></Set>
               </div>
             </div>
-            <div className="col-span-2 p-6 flex justify-center">
+            <div className="lg:col-span-2 p-6 flex justify-end lg:justify-center lg:order-2 w-full lg:w-full overflow-none">
               {user.email && <UserNav user={user}></UserNav>}
             </div>
           </div>
         </div>
         {currentTable && (
-          <div className="flex max-w-screen overflow-x-auto scrollbar-thin">
+          <div className="flex max-w-screen overflow-x-auto scrollbar-thin lg:mt-0 mt-4">
             <Column
+              isMobile={isMobile}
               columns={columns}
               setColumns={setColumns}
               setRerenderSignal={setRerenderSignal}
