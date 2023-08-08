@@ -8,16 +8,7 @@ import AddTable from "./AddTable";
 import DeleteColumn from "./DeleteColumn";
 import EditTable from "./EditTable";
 
-interface TaskData {
-  _id: string;
-  title: string;
-  completed: boolean;
-  column: string;
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
-  responsibleUsers: User[];
-}
+import { TaskData } from "./Task";
 
 interface User {
   _id: string;
@@ -63,7 +54,7 @@ const Set: React.FC<SetProps> = ({
   setRerenderSignal,
   currentTable,
   setCurrentTable,
-  isMobile
+  isMobile,
 }) => {
   const switchTable = (tableId: string, columns: Column[]) => {
     setColumns(columns);
@@ -86,9 +77,7 @@ const Set: React.FC<SetProps> = ({
                 }
               }}
             >
-              <div>
-                {table.title}
-              </div>
+              <div>{table.title}</div>
               <EditTable
                 user={user}
                 table={table}

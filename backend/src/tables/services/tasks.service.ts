@@ -303,4 +303,60 @@ export class TasksService {
     await task.save();
     return true;
   }
+
+  async toggleEstimation(
+    taskId: string,
+    isEstimated: boolean,
+  ): Promise<boolean> {
+    const task = await this.taskModel.findOneAndUpdate(
+      {
+        _id: taskId,
+      },
+      {
+        isEstimated: isEstimated,
+      },
+      { new: true },
+    );
+    if (!task) {
+      throw new Error('Task not found');
+    }
+    return true;
+  }
+
+  async updateDifficulty(taskId: string, difficulty: number): Promise<boolean> {
+    const task = await this.taskModel.findOneAndUpdate(
+      {
+        _id: taskId,
+      },
+      {
+        difficulty: difficulty,
+      },
+      { new: true },
+    );
+    if (!task) {
+      throw new Error('Task not found');
+    }
+    return true;
+  }
+
+  async setDateRange(
+    taskId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<boolean> {
+    const task = await this.taskModel.findOneAndUpdate(
+      {
+        _id: taskId,
+      },
+      {
+        startDate: startDate,
+        endDate: endDate,
+      },
+      { new: true },
+    );
+    if (!task) {
+      throw new Error('Task not found');
+    }
+    return true;
+  }
 }

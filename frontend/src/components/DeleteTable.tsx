@@ -3,16 +3,7 @@ import axios, { AxiosError } from "axios";
 
 import { Button } from "@material-tailwind/react";
 
-interface TaskData {
-  _id: string;
-  title: string;
-  completed: boolean;
-  column: string;
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
-  responsibleUsers: User[];
-}
+import { TaskData } from "./Task";
 
 interface User {
   _id: string;

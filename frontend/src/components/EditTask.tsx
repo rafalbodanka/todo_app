@@ -1,18 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { TaskData } from "./Task";
 
 import EditTaskAssignUser from "./EditTaskAssignUser";
-
-interface TaskData {
-  _id: string;
-  title: string;
-  completed: boolean;
-  column: string;
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
-  responsibleUsers: User[];
-}
+import Estimation from "./Estimation";
 
 interface ColumnData {
   _id: string;
@@ -58,7 +49,7 @@ const EditTask: React.FC<EditTaskProps> = ({
   currentTableId,
   responsibleUsers,
   setResponsibleUsers,
-  isMobile
+  isMobile,
 }) => {
   const [isDeleteTaskModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteTaskModalMessage, setDeleteTaskModalMessage] = useState("");
@@ -137,7 +128,6 @@ const EditTask: React.FC<EditTaskProps> = ({
 
     //replacing new lines with special character before sending to backend
     const formattedNotes = newNotes.trim().replace(/\n/g, "||");
-
     try {
       const response = await axios.post(
         `http://localhost:5000/tasks/${taskId}/notes`,
@@ -276,6 +266,11 @@ const EditTask: React.FC<EditTaskProps> = ({
                   onBlur={() => setTaskTitle(newTaskTitle, task._id)}
                   className="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                 ></input>
+                <Estimation
+                  task={task}
+                  isMobile={isMobile}
+                  setRerenderSignal={setRerenderSignal}
+                ></Estimation>
                 <p className="font-400 mt-4">Notes</p>
                 <textarea
                   value={newTaskNotes}

@@ -11,6 +11,8 @@ import DeleteColumn from "./DeleteColumn";
 import AddColumn from "./AddColumn";
 import EditColumn from "./EditColumn";
 
+import { TaskData } from "./Task";
+
 interface User {
   _id: string;
   email: string;
@@ -38,23 +40,12 @@ interface ColumnData {
   showCompletedTasks: boolean;
 }
 
-interface TaskData {
-  _id: string;
-  title: string;
-  completed: boolean;
-  column: string;
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
-  responsibleUsers: User[];
-}
-
 const Column: React.FC<ColumnProps> = ({
   columns,
   setColumns,
   setRerenderSignal,
   currentTable,
-  isMobile
+  isMobile,
 }) => {
   const [isDraggingPossible, setIsDraggingPossible] = useState(true);
 
