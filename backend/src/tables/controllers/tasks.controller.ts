@@ -9,6 +9,8 @@ import {
   Request,
   Param,
   Res,
+  Put,
+  Patch,
 } from '@nestjs/common';
 import * as mongoose from 'mongoose';
 import { AuthenticatedGuard } from 'src/auth/authenticated.guard';
@@ -184,6 +186,70 @@ export class TasksController {
       return res.status(HttpStatus.NOT_FOUND).json({
         message: 'Task not found',
         error: error.message,
+      });
+    }
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Patch('/:id/estimation')
+  async toggleEstimation(
+    @Param('id') id: string,
+    @Body('isEstimated') isEstimated: boolean,
+    @Res() res,
+  ) {
+    const result = await this.tasksService.toggleEstimation(id, isEstimated);
+
+    if (result) {
+      return res.status(HttpStatus.OK).json({
+        message: 'Task estimation status changed successfully',
+        data: result,
+      });
+    } else {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Task not found',
+      });
+    }
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Patch('/:id/difficulty')
+  async updateDifficulty(
+    @Param('id') id: string,
+    @Body('difficulty') difficulty: number,
+    @Res() res,
+  ) {
+    const result = await this.tasksService.updateDifficulty(id, difficulty);
+
+    if (result) {
+      return res.status(HttpStatus.OK).json({
+        message: 'Task difficulty updated successfully',
+        data: result,
+      });
+    } else {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Task not found',
+      });
+    }
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Patch('/:id/date-range')
+  async setDateRange(
+    @Param('id') id: string,
+    @Body('startDate') startDate: Date,
+    @Body('endDate') endDate: Date,
+    @Res() res,
+  ) {
+    const result = await this.tasksService.setDateRange(id, startDate, endDate);
+
+    if (result) {
+      return res.status(HttpStatus.OK).json({
+        message: 'Task date range updated successfully',
+        data: result,
+      });
+    } else {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Task not found',
       });
     }
   }

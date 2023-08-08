@@ -8,16 +8,7 @@ import InviteUser from "./InviteUser";
 import TablePermissions from "./TablePermissions";
 import MembersPagination from "./MembersPagination";
 
-interface TaskData {
-  _id: string;
-  title: string;
-  completed: boolean;
-  column: string;
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
-  responsibleUsers: User[];
-}
+import { TaskData } from "./Task";
 
 interface User {
   _id: string;
@@ -65,7 +56,7 @@ const EditTable: React.FC<EditTableProps> = ({
   tables,
   setCurrentTable,
   setColumns,
-  isMobile
+  isMobile,
 }) => {
   const [isEditTableModalOpen, setIsEditTableOpen] = useState(false);
   const [EditTableModalMessage, setEditTableModalMessage] = useState("");

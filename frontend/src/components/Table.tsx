@@ -4,23 +4,14 @@ import Set from "./Set";
 import Column from "./Column";
 import UserNav from "./UserNav";
 
+import { TaskData } from "./Task";
+
 type ColumnData = {
   _id: string;
   title: string;
   pendingTasks: TaskData[];
   completedTasks: TaskData[];
   showCompletedTasks: boolean;
-};
-
-type TaskData = {
-  _id: string;
-  title: string;
-  completed: boolean;
-  column: string;
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
-  responsibleUsers: User[];
 };
 
 interface User {
@@ -45,7 +36,7 @@ const Table: React.FC<TableProps> = ({
   user,
   rerenderSignal,
   setRerenderSignal,
-  isMobile
+  isMobile,
 }) => {
   const [columns, setColumns] = useState<ColumnData[]>([]);
   const [currentTable, setCurrentTable] = useState("");
@@ -64,7 +55,7 @@ const Table: React.FC<TableProps> = ({
       });
       if (response.status === 200) {
         setTables(response.data);
-        let newColumns; // Define newColumns variable
+        let newColumns;
         if (currentTable) {
           const table = response.data.find(
             (table: any) => table._id === currentTable
@@ -77,7 +68,6 @@ const Table: React.FC<TableProps> = ({
           newColumns = response.data[0].columns;
         }
         if (newColumns) {
-          // Check if newColumns is defined
           setColumns(newColumns);
         }
       }

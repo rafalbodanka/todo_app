@@ -78,6 +78,27 @@ export const TaskSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    difficulty: {
+      type: Number,
+      min: 1,
+      max: 10,
+      default: 5,
+    },
+    isEstimated: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    startDate: {
+      type: Date,
+      default: Date.now,
+      required: false,
+    },
+    endDate: {
+      type: Date,
+      required: false,
+      default: Date.now,
+    },
   },
   {
     timestamps: true,
