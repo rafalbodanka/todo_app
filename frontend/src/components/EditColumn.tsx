@@ -1,23 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ColumnType } from "./Types";
 
 interface EditColumnProps {
-  column: ColumnData;
+  column: ColumnType;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-interface ColumnData {
-  _id: string;
-  title: string;
-  pendingTasks: TaskData[];
-  completedTasks: TaskData[];
-  showCompletedTasks: boolean;
-}
-
-interface TaskData {
-  _id: string;
-  title: string;
-  completed: boolean;
 }
 
 const EditColumn: React.FC<EditColumnProps> = ({

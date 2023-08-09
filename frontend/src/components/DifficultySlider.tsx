@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Slider from "@mui/material/Slider";
-import { TaskData } from "./Task";
+import { TaskType } from "./Types";
 import ConnectionErrorModal from "./ConnectionErrorModal";
 import axios from "axios";
 
 type DifficultySliderProps = {
-  task: TaskData;
+  task: TaskType;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 

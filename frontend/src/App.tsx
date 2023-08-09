@@ -1,19 +1,7 @@
-import "./App.css";
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import { User } from "./components/Types";
 import AuthenticatedRoutes from "./components/AuthenticatedRoutes";
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-  createdAt: string;
-  updatedAt: string;
-}
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User>({

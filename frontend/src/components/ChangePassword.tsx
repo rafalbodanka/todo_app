@@ -1,8 +1,7 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Input } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
-import { Dialog } from "@material-tailwind/react";
 
 type ChangePasswordProps = {
   userId: string;
@@ -12,25 +11,20 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ userId }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmedNewPassword, setConfirmedNewPassword] = useState("");
-
   const [isOldPasswordValid, setIsOldPasswordValid] = useState(true);
   const [isNewPasswordValid, setIsNewPasswordValid] = useState(true);
   const [invalidNewPasswordMessage, setInvalidNewPasswordMessage] =
     useState("");
-
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [isResultSuccess, setIsResultSucess] = useState(true);
   const [resultModalMessage, setResultModalMessage] = useState("");
-
   const [invalidOldPasswordMessage, setInvalidOldPasswordMessage] = useState(
     "Incorrect password."
   );
-
   const [
     invalidConfirmedNewPasswordMessage,
     setInvalidConfirmedNewPasswordMessage,
   ] = useState("Passwords don't match.");
-
   const [isConfirmedNewPasswordValid, setIsConfirmedNewPasswordValid] =
     useState(true);
 

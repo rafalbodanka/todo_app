@@ -1,48 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import EditTask from "./EditTask";
+import { TaskType, User } from "./Types";
 import TimeRoundIcon from "@rsuite/icons/TimeRound";
 import {
   Popover,
   PopoverHandler,
   PopoverContent,
-  Button,
   Tooltip,
 } from "@material-tailwind/react";
 
-export interface TaskData {
-  _id: string;
-  title: string;
-  completed: boolean;
-  column: string;
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
-  responsibleUsers: User[];
-  isEstimated: boolean;
-  difficulty: number;
-  startDate: Date;
-  endDate: Date | null;
-}
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Member {
-  user: User;
-  permission: string;
-}
-
 interface TaskProps {
-  task: TaskData;
+  task: TaskType;
   taskIndex: Number;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   isDraggingPossible: boolean;

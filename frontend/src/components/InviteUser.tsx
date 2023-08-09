@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Input, Button, tab } from "@material-tailwind/react";
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-}
+import { Input, Button } from "@material-tailwind/react";
+import { User } from "./Types";
 
 type UserProps = {
   user: User;
