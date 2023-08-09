@@ -3,7 +3,6 @@ import axios from "axios";
 import { User, Member } from "./Types";
 
 import {
-  Checkbox,
   Select,
   Option,
   Typography,

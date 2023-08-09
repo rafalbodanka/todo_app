@@ -10,6 +10,7 @@ import DeleteColumn from "./DeleteColumn";
 import AddColumn from "./AddColumn";
 import EditColumn from "./EditColumn";
 import { ColumnType } from "./Types";
+import ColumnFilter from "./ColumnFilter";
 
 interface ColumnProps {
   columns: ColumnType[];
@@ -231,16 +232,21 @@ const Column: React.FC<ColumnProps> = ({
         {columns.map((column) => (
           <div key={column._id} className="tasks_container">
             <div className="relative">
-              <EditColumn
-                column={column}
-                setRerenderSignal={setRerenderSignal}
-              ></EditColumn>
-              <DeleteColumn
-                columns={columns}
-                columnTitle={column.title}
-                columnId={column._id}
-                setRerenderSignal={setRerenderSignal}
-              />
+              <div className="flex justify-between">
+                <EditColumn
+                  column={column}
+                  setRerenderSignal={setRerenderSignal}
+                ></EditColumn>
+                <div className="flex gap-4">
+                  <ColumnFilter currentTable={currentTable}></ColumnFilter>
+                  <DeleteColumn
+                    columns={columns}
+                    columnTitle={column.title}
+                    columnId={column._id}
+                    setRerenderSignal={setRerenderSignal}
+                  />
+                </div>
+              </div>
               <AddTask
                 columnId={column._id}
                 setRerenderSignal={setRerenderSignal}
