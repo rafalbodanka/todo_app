@@ -6,17 +6,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import axios from "axios";
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import { User } from "./Types";
 
 type AuthProps = {
   children: React.ReactNode;

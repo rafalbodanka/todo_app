@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { User, Member } from "./Types";
 
 import {
   Checkbox,
@@ -12,20 +13,6 @@ import {
 } from "@material-tailwind/react";
 import RemoveMember from "./RemoveMember";
 import MembersPagination from "./MembersPagination";
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-}
-
-interface Member {
-  user: User;
-  permission: string;
-}
 
 type TablePermissionsProps = {
   user: User;
@@ -52,11 +39,11 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
   tableUsersIds,
   setTableMembers,
   setRerenderSignal,
-  isMobile
+  isMobile,
 }) => {
   const [members, setMembers] = useState<Member[]>([]);
   const [membersRerenderSignal, setMembersRerenderSignal] = useState(false);
-  
+
   const TABLE_HEAD = ["Member", "Level", "Permissions", "Remove"];
   const MOBILE_TABLE_HEAD = ["Member", "Permissions", "Remove"];
   const RENDER_HEAD = isMobile ? MOBILE_TABLE_HEAD : TABLE_HEAD;
@@ -64,7 +51,9 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
 
   //pagination state
   const pageSize = isMobile ? 3 : 5;
-  const [totalPages, setTotalPages] = useState(Math.ceil(members.length / pageSize));
+  const [totalPages, setTotalPages] = useState(
+    Math.ceil(members.length / pageSize)
+  );
   const [currentPage, setCurrentPage] = useState(1);
   // CONST PAGE SIZE
   const startIndex = (currentPage - 1) * pageSize;
@@ -72,9 +61,9 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
 
   //on members change count total pages
   useEffect(() => {
-      setTotalPages(Math.ceil(members.length / pageSize));
-      console.log(Math.ceil(members.length / pageSize))
-    }, [members]);
+    setTotalPages(Math.ceil(members.length / pageSize));
+    console.log(Math.ceil(members.length / pageSize));
+  }, [members]);
 
   const [isPermissionEditModalVisible, setIsPermissionEditModalVisible] =
     useState(false);
@@ -250,15 +239,15 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
                             >
                               {user.email}
                             </Typography>
-                            {isMobile &&
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-normal opacity-70"
-                            >
-                              {user.level}
-                            </Typography>
-                            }
+                            {isMobile && (
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal opacity-70"
+                              >
+                                {user.level}
+                              </Typography>
+                            )}
                           </div>
                         </div>
                       </td>

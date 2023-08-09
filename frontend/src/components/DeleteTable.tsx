@@ -1,44 +1,15 @@
 import React, { useState } from "react";
-import axios, { AxiosError } from "axios";
-
+import axios from "axios";
 import { Button } from "@material-tailwind/react";
-
-import { TaskData } from "./Task";
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Column {
-  _id: string;
-  title: string;
-  pendingTasks: TaskData[];
-  completedTasks: TaskData[];
-  showCompletedTasks: boolean;
-}
-
-interface TableProps {
-  columns: Column[];
-  title: string;
-  users: User[];
-  __v: number;
-  _id: string;
-}
+import { ColumnType, TableType } from "./Types";
 
 type DeleteTableProps = {
   tableId: string;
   tableTitle: string;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
-  tables: TableProps[];
+  tables: TableType[];
   setCurrentTable: React.Dispatch<string>;
-  setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
+  setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
 };
 
 const DeleteTable: React.FC<DeleteTableProps> = ({

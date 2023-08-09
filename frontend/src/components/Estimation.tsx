@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TaskData } from "./Task";
+import { TaskType } from "./Types";
 import { Checkbox } from "@material-tailwind/react";
 import DifficultySlider from "./DifficultySlider";
 import EstimationDateRangePicker from "./EstimationDateRangePicker";
@@ -7,7 +7,7 @@ import ConnectionErrorModal from "./ConnectionErrorModal";
 import axios from "axios";
 
 type EstimationProps = {
-  task: TaskData;
+  task: TaskType;
   isMobile: boolean;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 };

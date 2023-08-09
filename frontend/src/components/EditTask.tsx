@@ -1,35 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { TaskData } from "./Task";
-
+import { TaskType, User } from "./Types";
 import EditTaskAssignUser from "./EditTaskAssignUser";
 import Estimation from "./Estimation";
 
-interface ColumnData {
-  _id: string;
-  title: string;
-  tasks: TaskData[];
-  showCompletedTasks: boolean;
-}
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Member {
-  user: User;
-  permission: string;
-}
-
 interface EditTaskProps {
-  task: TaskData;
+  task: TaskType;
   isEditTaskModalOpen: boolean;
   setIsEditTaskModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;

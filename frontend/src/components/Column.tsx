@@ -1,43 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { DraggableLocation, DropResult } from "@hello-pangea/dnd";
 import { DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { CSSProperties } from "react";
 import axios from "axios";
-
 import Task from "./Task";
 import AddTask from "./AddTask";
 import DeleteColumn from "./DeleteColumn";
 import AddColumn from "./AddColumn";
 import EditColumn from "./EditColumn";
-
-import { TaskData } from "./Task";
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import { ColumnType } from "./Types";
 
 interface ColumnProps {
-  columns: ColumnData[];
-  setColumns: React.Dispatch<React.SetStateAction<ColumnData[]>>;
+  columns: ColumnType[];
+  setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   currentTable: string;
   isMobile: boolean;
-}
-
-interface ColumnData {
-  _id: string;
-  title: string;
-  pendingTasks: TaskData[];
-  completedTasks: TaskData[];
-  showCompletedTasks: boolean;
 }
 
 const Column: React.FC<ColumnProps> = ({

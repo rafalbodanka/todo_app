@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import DateRangePicker from "rsuite/DateRangePicker";
 import "rsuite/dist/rsuite.min.css";
-import { TaskData } from "./Task";
+import { TaskType } from "./Types";
 import { DateRange } from "rsuite/esm/DateRangePicker/types";
 import ConnectionErrorModal from "./ConnectionErrorModal";
 import axios from "axios";
 
 const EstimationDateRangePicker: React.FC<{
   isMobile: boolean;
-  task: TaskData;
+  task: TaskType;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ isMobile, task, setRerenderSignal }) => {
   const [isError, setIsError] = useState(false);

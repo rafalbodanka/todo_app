@@ -3,27 +3,7 @@ import axios from "axios";
 import Set from "./Set";
 import Column from "./Column";
 import UserNav from "./UserNav";
-
-import { TaskData } from "./Task";
-
-type ColumnData = {
-  _id: string;
-  title: string;
-  pendingTasks: TaskData[];
-  completedTasks: TaskData[];
-  showCompletedTasks: boolean;
-};
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import { ColumnType, User } from "./Types";
 
 interface TableProps {
   user: User;
@@ -38,7 +18,7 @@ const Table: React.FC<TableProps> = ({
   setRerenderSignal,
   isMobile,
 }) => {
-  const [columns, setColumns] = useState<ColumnData[]>([]);
+  const [columns, setColumns] = useState<ColumnType[]>([]);
   const [currentTable, setCurrentTable] = useState("");
 
   const [tables, setTables] = useState([]);

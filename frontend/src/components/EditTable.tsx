@@ -1,50 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-
 import { Input } from "@material-tailwind/react";
-
 import DeleteTable from "./DeleteTable";
 import InviteUser from "./InviteUser";
 import TablePermissions from "./TablePermissions";
-import MembersPagination from "./MembersPagination";
-
-import { TaskData } from "./Task";
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Column {
-  _id: string;
-  title: string;
-  pendingTasks: TaskData[];
-  completedTasks: TaskData[];
-  showCompletedTasks: boolean;
-}
-
-interface TableProps {
-  columns: Column[];
-  title: string;
-  users: User[];
-  __v: number;
-  _id: string;
-}
+import { ColumnType, User, TableType } from "./Types";
 
 type EditTableProps = {
   user: User;
-  table: TableProps;
+  table: TableType;
   currentTable: string;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
-  tables: TableProps[];
+  tables: TableType[];
   setCurrentTable: React.Dispatch<string>;
-  setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
+  setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
   isMobile: boolean;
 };
 
