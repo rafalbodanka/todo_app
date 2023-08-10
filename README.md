@@ -64,6 +64,8 @@ Create and manage the tasks.
 
 ![Edit task view](./assets/edit-task-view.png)
 
+![Edit task date view](./assets/edit-task-date-view.png)
+
 Update your personal data and change profile icon.
 
 ![User nav view](./assets/user-nav.jpg)
