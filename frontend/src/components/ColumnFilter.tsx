@@ -27,6 +27,8 @@ const ColumnFilter: React.FC<ColumnFilterProps> = ({
   const [isDifficultyListOpen, setIsDifficultyListOpen] = useState(true);
   const [isAssignmentListOpen, setIsAssignmentListOpen] = useState(true);
   const [members, setMembers] = useState<Member[]>([]);
+  const [isMembersFetchError, setIsMembersFetchError] = useState(false);
+  const membersFetchErrorMessage = "Members were not loaded. Refresh the page.";
 
   const addFilter = (filterName: string, filterValue: string) => {
     setFilters((prevFilters) => ({
@@ -49,6 +51,8 @@ const ColumnFilter: React.FC<ColumnFilterProps> = ({
   //fetch table members data
   useEffect(() => {
     const fetchMembersData = async () => {
+      setIsMembersFetchError(false);
+      if (!currentTable) return;
       try {
         const response = await axios.get(
           `http://localhost:5000/tables/${currentTable}/members`,
@@ -63,10 +67,12 @@ const ColumnFilter: React.FC<ColumnFilterProps> = ({
         if (response.status === 200) {
           setMembers(response.data.data);
         }
-      } catch (err: any) {}
+      } catch (err) {
+        setIsMembersFetchError(true);
+      }
     };
     fetchMembersData();
-  }, []);
+  }, [currentTable]);
 
   return (
     <Popover placement="bottom">
@@ -282,38 +288,43 @@ const ColumnFilter: React.FC<ColumnFilterProps> = ({
               V
             </div>
           </div>
-          {isAssignmentListOpen && (
-            <List className="w-24 min-w-[240px] max-w-[240px]">
-              {members.map((member) => (
-                <ListItem
-                  ripple={false}
-                  key={member.user._id}
-                  className={`rounded-none py-1.5 px-3 text-sm font-normal ${
-                    filters.assignment.includes(member.user._id) &&
-                    "bg-gray-300 hover:bg-gray-300"
-                  }`}
-                  onClick={() => {
-                    if (filters.assignment.includes(member.user._id)) {
-                      removeFilter("assignment", member.user._id);
-                    } else {
-                      addFilter("assignment", member.user._id);
-                    }
-                  }}
-                >
-                  <div className="flex gap-2 items-center">
-                    <Avatar
-                      src={`./userIcons/${member.user.userIconId}.svg`}
-                      alt={`${member.user.firstName} ${member.user.lastName} icon`}
-                      size="sm"
-                    />
-                    <p>
-                      {member.user.firstName} {member.user.lastName}
-                    </p>
-                  </div>
-                </ListItem>
-              ))}
-            </List>
-          )}
+          {isAssignmentListOpen &&
+            (!isMembersFetchError ? (
+              <List className="w-24 min-w-[240px] max-w-[240px]">
+                {members.map((member) => (
+                  <ListItem
+                    ripple={false}
+                    key={member.user._id}
+                    className={`rounded-none py-1.5 px-3 text-sm font-normal ${
+                      filters.assignment.includes(member.user._id) &&
+                      "bg-gray-300 hover:bg-gray-300"
+                    }`}
+                    onClick={() => {
+                      if (filters.assignment.includes(member.user._id)) {
+                        removeFilter("assignment", member.user._id);
+                      } else {
+                        addFilter("assignment", member.user._id);
+                      }
+                    }}
+                  >
+                    <div className="flex gap-2 items-center">
+                      <Avatar
+                        src={`./userIcons/${member.user.userIconId}.svg`}
+                        alt={`${member.user.firstName} ${member.user.lastName} icon`}
+                        size="sm"
+                      />
+                      <p>
+                        {member.user.firstName} {member.user.lastName}
+                      </p>
+                    </div>
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <p className="w-24 min-w-[240px] max-w-[240px] text-center">
+                {membersFetchErrorMessage}
+              </p>
+            ))}
         </div>
       </PopoverContent>
       <PopoverHandler>
