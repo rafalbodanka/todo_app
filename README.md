@@ -21,7 +21,7 @@ This is a simple to do app. Set up the table with your colleagues, workmates or 
    npm install
    ```
 
-4. Create a .env file in the backend folder and specify the necessary environment variables. You can use the .env.example file as a template. Look at [Configuration](#configuration) for more details.
+4. Create a .env file in the backend folder and specify the necessary environment variables. Look at [Configuration](#configuration) for more details.
 
 5. Start the backend server by running the following command:
 
