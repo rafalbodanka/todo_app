@@ -42,5 +42,13 @@ export type TaskType = {
   isEstimated: boolean;
   difficulty: number;
   startDate: Date;
-  endDate: Date | null;
+  endDate: Date;
+};
+
+export type Filters = {
+  isEstimated: string[];
+  difficulty: string[];
+  assignment: string[];
+  finishStatus: string[];
+  [key: string]: string[]; // Index signature for dynamic access
 };
