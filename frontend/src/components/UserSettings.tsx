@@ -1,16 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { Button, Input, Avatar, Popover, PopoverHandler, PopoverContent } from "@material-tailwind/react";
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-}
+import {
+  Button,
+  Input,
+  Avatar,
+  Popover,
+  PopoverHandler,
+  PopoverContent,
+} from "@material-tailwind/react";
+import { User } from "./Types";
 
 type userSettingsProps = {
   user: User;
@@ -23,8 +22,7 @@ const UserSettings: React.FC<userSettingsProps> = ({ user, isMobile }) => {
   const [email, setEmail] = useState("");
   const [level, setlevel] = useState("");
   const [userIconId, setUserIconId] = useState(Number);
-  const [userImage, setUserImage] = useState("");
-  const totalIcons = 20; // Total number of icons
+  const totalIcons = 20;
   const userIcons = Array.from(
     { length: totalIcons },
     (_, index) => `${index + 1}`
@@ -34,7 +32,6 @@ const UserSettings: React.FC<userSettingsProps> = ({ user, isMobile }) => {
   const [isLastNameValid, setIsLastNameValid] = useState(true);
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isLevelValid, setIsLevelValid] = useState(true);
-  const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [invalidFirstNameMessage, setInvalidFirstNameMessage] =
     useState("Invalid first name");
   const [invalidLastNameMessage, setInvalidLastNameMessage] = useState(
@@ -44,9 +41,6 @@ const UserSettings: React.FC<userSettingsProps> = ({ user, isMobile }) => {
     useState("Invalid email");
   const [invalidLevelMessage, setInvalidLevelMessage] =
     useState("Invalid level");
-  const [invalidPasswordMessage, setInvalidPasswordMessage] = useState(
-    "Password must have 8-30 characters"
-  );
 
   const [isEdited, setIsEdited] = useState(false);
   const [isEditSuccessful, setIsEditSuccessful] = useState(false);
@@ -217,61 +211,74 @@ const UserSettings: React.FC<userSettingsProps> = ({ user, isMobile }) => {
     <div className={`${isMobile ? "p-4" : "p-16"} text-black`}>
       <a href="/" className="inline-block text-md no-underline">
         <Button className="bg-purple-900 flex items-center shadow-gray-400 hover:shadow-gray-400">
-          <img src="./arrow-left.svg"></img>
+          <img alt="arrow left" src="./arrow-left.svg"></img>
           <p className="ml-4">go back to the planner</p>
         </Button>
       </a>
-      <p className={`text-xl mt-16 flex items-center ${isMobile && "justify-center"}`}>
-        <img src="./settings-wheel.svg"></img>
+      <p
+        className={`text-xl mt-16 flex items-center ${
+          isMobile && "justify-center"
+        }`}
+      >
+        <img alt="settings wheel" src="./settings-wheel.svg"></img>
         <span className="ml-2">Account settings</span>
       </p>
       <div className={`${!isMobile && "w-72"} mt-8`}>
-      <Popover placement={`${isMobile ? "bottom" : "right"}`}>
-        <PopoverHandler>
-        <div className="flex justify-center">
-          <label
-            htmlFor="file"
-            className="relative cursor-pointer"
-            onMouseEnter={() => setIsEditUserIconVisible(true)}
-            onMouseLeave={() => setIsEditUserIconVisible(false)}
-          >
-            <Avatar
-              className="w-32 h-32"
-              src={
-                userIconId === 0
-                  ? "./avatar.png"
-                  : `./userIcons/${userIconId}.svg`
-              }
-            ></Avatar>
-            <img
-              className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 w-1/3 -translate-y-1/2 opacity-0 duration-200 ${
-                isEditUserIconVisible && "opacity-100"
-              }`}
-              src="./edit-file.svg"
-            ></img>
-          </label>
-        </div>
-        </PopoverHandler>
-        <PopoverContent className="p-0">
-          <div>
-            <div className="bg-gray-200 rounded-lg shadow-lg">
-              <div className={`${isMobile && "w-screen"} h-64 p-6 overflow-y-auto scrollbar-none`}>
-                <div className={`grid ${isMobile ? "grid-cols-3" : "grid-cols-4"} gap-4`}>
-                  {userIcons.map((icon) => (
-                    <img
-                      key={icon}
-                      src={`./userIcons/${icon}.svg`}
-                      onClick={() => handleSetUserImage(icon)}
-                      alt="Profile Icon"
-                      className="cursor-pointer shadow-sm shadow-gray-600 hover:shadow-2xl rounded-full"
-                    />
-                  ))}
+        <Popover placement={`${isMobile ? "bottom" : "right"}`}>
+          <PopoverHandler>
+            <div className="flex justify-center">
+              <label
+                htmlFor="file"
+                className="relative cursor-pointer"
+                onMouseEnter={() => setIsEditUserIconVisible(true)}
+                onMouseLeave={() => setIsEditUserIconVisible(false)}
+              >
+                <Avatar
+                  className="w-32 h-32"
+                  src={
+                    userIconId === 0
+                      ? "./avatar.png"
+                      : `./userIcons/${userIconId}.svg`
+                  }
+                ></Avatar>
+                <img
+                  className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 w-1/3 -translate-y-1/2 opacity-0 duration-200 ${
+                    isEditUserIconVisible && "opacity-100"
+                  }`}
+                  alt="edit file"
+                  src="./edit-file.svg"
+                ></img>
+              </label>
+            </div>
+          </PopoverHandler>
+          <PopoverContent className="p-0">
+            <div>
+              <div className="bg-gray-200 rounded-lg shadow-lg">
+                <div
+                  className={`${
+                    isMobile && "w-screen"
+                  } h-64 p-6 overflow-y-auto scrollbar-none`}
+                >
+                  <div
+                    className={`grid ${
+                      isMobile ? "grid-cols-3" : "grid-cols-4"
+                    } gap-4`}
+                  >
+                    {userIcons.map((icon) => (
+                      <img
+                        key={icon}
+                        src={`./userIcons/${icon}.svg`}
+                        onClick={() => handleSetUserImage(icon)}
+                        alt="Profile Icon"
+                        className="cursor-pointer shadow-sm shadow-gray-600 hover:shadow-2xl rounded-full"
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </PopoverContent>
-      </Popover>
+          </PopoverContent>
+        </Popover>
         <form>
           <div className="flex justify-center">
             <div className="grid gap-4 mt-8">
@@ -313,7 +320,9 @@ const UserSettings: React.FC<userSettingsProps> = ({ user, isMobile }) => {
                   />
                 </div>
                 {!isLastNameValid && (
-                  <p className="text-sm text-red-400">{invalidLastNameMessage}</p>
+                  <p className="text-sm text-red-400">
+                    {invalidLastNameMessage}
+                  </p>
                 )}
               </div>
               <div>
@@ -356,7 +365,11 @@ const UserSettings: React.FC<userSettingsProps> = ({ user, isMobile }) => {
               )}
             </div>
           </div>
-          <div className={`text-purple-900 mt-4 cursor-pointer ${isMobile && "flex justify-center"}`}>
+          <div
+            className={`text-purple-900 mt-4 cursor-pointer ${
+              isMobile && "flex justify-center"
+            }`}
+          >
             <Link to="/changepassword">Change password</Link>
           </div>
           <div className="flex justify-center">

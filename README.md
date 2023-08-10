@@ -21,7 +21,7 @@ This is a simple to do app. Set up the table with your colleagues, workmates or 
    npm install
    ```
 
-4. Create a .env file in the backend folder and specify the necessary environment variables. You can use the .env.example file as a template. Look at [Configuration](#configuration) for more details.
+4. Create a .env file in the backend folder and specify the necessary environment variables. Look at [Configuration](#configuration) for more details.
 
 5. Start the backend server by running the following command:
 
@@ -63,6 +63,8 @@ Users without permissions cannot modify the table.
 Create and manage the tasks.
 
 ![Edit task view](./assets/edit-task-view.png)
+
+![Edit task date view](./assets/edit-task-date-view.png)
 
 Update your personal data and change profile icon.
 

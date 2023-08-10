@@ -58,7 +58,7 @@ const DeleteColumn: React.FC<DeleteColumnProps> = ({
   return (
     <>
       <button
-        className="absolute top-0 right-0 pl-2 pr-2 cursor-pointer"
+        className="cursor-pointer"
         onClick={(event) => {
           event.preventDefault();
           openDeleteColumnModalOpen();

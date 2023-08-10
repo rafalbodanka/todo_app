@@ -4,38 +4,13 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { DraggableLocation, DropResult } from "@hello-pangea/dnd";
 import { DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { CSSProperties } from "react";
+import { TaskType, User, ColumnType, TableType } from "./Types";
 
-interface Task {
-  id: string;
-  title: string;
-  completed: boolean;
-}
-
-interface User {
-  _id: string;
-  __v: number;
-}
-
-interface Column {
-  id: string;
-  title: string;
-  tasks: Task[];
-  showCompletedTasks: boolean;
-}
-
-interface TableProps {
-  columns: Column[];
-  title: string;
-  users: User[];
-  __v: number;
-  _id: string;
-}
-
-interface SetProps {
+interface AddTableProps {
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AddTable: React.FC<SetProps> = ({ setRerenderSignal }) => {
+const AddTable: React.FC<AddTableProps> = ({ setRerenderSignal }) => {
   const [showInput, setShowInput] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef(null);

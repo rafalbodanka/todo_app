@@ -1,38 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
 import EditTask from "./EditTask";
-import { Tooltip } from "@material-tailwind/react";
-
-interface TaskData {
-  _id: string;
-  title: string;
-  completed: boolean;
-  column: string;
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
-  responsibleUsers: User[];
-}
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Member {
-  user: User;
-  permission: string;
-}
+import { TaskType, User } from "./Types";
+import TimeRoundIcon from "@rsuite/icons/TimeRound";
+import {
+  Popover,
+  PopoverHandler,
+  PopoverContent,
+  Tooltip,
+} from "@material-tailwind/react";
 
 interface TaskProps {
-  task: TaskData;
+  task: TaskType;
   taskIndex: Number;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   isDraggingPossible: boolean;
@@ -49,12 +28,20 @@ const Task: React.FC<TaskProps> = ({
   isDraggingPossible,
   setIsDraggingPossible,
   currentTableId,
-  isMobile
+  isMobile,
 }) => {
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [responsibleUsers, setResponsibleUsers] = useState(
     task.responsibleUsers
   );
+  const [openPopover, setOpenPopover] = React.useState(false);
+
+  //Task popover
+  const triggers = {
+    onMouseEnter: () => setOpenPopover(true),
+    onMouseLeave: () => setOpenPopover(false),
+  };
+
   const openEditTaskModal = () => {
     setIsEditTaskModalOpen(true);
     setIsDraggingPossible(false);
@@ -109,7 +96,7 @@ const Task: React.FC<TaskProps> = ({
               toggleTaskStatus(task._id, task.completed, task.column);
             }}
           />
-          <div className="ml-2 min-w-1">{task.title}</div>
+          <div className="ml-2 min-w-1 flex items-center">{task.title}</div>
         </div>
         <div className="flex justify-end">
           {responsibleUsers.length >= 3 && (
@@ -180,6 +167,50 @@ const Task: React.FC<TaskProps> = ({
           />
         )}
       </div>
+      {task.isEstimated && (
+        <div
+          className={`absolute w-1 bg-${
+            task.difficulty <= 3
+              ? "green-500"
+              : task.difficulty <= 7
+              ? "orange-500"
+              : "red-500"
+          } right-0 top-0 h-full rounded-r-full`}
+        ></div>
+      )}
+      {!task.completed &&
+        task.isEstimated &&
+        task.endDate &&
+        new Date(task.endDate).setHours(0, 0, 0, 0) <=
+          new Date().setHours(0, 0, 0, 0) && (
+          <div className="absolute right-0 top-0 translate-x-0.5 -translate-y-1.5 bg-white w-[1em] h-[1em]">
+            {isMobile ? (
+              <TimeRoundIcon className="w-[1.5em] h-[1.5em]" />
+            ) : (
+              <Popover
+                open={openPopover}
+                placement="top"
+                handler={setOpenPopover}
+              >
+                <PopoverContent {...triggers}>
+                  {new Date(task.endDate).setHours(0, 0, 0, 0) <
+                  new Date().setHours(0, 0, 0, 0) ? (
+                    <p className="text-red-400 font-bold">
+                      Finish time exceeded
+                    </p>
+                  ) : (
+                    <p className="font-bold">Finish time ends today</p>
+                  )}
+                </PopoverContent>
+                <PopoverHandler {...triggers}>
+                  <button>
+                    <TimeRoundIcon className="w-[1.5em] h-[1.5em]" />
+                  </button>
+                </PopoverHandler>
+              </Popover>
+            )}
+          </div>
+        )}
     </div>
   );
 };

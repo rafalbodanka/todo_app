@@ -18,7 +18,7 @@
   @apply duration-200;
 }
 
-.hidden_tasks {
+.hidden_content {
   @apply rotate-180;
 }
 
@@ -70,4 +70,59 @@
 
 .scrollable-container::-webkit-scrollbar-thumb {
   height: 8px;
+}
+
+/* react-suite date range picker */
+.rs-anim-fade.rs-anim-in {
+  z-index: 40;
+}
+
+.rs-btn-primary {
+  background-color: #673ab7 !important;
+}
+
+.rs-picker-toggle-value {
+  color: #673ab7 !important;
+}
+
+.rs-calendar-table-cell-selected .rs-calendar-table-cell-content {
+  background-color: #673ab7 !important;
+}
+
+.rs-calendar-table-cell-content:hover {
+  background-color: #673ab7 !important;
+  color: #fff !important;
+}
+
+.rs-calendar-table-cell-in-range:before {
+  background-color: #d1c4e9 !important;
+}
+
+.rs-picker-default:not(.rs-picker-disabled) .rs-btn-active,
+.rs-picker-default:not(.rs-picker-disabled) .rs-btn:focus,
+.rs-picker-default:not(.rs-picker-disabled) .rs-btn:hover,
+.rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle-active,
+.rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle:focus,
+.rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle:hover {
+  border-color: #673ab7 !important;
+}
+
+.rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle-active,
+.rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle:focus,
+.rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle:hover {
+  border-color: #673ab7 !important;
+}
+
+.rs-picker-default .rs-btn,
+.rs-picker-default .rs-picker-toggle,
+.rs-picker-input .rs-btn,
+.rs-picker-input .rs-picker-toggle {
+  background-color: #ffffff !important;
+}
+
+a {
+  text-decoration: none !important;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: #673ab7 !important;
 }

@@ -1,20 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Button } from "@material-tailwind/react";
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-}
-
-interface Member {
-  user: User;
-  permission: string;
-}
+import { User, Member } from "./Types";
 
 type RemoveMemberProps = {
   user: User;

@@ -1,19 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { IconButton, Typography } from "@material-tailwind/react";
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-}
-
-interface Member {
-  user: User;
-  permission: string;
-}
+import { Member } from "./Types";
 
 interface MembersPaginationProps {
   totalPages: number;
