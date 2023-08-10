@@ -6,21 +6,45 @@ import {
   PopoverContent,
   List,
   ListItem,
-  ListItemPrefix,
 } from "@material-tailwind/react";
-import { Member, User } from "./Types";
+import { Member, User, Filters } from "./Types";
 import axios from "axios";
 import { Avatar } from "@material-tailwind/react";
+import { unfocusAllElements } from "./Helpers";
 
 type ColumnFilterProps = {
   currentTable: string;
+  filters: Filters;
+  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
 };
 
-const ColumnFilter: React.FC<ColumnFilterProps> = ({ currentTable }) => {
+const ColumnFilter: React.FC<ColumnFilterProps> = ({
+  currentTable,
+  filters,
+  setFilters,
+}) => {
   const [isFinishDateListOpen, setIsFinishDateListOpen] = useState(true);
   const [isDifficultyListOpen, setIsDifficultyListOpen] = useState(true);
   const [isAssignmentListOpen, setIsAssignmentListOpen] = useState(true);
   const [members, setMembers] = useState<Member[]>([]);
+
+  const addFilter = (filterName: string, filterValue: string) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [filterName]: [...prevFilters[filterName], filterValue],
+    }));
+    unfocusAllElements();
+  };
+
+  const removeFilter = (filterName: string, filterValue: string) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [filterName]: prevFilters[filterName as keyof typeof filters].filter(
+        (value) => value !== filterValue
+      ),
+    }));
+    unfocusAllElements();
+  };
 
   //fetch table members data
   useEffect(() => {
@@ -46,7 +70,7 @@ const ColumnFilter: React.FC<ColumnFilterProps> = ({ currentTable }) => {
 
   return (
     <Popover placement="bottom">
-      <PopoverContent className="max-h-[600px] p-0 overflow-y-auto overflow-x-hidden scrollbar-none">
+      <PopoverContent className="max-h-[600px] p-0 overflow-y-auto overflow-x-hidden scrollbar-none mt-3">
         <div>
           <div
             className="flex justify-between bg-gray-100 text-gray-800 px-3 font-bold cursor-pointer"
@@ -65,16 +89,68 @@ const ColumnFilter: React.FC<ColumnFilterProps> = ({ currentTable }) => {
           </div>
           {isFinishDateListOpen && (
             <List className="w-24 min-w-[240px] max-w-[240px]">
-              <ListItem className="rounded-none py-1.5 px-3 text-sm font-normal">
+              <ListItem
+                ripple={false}
+                className={`rounded-none py-1.5 px-3 text-sm font-normal ${
+                  filters.finishStatus.includes("exceeded") &&
+                  "bg-gray-300 hover:bg-gray-300"
+                }`}
+                onClick={() => {
+                  if (filters.finishStatus.includes("exceeded")) {
+                    removeFilter("finishStatus", "exceeded");
+                  } else {
+                    addFilter("finishStatus", "exceeded");
+                  }
+                }}
+              >
                 Exceeded
               </ListItem>
-              <ListItem className="rounded-none py-1.5 px-3 text-sm font-normal">
+              <ListItem
+                ripple={false}
+                className={`rounded-none py-1.5 px-3 text-sm font-normal ${
+                  filters.finishStatus.includes("today") &&
+                  "bg-gray-300 hover:bg-gray-300"
+                }`}
+                onClick={() => {
+                  if (filters.finishStatus.includes("today")) {
+                    removeFilter("finishStatus", "today");
+                  } else {
+                    addFilter("finishStatus", "today");
+                  }
+                }}
+              >
                 Today
               </ListItem>
-              <ListItem className="rounded-none py-1.5 px-3 text-sm font-normal">
+              <ListItem
+                ripple={false}
+                className={`rounded-none py-1.5 px-3 text-sm font-normal ${
+                  filters.finishStatus.includes("in-progress") &&
+                  "bg-gray-300 hover:bg-gray-300"
+                }`}
+                onClick={() => {
+                  if (filters.finishStatus.includes("in-progress")) {
+                    removeFilter("finishStatus", "in-progress");
+                  } else {
+                    addFilter("finishStatus", "in-progress");
+                  }
+                }}
+              >
                 In progress
               </ListItem>
-              <ListItem className="rounded-none py-1.5 px-3 text-sm font-normal">
+              <ListItem
+                ripple={false}
+                className={`rounded-none py-1.5 px-3 text-sm font-normal ${
+                  filters.finishStatus.includes("planned") &&
+                  "bg-gray-300 hover:bg-gray-300"
+                }`}
+                onClick={() => {
+                  if (filters.finishStatus.includes("planned")) {
+                    removeFilter("finishStatus", "planned");
+                  } else {
+                    addFilter("finishStatus", "planned");
+                  }
+                }}
+              >
                 Planned
               </ListItem>
             </List>
@@ -98,28 +174,93 @@ const ColumnFilter: React.FC<ColumnFilterProps> = ({ currentTable }) => {
           </div>
           {isDifficultyListOpen && (
             <List className="w-24 min-w-[240px] max-w-[240px]">
-              <ListItem className="rounded-none py-1.5 px-3 text-sm font-normal">
+              <ListItem
+                ripple={false}
+                className={`rounded-none py-1.5 px-3 text-sm font-normal ${
+                  filters.difficulty.includes("easy") &&
+                  "bg-gray-300 hover:bg-gray-300"
+                }`}
+                onClick={() => {
+                  if (filters.difficulty.includes("easy")) {
+                    removeFilter("difficulty", "easy");
+                  } else {
+                    addFilter("difficulty", "easy");
+                  }
+                }}
+              >
                 <div className="flex items-center gap-1">
                   <div className="w-1 h-4 bg-green-500"></div>
                   <p>Easy</p>
                 </div>
               </ListItem>
-              <ListItem className="rounded-none py-1.5 px-3 text-sm font-normal">
+              <ListItem
+                ripple={false}
+                className={`rounded-none py-1.5 px-3 text-sm font-normal ${
+                  filters.difficulty.includes("medium") &&
+                  "bg-gray-300 hover:bg-gray-300"
+                }`}
+                onClick={() => {
+                  if (filters.difficulty.includes("medium")) {
+                    removeFilter("difficulty", "medium");
+                  } else {
+                    addFilter("difficulty", "medium");
+                  }
+                }}
+              >
                 <div className="flex items-center gap-1">
                   <div className="w-1 h-4 bg-orange-500"></div>
                   <p>Medium</p>
                 </div>{" "}
               </ListItem>
-              <ListItem className="rounded-none py-1.5 px-3 text-sm font-normal">
+              <ListItem
+                ripple={false}
+                className={`rounded-none py-1.5 px-3 text-sm font-normal ${
+                  filters.difficulty.includes("hard") &&
+                  "bg-gray-300 hover:bg-gray-300"
+                }`}
+                onClick={() => {
+                  if (filters.difficulty.includes("hard")) {
+                    removeFilter("difficulty", "hard");
+                  } else {
+                    addFilter("difficulty", "hard");
+                  }
+                }}
+              >
                 <div className="flex items-center gap-1">
                   <div className="w-1 h-4 bg-red-500"></div>
                   <p>Hard</p>
                 </div>{" "}
               </ListItem>
-              <ListItem className="rounded-none py-1.5 px-3 text-sm font-normal">
+              <ListItem
+                ripple={false}
+                className={`rounded-none py-1.5 px-3 text-sm font-normal ${
+                  filters.isEstimated.includes("estimated") &&
+                  "bg-gray-300 hover:bg-gray-300"
+                }`}
+                onClick={() => {
+                  if (filters.isEstimated.includes("estimated")) {
+                    removeFilter("isEstimated", "estimated");
+                  } else {
+                    addFilter("isEstimated", "estimated");
+                  }
+                }}
+              >
                 Estimated
               </ListItem>
-              <ListItem className="rounded-none py-1.5 px-3 text-sm font-normal">
+              <ListItem
+                ripple={false}
+                className={`rounded-none py-1.5 px-3 text-sm font-normal ${
+                  filters.isEstimated.includes("not-estimated") &&
+                  "bg-gray-300 hover:bg-gray-300"
+                }`}
+                onClick={() => {
+                  if (filters.isEstimated.includes("not-estimated")) {
+                    removeFilter("isEstimated", "not-estimated");
+                  } else {
+                    addFilter("isEstimated", "not-estimated");
+                  }
+                }}
+              >
                 Not estimated
               </ListItem>
             </List>
@@ -144,7 +285,21 @@ const ColumnFilter: React.FC<ColumnFilterProps> = ({ currentTable }) => {
           {isAssignmentListOpen && (
             <List className="w-24 min-w-[240px] max-w-[240px]">
               {members.map((member) => (
-                <ListItem className="rounded-none py-1.5 px-3 text-sm font-normal">
+                <ListItem
+                  ripple={false}
+                  key={member.user._id}
+                  className={`rounded-none py-1.5 px-3 text-sm font-normal ${
+                    filters.assignment.includes(member.user._id) &&
+                    "bg-gray-300 hover:bg-gray-300"
+                  }`}
+                  onClick={() => {
+                    if (filters.assignment.includes(member.user._id)) {
+                      removeFilter("assignment", member.user._id);
+                    } else {
+                      addFilter("assignment", member.user._id);
+                    }
+                  }}
+                >
                   <div className="flex gap-2 items-center">
                     <Avatar
                       src={`./userIcons/${member.user.userIconId}.svg`}
@@ -163,7 +318,10 @@ const ColumnFilter: React.FC<ColumnFilterProps> = ({ currentTable }) => {
       </PopoverContent>
       <PopoverHandler>
         <button>
-          <FunnelIcon className="cursor-pointer"></FunnelIcon>
+          <FunnelIcon
+            className="cursor-pointer"
+            style={{ fontSize: "1.5em" }}
+          ></FunnelIcon>
         </button>
       </PopoverHandler>
     </Popover>

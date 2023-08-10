@@ -9,8 +9,9 @@ import AddTask from "./AddTask";
 import DeleteColumn from "./DeleteColumn";
 import AddColumn from "./AddColumn";
 import EditColumn from "./EditColumn";
-import { ColumnType } from "./Types";
+import { ColumnType, Filters, TaskType } from "./Types";
 import ColumnFilter from "./ColumnFilter";
+import { filterTasks } from "./Helpers";
 
 interface ColumnProps {
   columns: ColumnType[];
@@ -18,6 +19,8 @@ interface ColumnProps {
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   currentTable: string;
   isMobile: boolean;
+  filters: Filters;
+  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
 }
 
 const Column: React.FC<ColumnProps> = ({
@@ -26,6 +29,8 @@ const Column: React.FC<ColumnProps> = ({
   setRerenderSignal,
   currentTable,
   isMobile,
+  filters,
+  setFilters,
 }) => {
   const [isDraggingPossible, setIsDraggingPossible] = useState(true);
 
@@ -237,15 +242,12 @@ const Column: React.FC<ColumnProps> = ({
                   column={column}
                   setRerenderSignal={setRerenderSignal}
                 ></EditColumn>
-                <div className="flex gap-4">
-                  <ColumnFilter currentTable={currentTable}></ColumnFilter>
-                  <DeleteColumn
-                    columns={columns}
-                    columnTitle={column.title}
-                    columnId={column._id}
-                    setRerenderSignal={setRerenderSignal}
-                  />
-                </div>
+                <DeleteColumn
+                  columns={columns}
+                  columnTitle={column.title}
+                  columnId={column._id}
+                  setRerenderSignal={setRerenderSignal}
+                />
               </div>
               <AddTask
                 columnId={column._id}
@@ -264,37 +266,39 @@ const Column: React.FC<ColumnProps> = ({
                         : "h-auto"
                     }
                   >
-                    {column.pendingTasks.map((task, index) => (
-                      <Draggable
-                        key={task._id}
-                        draggableId={task._id}
-                        index={index}
-                        isDragDisabled={!isDraggingPossible}
-                      >
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            style={getStyle(
-                              provided.draggableProps.style,
-                              snapshot
-                            )}
-                          >
-                            <Task
-                              responsibleUsers={task.responsibleUsers}
-                              taskIndex={index}
-                              task={task}
-                              setRerenderSignal={setRerenderSignal}
-                              isDraggingPossible={isDraggingPossible}
-                              setIsDraggingPossible={setIsDraggingPossible}
-                              currentTableId={currentTable}
-                              isMobile={isMobile}
-                            />
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
+                    {filterTasks(column.pendingTasks, filters).map(
+                      (task, index) => (
+                        <Draggable
+                          key={task._id}
+                          draggableId={task._id}
+                          index={index}
+                          isDragDisabled={!isDraggingPossible}
+                        >
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              style={getStyle(
+                                provided.draggableProps.style,
+                                snapshot
+                              )}
+                            >
+                              <Task
+                                responsibleUsers={task.responsibleUsers}
+                                taskIndex={index}
+                                task={task}
+                                setRerenderSignal={setRerenderSignal}
+                                isDraggingPossible={isDraggingPossible}
+                                setIsDraggingPossible={setIsDraggingPossible}
+                                currentTableId={currentTable}
+                                isMobile={isMobile}
+                              />
+                            </div>
+                          )}
+                        </Draggable>
+                      )
+                    )}
                     {provided.placeholder}
                   </div>
                 )}
@@ -331,37 +335,41 @@ const Column: React.FC<ColumnProps> = ({
                         </div>
                       </div>
                       {column.showCompletedTasks &&
-                        column.completedTasks.map((task, index) => (
-                          <Draggable
-                            key={task._id}
-                            draggableId={task._id}
-                            index={index}
-                            isDragDisabled={!isDraggingPossible}
-                          >
-                            {(provided, snapshot) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                style={getStyle(
-                                  provided.draggableProps.style,
-                                  snapshot
-                                )}
-                              >
-                                <Task
-                                  responsibleUsers={task.responsibleUsers}
-                                  taskIndex={index}
-                                  task={task}
-                                  setRerenderSignal={setRerenderSignal}
-                                  isDraggingPossible={isDraggingPossible}
-                                  setIsDraggingPossible={setIsDraggingPossible}
-                                  currentTableId={currentTable}
-                                  isMobile={isMobile}
-                                />
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
+                        filterTasks(column.completedTasks, filters).map(
+                          (task, index) => (
+                            <Draggable
+                              key={task._id}
+                              draggableId={task._id}
+                              index={index}
+                              isDragDisabled={!isDraggingPossible}
+                            >
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  style={getStyle(
+                                    provided.draggableProps.style,
+                                    snapshot
+                                  )}
+                                >
+                                  <Task
+                                    responsibleUsers={task.responsibleUsers}
+                                    taskIndex={index}
+                                    task={task}
+                                    setRerenderSignal={setRerenderSignal}
+                                    isDraggingPossible={isDraggingPossible}
+                                    setIsDraggingPossible={
+                                      setIsDraggingPossible
+                                    }
+                                    currentTableId={currentTable}
+                                    isMobile={isMobile}
+                                  />
+                                </div>
+                              )}
+                            </Draggable>
+                          )
+                        )}
                       {provided.placeholder}
                     </div>
                   )}
