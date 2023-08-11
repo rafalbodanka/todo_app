@@ -3,6 +3,13 @@ import axios from "axios";
 import { TaskType, User } from "./Types";
 import EditTaskAssignUser from "./EditTaskAssignUser";
 import Estimation from "./Estimation";
+import {
+  Popover,
+  PopoverContent,
+  PopoverHandler,
+} from "@material-tailwind/react";
+import CloseIcon from "@rsuite/icons/Close";
+import MoreIcon from "@rsuite/icons/More";
 
 interface EditTaskProps {
   task: TaskType;
@@ -190,8 +197,36 @@ const EditTask: React.FC<EditTaskProps> = ({
             onClick={(event) => event.stopPropagation()}
           >
             <div>
-              <div className="grid grid-cols-10 font-400 text-xs text-gray-600">
-                <div className="col-span-9">
+              <div className="flex justify-end mb-4 md:mb-0">
+                <div className="flex gap-6">
+                  <div>
+                    <Popover>
+                      <PopoverHandler>
+                        <button>
+                          <MoreIcon className="w-6 h-6 cursor-pointer" />
+                        </button>
+                      </PopoverHandler>
+                      <PopoverContent className="z-40">
+                        <div className="flex justify-center items-center">
+                          <p
+                            onClick={() => {
+                              deleteTask(task.title);
+                            }}
+                            className="cursor-pointer hover:text-red-600"
+                          >
+                            Delete task
+                          </p>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <div onClick={() => setIsEditTaskModalOpen(false)}>
+                    <CloseIcon className="w-6 h-6 cursor-pointer" />
+                  </div>
+                </div>
+              </div>
+              <div className="flex font-400 text-xs text-gray-600">
+                <div>
                   <p>
                     <span>Created on {createdAt}</span>
                   </p>
@@ -201,16 +236,7 @@ const EditTask: React.FC<EditTaskProps> = ({
                     )}
                   </p>
                 </div>
-                <div className="flex justify-end grid-cols-1">
-                  <img
-                    src={process.env.PUBLIC_URL + "/icon-trash.svg"}
-                    alt="Trash Icon"
-                    onClick={() => {
-                      deleteTask(task.title);
-                    }}
-                    className="w-6 cursor-pointer"
-                  />
-                </div>
+                <div className="flex justify-end grid-cols-1"></div>
               </div>
               <div className="mt-4">
                 <p className="font-400">Title</p>

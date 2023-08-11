@@ -123,6 +123,9 @@
 a {
   text-decoration: none !important;
   font-weight: bold;
-  letter-spacing: 0.5px;
-  color: #673ab7 !important;
+  color: #4a418c !important;
+}
+
+span {
+  color: #282828;
 }

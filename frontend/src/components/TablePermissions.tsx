@@ -174,7 +174,7 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
 
   return (
     <>
-      <CardBody className="px-0 md:p-0 pt-6 md:pt-6">
+      <div className="px-0 md:p-0 pt-6 md:pt-6">
         <table className="w-screen md:w-full min-w-max table-auto -translate-x-6 md:translate-x-0 text-left">
           <thead>
             <tr>
@@ -194,7 +194,7 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="relative">
             {members.length > 0 ? (
               members
                 .slice(startIndex, endIndex)
@@ -373,7 +373,7 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
             )}
           </tbody>
         </table>
-      </CardBody>
+      </div>
       {totalPages > 1 && (
         <MembersPagination
           totalPages={totalPages}
