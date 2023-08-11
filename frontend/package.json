@@ -6,6 +6,15 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.14.3",
+    "@react-email/button": "0.0.10",
+    "@react-email/components": "^0.0.7",
+    "@react-email/container": "0.0.8",
+    "@react-email/font": "0.0.3",
+    "@react-email/head": "0.0.5",
+    "@react-email/heading": "0.0.8",
+    "@react-email/html": "0.0.4",
+    "@react-email/link": "0.0.5",
+    "@react-email/tailwind": "0.0.8",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -17,6 +26,7 @@
     "material-ui-colors": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-email": "1.9.4",
     "react-scripts": "5.0.1",
     "rsuite": "^5.37.3",
     "typescript": "^4.9.5",
@@ -26,7 +36,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "email": "email dev --dir src/components/emails"
   },
   "eslintConfig": {
     "extends": [
