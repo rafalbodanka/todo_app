@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Input } from "@material-tailwind/react";
+import {
+  Input,
+  PopoverContent,
+  PopoverHandler,
+  Popover,
+} from "@material-tailwind/react";
 import DeleteTable from "./DeleteTable";
 import InviteUser from "./InviteUser";
 import TablePermissions from "./TablePermissions";
 import { ColumnType, User, TableType } from "./Types";
+import CloseIcon from "@rsuite/icons/Close";
+import MoreIcon from "@rsuite/icons/More";
 
 type EditTableProps = {
   user: User;
@@ -117,19 +124,37 @@ const EditTable: React.FC<EditTableProps> = ({
               className="bg-white p-6 rounded-md cursor-default md:w-1/2 md:min-h-1/2 md:min-w-[600px] w-screen"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="">
-                {isAdmin && (
-                  <div className="flex justify-end mb-6 md:mb-0">
-                    <DeleteTable
-                      tableId={table._id}
-                      tableTitle={table.title}
-                      setRerenderSignal={setRerenderSignal}
-                      tables={tables}
-                      setCurrentTable={setCurrentTable}
-                      setColumns={setColumns}
-                    ></DeleteTable>
+              <div>
+                <div className="flex justify-end mb-4 md:mb-0">
+                  <div className="flex gap-6">
+                    <div>
+                      {isAdmin && (
+                        <Popover>
+                          <PopoverHandler>
+                            <button>
+                              <MoreIcon className="w-6 h-6 cursor-pointer" />
+                            </button>
+                          </PopoverHandler>
+                          <PopoverContent className="z-40">
+                            <div className="flex justify-center items-center">
+                              <DeleteTable
+                                tableId={table._id}
+                                tableTitle={table.title}
+                                setRerenderSignal={setRerenderSignal}
+                                tables={tables}
+                                setCurrentTable={setCurrentTable}
+                                setColumns={setColumns}
+                              ></DeleteTable>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      )}
+                    </div>
+                    <div onClick={() => setIsEditTableOpen(false)}>
+                      <CloseIcon className="w-6 h-6 cursor-pointer" />
+                    </div>
                   </div>
-                )}
+                </div>
                 <div className="relative flex w-full max-w-[24rem]">
                   <Input
                     color="deep-purple"
@@ -147,14 +172,16 @@ const EditTable: React.FC<EditTableProps> = ({
                   ></Input>
                 </div>
               </div>
-              {(isAdmin || canInvite) && (
-                <InviteUser
-                  tableMembers={tableMembers}
-                  user={user}
-                  tableId={table._id}
-                  tableName={table.title}
-                ></InviteUser>
-              )}
+              <div className="flex justify-between">
+                {(isAdmin || canInvite) && (
+                  <InviteUser
+                    tableMembers={tableMembers}
+                    user={user}
+                    tableId={table._id}
+                    tableName={table.title}
+                  ></InviteUser>
+                )}
+              </div>
               <TablePermissions
                 user={user}
                 isAdmin={isAdmin}

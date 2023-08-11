@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Button } from "@material-tailwind/react";
+import {
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverHandler,
+} from "@material-tailwind/react";
 import { User, Member } from "./Types";
 
 type RemoveMemberProps = {
@@ -34,7 +39,7 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
   setMembersRerenderSignal,
   setRerenderSignal,
 }) => {
-  const [isRemoveMemberModalOpen, setIsRemoveMemberModalOpen] = useState(false);
+  const [openPopover, setOpenPopover] = React.useState(false);
   const [isRemovePossible, setIsRemovePossible] = useState(true);
   const [isLastLeavingUser, setIsLastLeavingUser] = useState(false);
 
@@ -55,11 +60,10 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
       setIsRemovePossible(true);
       setIsLastLeavingUser(true);
     }
-    setIsRemoveMemberModalOpen(true);
   };
 
   const closeRemoveMemberModal = () => {
-    setIsRemoveMemberModalOpen(false);
+    setOpenPopover(false);
   };
 
   const removeMember = async (e: any) => {
@@ -93,27 +97,25 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
         setMembersRerenderSignal((prevSignal) => !prevSignal);
         setRerenderSignal((prevSignal) => !prevSignal);
       }
-      setIsRemoveMemberModalOpen(false);
+      closeRemoveMemberModal();
     }
   };
 
   return (
-    <>
-      <img
-        id="remove-user"
-        src="./icon-cross-mark.png"
-        className="w-4 cursor-pointer"
-        onClick={openRemoveMemberModalOpen}
-      ></img>
-      {isRemoveMemberModalOpen && (
-        <div
-          className="bg-black bg-opacity-30 fixed top-0 left-0 w-screen h-screen flex justify-center items-center z-20"
-          onClick={closeRemoveMemberModal}
-        >
-          <div
-            className="bg-white p-6 rounded-md"
-            onClick={(event) => event.stopPropagation()}
-          >
+    <Popover open={openPopover} handler={setOpenPopover} placement="top">
+      <PopoverHandler>
+        <button>
+          <img
+            id="remove-user"
+            src="./icon-cross-mark.png"
+            className="w-4 cursor-pointer"
+            onClick={openRemoveMemberModalOpen}
+          ></img>
+        </button>
+      </PopoverHandler>
+      <PopoverContent className="z-40 max-w-screen text-sm text-black">
+        <div>
+          <div className="bg-white rounded-md text-center">
             {isLastLeavingUser ? (
               <div>
                 <p className="font-400 flex justify-center">
@@ -197,8 +199,8 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
             )}
           </div>
         </div>
-      )}
-    </>
+      </PopoverContent>
+    </Popover>
   );
 };
 

@@ -88,7 +88,7 @@ const InviteUser: React.FC<UserProps> = ({
   }, [isInviteResponseVisible]);
 
   return (
-    <>
+    <div>
       <p className="text-black mt-8">Members</p>
       <div className="block md:flex">
         <div className="relative flex w-full max-w-[24rem] mt-2">
@@ -126,7 +126,7 @@ const InviteUser: React.FC<UserProps> = ({
           ))}
       </div>
       {!isEmailValid && <p className="text-red-400 text-sm">{emailError}</p>}
-    </>
+    </div>
   );
 };
 

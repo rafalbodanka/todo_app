@@ -75,32 +75,6 @@ const UserNav: React.FC<userNavProps> = ({ user }) => {
           </div>
           <List className="p-0 min-w-0">
             <a href="/invitations">
-              {/* <Tooltip
-                content={
-                  <div>
-                    <p>
-                      You have{" "}
-                      <span className="font-700 text-purple-900">
-                        {invitationsNumber}
-                      </span>{" "}
-                      pending invitations.
-                    </p>
-                  </div>
-                }
-                placement="left"
-                className="bg-gray-300 text-black text-md"
-                animate={{
-                  mount: { scale: 1, x: 0 },
-                  unmount: { scale: 0, x: 75 },
-                }}
-              >
-                <ListItem className="justify-center w-full" tabIndex={-1}>
-                  <div>
-                    <p>Invitations</p>
-                    <div></div>
-                  </div>
-                </ListItem>
-              </Tooltip> */}
               <ListItem
                 className="justify-center w-full relative"
                 tabIndex={-1}
