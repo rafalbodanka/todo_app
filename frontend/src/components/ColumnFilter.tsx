@@ -11,17 +11,22 @@ import { Member, User, Filters } from "./Types";
 import axios from "axios";
 import { Avatar } from "@material-tailwind/react";
 import { unfocusAllElements } from "./Helpers";
+import SearchTasks from "./SearchTasks";
 
 type ColumnFilterProps = {
   currentTable: string;
   filters: Filters;
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  searchValue: string;
+  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const ColumnFilter: React.FC<ColumnFilterProps> = ({
   currentTable,
   filters,
   setFilters,
+  searchValue,
+  setSearchValue,
 }) => {
   const [isFinishDateListOpen, setIsFinishDateListOpen] = useState(true);
   const [isDifficultyListOpen, setIsDifficultyListOpen] = useState(true);
@@ -29,6 +34,7 @@ const ColumnFilter: React.FC<ColumnFilterProps> = ({
   const [members, setMembers] = useState<Member[]>([]);
   const [isMembersFetchError, setIsMembersFetchError] = useState(false);
   const membersFetchErrorMessage = "Members were not loaded. Refresh the page.";
+  const [prevSearchValue, setPrevSearchValue] = useState("");
 
   const addFilter = (filterName: string, filterValue: string) => {
     setFilters((prevFilters) => ({
@@ -78,6 +84,14 @@ const ColumnFilter: React.FC<ColumnFilterProps> = ({
     <Popover placement="bottom">
       <PopoverContent className="max-h-[600px] p-0 overflow-y-auto overflow-x-hidden scrollbar-none mt-3">
         <div>
+          <div className="m-2">
+            <SearchTasks
+              searchValue={searchValue}
+              setSearchValue={setSearchValue}
+              prevSearchValue={prevSearchValue}
+              setPrevSearchValue={setPrevSearchValue}
+            ></SearchTasks>
+          </div>
           <div
             className="flex justify-between bg-gray-100 text-gray-800 px-3 font-bold cursor-pointer"
             onClick={() => {

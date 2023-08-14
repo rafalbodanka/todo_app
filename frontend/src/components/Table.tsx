@@ -31,6 +31,8 @@ const Table: React.FC<TableProps> = ({
     finishStatus: [], // ["exceeded", "today", "in-progress", "planned"]
   });
 
+  const [searchValue, setSearchValue] = useState("");
+
   const getUserSet = async () => {
     if (!user.email) return;
     try {
@@ -90,6 +92,8 @@ const Table: React.FC<TableProps> = ({
                   currentTable={currentTable}
                   filters={filters}
                   setFilters={setFilters}
+                  searchValue={searchValue}
+                  setSearchValue={setSearchValue}
                 ></ColumnFilter>
               </div>
               <div>{user.email && <UserNav user={user}></UserNav>}</div>
@@ -105,6 +109,7 @@ const Table: React.FC<TableProps> = ({
               setRerenderSignal={setRerenderSignal}
               currentTable={currentTable}
               filters={filters}
+              searchValue={searchValue}
               setFilters={setFilters}
             />
           </div>

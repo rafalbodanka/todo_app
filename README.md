@@ -52,6 +52,10 @@ Stay up to date with your crew's duties.
 
 ![Main view](./assets/main-view.png)
 
+Filter tasks.
+
+![Filter tasks view](./assets/filter-tasks-view.png)
+
 Create and manage the tables.
 
 ![Edit table admin view](./assets/edit-table-admin-view.png)

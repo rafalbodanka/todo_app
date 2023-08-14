@@ -21,6 +21,7 @@ interface ColumnProps {
   isMobile: boolean;
   filters: Filters;
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  searchValue: string;
 }
 
 const Column: React.FC<ColumnProps> = ({
@@ -31,6 +32,7 @@ const Column: React.FC<ColumnProps> = ({
   isMobile,
   filters,
   setFilters,
+  searchValue,
 }) => {
   const [isDraggingPossible, setIsDraggingPossible] = useState(true);
 
@@ -266,8 +268,18 @@ const Column: React.FC<ColumnProps> = ({
                         : "h-auto"
                     }
                   >
-                    {filterTasks(column.pendingTasks, filters).map(
-                      (task, index) => (
+                    {filterTasks(column.pendingTasks, filters)
+                      //filter by search value
+                      .filter(
+                        (task) =>
+                          task.title
+                            .toLowerCase()
+                            .includes(searchValue.toLowerCase()) ||
+                          task.notes
+                            .toLowerCase()
+                            .includes(searchValue.toLowerCase())
+                      )
+                      .map((task, index) => (
                         <Draggable
                           key={task._id}
                           draggableId={task._id}
@@ -297,8 +309,7 @@ const Column: React.FC<ColumnProps> = ({
                             </div>
                           )}
                         </Draggable>
-                      )
-                    )}
+                      ))}
                     {provided.placeholder}
                   </div>
                 )}
@@ -335,8 +346,17 @@ const Column: React.FC<ColumnProps> = ({
                         </div>
                       </div>
                       {column.showCompletedTasks &&
-                        filterTasks(column.completedTasks, filters).map(
-                          (task, index) => (
+                        filterTasks(column.completedTasks, filters) //filter by search value
+                          .filter(
+                            (task) =>
+                              task.title
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase()) ||
+                              task.notes
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase())
+                          )
+                          .map((task, index) => (
                             <Draggable
                               key={task._id}
                               draggableId={task._id}
@@ -368,8 +388,7 @@ const Column: React.FC<ColumnProps> = ({
                                 </div>
                               )}
                             </Draggable>
-                          )
-                        )}
+                          ))}
                       {provided.placeholder}
                     </div>
                   )}
