@@ -54,11 +54,12 @@ Stay up to date with your crew's duties.
 
 Create and manage the tables.
 
-![Edit table admin view](./assets/edit-table-admin-view.png)
-
 Filter tasks.
 
 ![Filter tasks view](./assets/filter-tasks-view.png)
+
+![Edit table admin view](./assets/edit-table-admin-view.png)
+
 
 Users without permissions cannot modify the table.
 
