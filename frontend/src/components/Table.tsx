@@ -4,22 +4,23 @@ import Set from "./Set";
 import Column from "./Column";
 import UserNav from "./UserNav";
 import { ColumnType, Filters, User } from "./Types";
-import FunnelIcon from "@rsuite/icons/Funnel";
 import ColumnFilter from "./ColumnFilter";
+import { useAppSelector } from "../redux/hooks";
+import { selectUser } from "../redux/user";
 
 interface TableProps {
-  user: User;
   rerenderSignal: boolean;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   isMobile: boolean;
 }
 
 const Table: React.FC<TableProps> = ({
-  user,
   rerenderSignal,
   setRerenderSignal,
   isMobile,
 }) => {
+  const user: User = useAppSelector(selectUser);
+
   const [columns, setColumns] = useState<ColumnType[]>([]);
   const [currentTable, setCurrentTable] = useState("");
   const [tables, setTables] = useState([]);
@@ -27,7 +28,7 @@ const Table: React.FC<TableProps> = ({
   const [filters, setFilters] = useState<Filters>({
     isEstimated: [], // ["", "true", "false"]
     difficulty: [], // ["easy", "medium", "hard"]
-    assignment: [], // e.g. ["user._id"]
+    assignment: [], // ["user._id"]
     finishStatus: [], // ["exceeded", "today", "in-progress", "planned"]
   });
 

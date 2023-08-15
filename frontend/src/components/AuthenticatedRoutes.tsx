@@ -8,11 +8,8 @@ import Unauthorized from "./Unauthorized";
 import ChangePassword from "./ChangePassword";
 import UserInvitations from "./UserInvitations";
 import Table from "./Table";
-import { User } from "./Types";
 
 type AuthenticatedRoutesProps = {
-  user: User;
-  setUser: React.Dispatch<React.SetStateAction<User>>;
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   rerenderSignal: boolean;
@@ -20,8 +17,6 @@ type AuthenticatedRoutesProps = {
 };
 
 const AuthenticatedRoutes = ({
-  user,
-  setUser,
   isLoggedIn,
   setIsLoggedIn,
   rerenderSignal,
@@ -55,7 +50,6 @@ const AuthenticatedRoutes = ({
 
   return (
     <Auth
-      setUser={setUser}
       isLoggedIn={isLoggedIn}
       setIsLoggedIn={setIsLoggedIn}
     >
@@ -78,7 +72,7 @@ const AuthenticatedRoutes = ({
           path="/user"
           element={
             isLoggedIn ? (
-              <UserSettings user={user} isMobile={isMobile} />
+              <UserSettings isMobile={isMobile} />
             ) : (
               <Navigate to="/" replace />
             )
@@ -98,7 +92,7 @@ const AuthenticatedRoutes = ({
           path="/changepassword"
           element={
             isLoggedIn ? (
-              <ChangePassword userId={user._id} />
+              <ChangePassword />
             ) : (
               <Navigate to="/" replace />
             )
@@ -112,7 +106,6 @@ const AuthenticatedRoutes = ({
             ) : (
               <Table
                 isMobile={isMobile}
-                user={user}
                 rerenderSignal={rerenderSignal}
                 setRerenderSignal={setRerenderSignal}
               ></Table>

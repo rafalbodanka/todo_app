@@ -9,14 +9,16 @@ import {
   PopoverHandler,
   PopoverContent,
 } from "@material-tailwind/react";
-import { User } from "./Types";
+import { useAppSelector } from '../redux/hooks';
+import { selectUser } from "../redux/user";
 
 type userSettingsProps = {
-  user: User;
   isMobile: boolean;
 };
 
-const UserSettings: React.FC<userSettingsProps> = ({ user, isMobile }) => {
+const UserSettings: React.FC<userSettingsProps> = ({ isMobile }) => {
+  const user = useAppSelector(selectUser);
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
