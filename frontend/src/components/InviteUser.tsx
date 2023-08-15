@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Input, Button } from "@material-tailwind/react";
-import { User } from "./Types";
+import { useAppSelector } from "../redux/hooks";
+import { selectUser } from "../redux/user";
 
 type UserProps = {
-  user: User;
   tableMembers: string[];
   tableId: string;
   tableName: string;
 };
 
 const InviteUser: React.FC<UserProps> = ({
-  user,
   tableMembers,
   tableId,
   tableName,
 }) => {
+  const user = useAppSelector(selectUser)
+
   const [email, setEmail] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(Boolean);
   const [emailError, setEmailError] = useState("");

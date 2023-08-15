@@ -77,7 +77,6 @@ const Table: React.FC<TableProps> = ({
             <div className="lg:col-span-6 lg:items-end order-2 overflow-x-auto scrollbar-thin p-2">
               <div className="scrollable-container whitespace-nowrap h-full">
                 <Set
-                  user={user}
                   tables={tables}
                   setColumns={setColumns}
                   setRerenderSignal={setRerenderSignal}
@@ -96,7 +95,7 @@ const Table: React.FC<TableProps> = ({
                   setSearchValue={setSearchValue}
                 ></ColumnFilter>
               </div>
-              <div>{user.email && <UserNav user={user}></UserNav>}</div>
+              <div>{user.email && <UserNav></UserNav>}</div>
             </div>
           </div>
         </div>

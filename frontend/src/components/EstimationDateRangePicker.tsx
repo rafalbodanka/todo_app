@@ -54,11 +54,9 @@ const EstimationDateRangePicker: React.FC<{
         }
       );
       if (response.status === 200) {
-        console.log("gituwa");
         setRerenderSignal((prevSignal) => !prevSignal);
       }
     } catch (err) {
-      console.log(err);
     }
   };
   return (

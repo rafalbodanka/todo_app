@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { User, Member } from "./Types";
 import { useAppSelector } from "../redux/hooks";
+import { selectUser } from "../redux/user";
 import { isMobileValue } from "../redux/isMobile";
 import {
   Select,
@@ -15,7 +16,6 @@ import RemoveMember from "./RemoveMember";
 import MembersPagination from "./MembersPagination";
 
 type TablePermissionsProps = {
-  user: User;
   isAdmin: boolean;
   setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
   canInvite: boolean;
@@ -28,7 +28,6 @@ type TablePermissionsProps = {
 };
 
 const TablePermissions: React.FC<TablePermissionsProps> = ({
-  user,
   isAdmin,
   setIsAdmin,
   canInvite,
@@ -39,6 +38,7 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
   setTableMembers,
   setRerenderSignal,
 }) => {
+  const user = useAppSelector(selectUser)
   const isMobile = useAppSelector(isMobileValue)
 
   const [members, setMembers] = useState<Member[]>([]);
@@ -324,7 +324,6 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
                         <div className="ml-4">
                           {canRemove && (
                             <RemoveMember
-                              user={user}
                               currentUser={currentUser}
                               members={members}
                               memberId={user._id}

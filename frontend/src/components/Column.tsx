@@ -245,7 +245,6 @@ const Column: React.FC<ColumnProps> = ({
                   setRerenderSignal={setRerenderSignal}
                 ></EditColumn>
                 <DeleteColumn
-                  columns={columns}
                   columnTitle={column.title}
                   columnId={column._id}
                   setRerenderSignal={setRerenderSignal}

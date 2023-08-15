@@ -3,10 +3,10 @@ import AddTable from "./AddTable";
 import EditTable from "./EditTable";
 import { ColumnType, User, TableType } from "./Types";
 import { useAppSelector } from "../redux/hooks";
+import { selectUser } from "../redux/user";
 import { isMobileValue } from "../redux/isMobile";
 
 interface SetProps {
-  user: User;
   tables: TableType[];
   setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,13 +15,13 @@ interface SetProps {
 }
 
 const Set: React.FC<SetProps> = ({
-  user,
   tables,
   setColumns,
   setRerenderSignal,
   currentTable,
   setCurrentTable,
 }) => {
+  const user = useAppSelector(selectUser)
   const isMobile = useAppSelector(isMobileValue)
 
   const switchTable = (tableId: string, columns: ColumnType[]) => {
@@ -47,7 +47,6 @@ const Set: React.FC<SetProps> = ({
             >
               <div>{table.title}</div>
               <EditTable
-                user={user}
                 table={table}
                 currentTable={currentTable}
                 setRerenderSignal={setRerenderSignal}

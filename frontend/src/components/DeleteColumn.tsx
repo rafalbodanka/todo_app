@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 
 type DeleteColumnProps = {
-  columns: any[];
   columnTitle: string;
   columnId: string;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -11,7 +10,6 @@ type DeleteColumnProps = {
 const DeleteColumn: React.FC<DeleteColumnProps> = ({
   columnId,
   columnTitle,
-  columns,
   setRerenderSignal,
 }) => {
   const [isDeleteColumnModalOpen, setIsDeleteColumnModalOpen] = useState(false);

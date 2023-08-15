@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { useAppSelector } from "../redux/hooks";
+import { selectUser } from "../redux/user";
 import {
   Popover,
   PopoverHandler,
@@ -23,10 +24,6 @@ interface User {
   userIconId: number;
 }
 
-type userNavProps = {
-  user: User;
-};
-
 const handleLogout = async () => {
   try {
     const response = await axios.get("http://localhost:5000/users/logout", {
@@ -43,7 +40,8 @@ const handleLogout = async () => {
   } catch (err) {}
 };
 
-const UserNav: React.FC<userNavProps> = ({ user }) => {
+const UserNav = () => {
+  const user = useAppSelector(selectUser)
   const [invitationsNumber, setInvitationsNumber] = useState(0);
   return (
     <>

@@ -12,19 +12,17 @@ import { useAppDispatch } from "../redux/hooks";
 import { setIsMobile } from '../redux/isMobile';
 
 type AuthenticatedRoutesProps = {
-  isLoggedIn: boolean;
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   rerenderSignal: boolean;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const AuthenticatedRoutes = ({
-  isLoggedIn,
-  setIsLoggedIn,
   rerenderSignal,
   setRerenderSignal,
 }: AuthenticatedRoutesProps) => {
   const dispatch = useAppDispatch()
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Function to check if the window width corresponds to mobile
   const checkMobile = () => {

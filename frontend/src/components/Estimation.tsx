@@ -5,8 +5,6 @@ import DifficultySlider from "./DifficultySlider";
 import EstimationDateRangePicker from "./EstimationDateRangePicker";
 import ConnectionErrorModal from "./ConnectionErrorModal";
 import axios from "axios";
-import { useAppSelector } from "../redux/hooks";
-import { isMobileValue } from "../redux/isMobile";
 
 type EstimationProps = {
   task: TaskType;
@@ -25,37 +23,10 @@ const Estimation: React.FC<EstimationProps> = ({
   task,
   setRerenderSignal,
 }) => {
-  const isMobile = useAppSelector(isMobileValue)
 
   const [isEstimated, setIsEstimated] = useState(task.isEstimated);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [toBeFinishedDate, setToBeFinishedDate] = useState(() => {
-    const toBeFinishedDate = calculateFinishDate(
-      new Date(task.updatedAt),
-      Number(task.difficulty)
-    );
-    return new Date(toBeFinishedDate);
-  });
-
-  // Function to format the date as "Sunday, July 2, 2023"
-  const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return date.toLocaleDateString(undefined, options);
-  };
-
-  // const handleSliderChange = (value: number) => {
-  //   console.log(value);
-  //   setDifficulty(value);
-  //   setToBeFinishedDate(
-  //     calculateFinishDate(new Date(task.updatedAt), difficulty)
-  //   );
-  // };
 
   const handleToggleEstimation = async (
     event: React.ChangeEvent<HTMLInputElement>
