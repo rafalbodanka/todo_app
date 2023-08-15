@@ -40,6 +40,14 @@ const Column: React.FC<ColumnProps> = ({
     columnId: string,
     showCompletedTasks: boolean
   ) => {
+    setColumns((prevColumns: ColumnType[]) =>
+    prevColumns.map(column => {
+      if (column._id === columnId) {
+        return { ...column, showCompletedTasks: !column.showCompletedTasks };
+      }
+      return column;
+    })
+  );
     try {
       const response = await axios.post(
         `http://localhost:5000/columns/${columnId}/status`,
@@ -52,25 +60,16 @@ const Column: React.FC<ColumnProps> = ({
           },
         }
       );
-
       if (response.status === 200) {
         setRerenderSignal((prevSignal) => !prevSignal);
       }
     } catch (err: any) {
       if (err.response && err.response.status === 404) {
       } else {
+        setRerenderSignal((prevSignal) => !prevSignal);
       }
     }
   };
-
-  interface ResultProps {
-    draggableId: string;
-    type: string;
-    source: DraggableLocation;
-    destination: DraggableLocation | null;
-    reason: string;
-    mode?: string;
-  }
 
   const handleOnDragEnd = async (result: DropResult) => {
     if (!result.destination) {
@@ -339,7 +338,7 @@ const Column: React.FC<ColumnProps> = ({
                           {column.showCompletedTasks ? (
                             <div className="expand_btn max-w-fit">V</div>
                           ) : (
-                            <div className="expand_btn hidden_tasks max-w-fit">
+                            <div className={`expand_btn ${!column.showCompletedTasks && "hidden_content"} max-w-fit`}>
                               V
                             </div>
                           )}
