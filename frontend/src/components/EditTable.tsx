@@ -12,6 +12,8 @@ import TablePermissions from "./TablePermissions";
 import { ColumnType, User, TableType } from "./Types";
 import CloseIcon from "@rsuite/icons/Close";
 import MoreIcon from "@rsuite/icons/More";
+import { useAppSelector } from "../redux/hooks";
+import { isMobileValue } from "../redux/isMobile";
 
 type EditTableProps = {
   user: User;
@@ -21,7 +23,6 @@ type EditTableProps = {
   tables: TableType[];
   setCurrentTable: React.Dispatch<string>;
   setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
-  isMobile: boolean;
 };
 
 const EditTable: React.FC<EditTableProps> = ({
@@ -32,8 +33,9 @@ const EditTable: React.FC<EditTableProps> = ({
   tables,
   setCurrentTable,
   setColumns,
-  isMobile,
 }) => {
+  const isMobile = useAppSelector(isMobileValue)
+
   const [isEditTableModalOpen, setIsEditTableOpen] = useState(false);
   const [EditTableModalMessage, setEditTableModalMessage] = useState("");
   const [prevTableName, setPrevTableName] = useState(table.title);
@@ -193,7 +195,6 @@ const EditTable: React.FC<EditTableProps> = ({
                 tableUsersIds={table.users}
                 setTableMembers={setTableMembers}
                 setRerenderSignal={setRerenderSignal}
-                isMobile={isMobile}
               ></TablePermissions>
             </div>
           </div>

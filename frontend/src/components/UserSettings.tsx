@@ -11,13 +11,11 @@ import {
 } from "@material-tailwind/react";
 import { useAppSelector } from '../redux/hooks';
 import { selectUser } from "../redux/user";
+import{ isMobileValue } from "../redux/isMobile";
 
-type userSettingsProps = {
-  isMobile: boolean;
-};
-
-const UserSettings: React.FC<userSettingsProps> = ({ isMobile }) => {
+const UserSettings = () => {
   const user = useAppSelector(selectUser);
+  const isMobile = useAppSelector(isMobileValue)
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");

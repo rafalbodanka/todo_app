@@ -3,28 +3,15 @@ import axios from "axios";
 import { Button, Popover, PopoverContent, PopoverHandler } from "@material-tailwind/react";
 import CancelInvitation from "./CancelInvitation";
 import AcceptInvitation from "./AcceptInvitations";
+import type { Invitation } from "./Types";
+import { useAppSelector } from "../redux/hooks";
+import { isMobileValue } from "../redux/isMobile";
 
-interface Invitation {
-  createdAt: string;
-  invitee: string;
-  inviteeEmail: string;
-  inviter: string;
-  inviterEmail: string;
-  inviterFirstName: string;
-  inviterLastName: string;
-  status: string;
-  tableId: string;
-  tableName: string;
-  updatedAt: string;
-  __v: number;
-  _id: string;
-}
 
-interface UserInvitationsProps {
-  isMobile: boolean;
-}
 
-const UserInvitations: React.FC<UserInvitationsProps> = ({ isMobile }) => {
+const UserInvitations = () => {
+  const isMobile = useAppSelector(isMobileValue)
+
   const [sentInvitations, setSentInvitations] = useState<Invitation[]>([]);
   const [receivedInvitations, setReceivedInvitations] = useState<Invitation[]>(
     []

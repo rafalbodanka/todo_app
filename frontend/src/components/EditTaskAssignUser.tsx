@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import { useAppSelector } from "../redux/hooks";
+import { isMobileValue } from "../redux/isMobile";
+import type { TaskType, User, Member } from "./Types"
 import {
   List,
   ListItem,
@@ -14,39 +16,11 @@ import {
   PopoverContent,
 } from "@material-tailwind/react";
 
-interface TaskData {
-  _id: string;
-  title: string;
-  completed: boolean;
-  column: string;
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
-  responsibleUsers: User[];
-}
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  level?: string;
-  userIconId: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Member {
-  user: User;
-  permission: string;
-}
-
 interface EditTaskAssignUserProps {
   currentTableId: string;
-  task: TaskData;
+  task: TaskType;
   responsibleUsers: User[];
   setResponsibleUsers: React.Dispatch<React.SetStateAction<User[]>>;
-  isMobile: boolean;
 }
 
 const EditTaskAssignUser: React.FC<EditTaskAssignUserProps> = ({
@@ -54,8 +28,9 @@ const EditTaskAssignUser: React.FC<EditTaskAssignUserProps> = ({
   task,
   responsibleUsers,
   setResponsibleUsers,
-  isMobile
 }) => {
+  const isMobile = useAppSelector(isMobileValue)
+
   const [members, setMembers] = useState<Member[]>([]);
   const [responsibleUsersRerenderSignal, setResponsibleUsersRerenderSignal] =
     useState(false);

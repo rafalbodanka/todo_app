@@ -10,15 +10,15 @@ import DeleteColumn from "./DeleteColumn";
 import AddColumn from "./AddColumn";
 import EditColumn from "./EditColumn";
 import { ColumnType, Filters, TaskType } from "./Types";
-import ColumnFilter from "./ColumnFilter";
 import { filterTasks } from "./Helpers";
+import { useAppSelector } from "../redux/hooks";
+import { isMobileValue } from "../redux/isMobile";
 
 interface ColumnProps {
   columns: ColumnType[];
   setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   currentTable: string;
-  isMobile: boolean;
   filters: Filters;
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
   searchValue: string;
@@ -29,11 +29,12 @@ const Column: React.FC<ColumnProps> = ({
   setColumns,
   setRerenderSignal,
   currentTable,
-  isMobile,
   filters,
   setFilters,
   searchValue,
 }) => {
+  const isMobile = useAppSelector(isMobileValue)
+
   const [isDraggingPossible, setIsDraggingPossible] = useState(true);
 
   const toggleShowCompletedTasks = async (
@@ -303,7 +304,6 @@ const Column: React.FC<ColumnProps> = ({
                                 isDraggingPossible={isDraggingPossible}
                                 setIsDraggingPossible={setIsDraggingPossible}
                                 currentTableId={currentTable}
-                                isMobile={isMobile}
                               />
                             </div>
                           )}
@@ -382,7 +382,6 @@ const Column: React.FC<ColumnProps> = ({
                                       setIsDraggingPossible
                                     }
                                     currentTableId={currentTable}
-                                    isMobile={isMobile}
                                   />
                                 </div>
                               )}

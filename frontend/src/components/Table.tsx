@@ -7,19 +7,19 @@ import { ColumnType, Filters, User } from "./Types";
 import ColumnFilter from "./ColumnFilter";
 import { useAppSelector } from "../redux/hooks";
 import { selectUser } from "../redux/user";
+import { isMobileValue } from "../redux/isMobile";
 
 interface TableProps {
   rerenderSignal: boolean;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
-  isMobile: boolean;
 }
 
 const Table: React.FC<TableProps> = ({
   rerenderSignal,
   setRerenderSignal,
-  isMobile,
 }) => {
   const user: User = useAppSelector(selectUser);
+  const isMobile = useAppSelector(isMobileValue)
 
   const [columns, setColumns] = useState<ColumnType[]>([]);
   const [currentTable, setCurrentTable] = useState("");
@@ -83,7 +83,6 @@ const Table: React.FC<TableProps> = ({
                   setRerenderSignal={setRerenderSignal}
                   currentTable={currentTable}
                   setCurrentTable={setCurrentTable}
-                  isMobile={isMobile}
                 ></Set>
               </div>
             </div>
@@ -104,7 +103,6 @@ const Table: React.FC<TableProps> = ({
         {currentTable && (
           <div className="flex max-w-screen overflow-x-auto scrollbar-thin lg:mt-0 mt-4">
             <Column
-              isMobile={isMobile}
               columns={columns}
               setColumns={setColumns}
               setRerenderSignal={setRerenderSignal}

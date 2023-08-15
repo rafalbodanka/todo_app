@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
-import userReducer from './user'; // Import the userSlice.reducer
-// ...
+import userReducer from './user';
+import uiReducer from './isMobile'
 
 export const store = configureStore({
   reducer: {
 		user: userReducer,
+		ui: uiReducer,
   }
 })
 

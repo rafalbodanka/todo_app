@@ -5,12 +5,15 @@ import { TaskType } from "./Types";
 import { DateRange } from "rsuite/esm/DateRangePicker/types";
 import ConnectionErrorModal from "./ConnectionErrorModal";
 import axios from "axios";
+import { useAppSelector } from "../redux/hooks";
+import { isMobileValue } from "../redux/isMobile";
 
 const EstimationDateRangePicker: React.FC<{
-  isMobile: boolean;
   task: TaskType;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ isMobile, task, setRerenderSignal }) => {
+}> = ({ task, setRerenderSignal }) => {
+  const isMobile = useAppSelector(isMobileValue)
+
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { User, Member } from "./Types";
-
+import { useAppSelector } from "../redux/hooks";
+import { isMobileValue } from "../redux/isMobile";
 import {
   Select,
   Option,
@@ -24,7 +25,6 @@ type TablePermissionsProps = {
   tableUsersIds: User[];
   setTableMembers: React.Dispatch<React.SetStateAction<string[]>>;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
-  isMobile: boolean;
 };
 
 const TablePermissions: React.FC<TablePermissionsProps> = ({
@@ -38,8 +38,9 @@ const TablePermissions: React.FC<TablePermissionsProps> = ({
   tableUsersIds,
   setTableMembers,
   setRerenderSignal,
-  isMobile,
 }) => {
+  const isMobile = useAppSelector(isMobileValue)
+
   const [members, setMembers] = useState<Member[]>([]);
   const [membersRerenderSignal, setMembersRerenderSignal] = useState(false);
 

@@ -5,10 +5,11 @@ import DifficultySlider from "./DifficultySlider";
 import EstimationDateRangePicker from "./EstimationDateRangePicker";
 import ConnectionErrorModal from "./ConnectionErrorModal";
 import axios from "axios";
+import { useAppSelector } from "../redux/hooks";
+import { isMobileValue } from "../redux/isMobile";
 
 type EstimationProps = {
   task: TaskType;
-  isMobile: boolean;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -22,9 +23,10 @@ const calculateFinishDate = (initialDate: Date, days: number | null) => {
 
 const Estimation: React.FC<EstimationProps> = ({
   task,
-  isMobile,
   setRerenderSignal,
 }) => {
+  const isMobile = useAppSelector(isMobileValue)
+
   const [isEstimated, setIsEstimated] = useState(task.isEstimated);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -99,7 +101,6 @@ const Estimation: React.FC<EstimationProps> = ({
               setRerenderSignal={setRerenderSignal}
             ></DifficultySlider>
             <EstimationDateRangePicker
-              isMobile={isMobile}
               task={task}
               setRerenderSignal={setRerenderSignal}
             ></EstimationDateRangePicker>

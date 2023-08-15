@@ -8,6 +8,8 @@ import Unauthorized from "./Unauthorized";
 import ChangePassword from "./ChangePassword";
 import UserInvitations from "./UserInvitations";
 import Table from "./Table";
+import { useAppDispatch } from "../redux/hooks";
+import { setIsMobile } from '../redux/isMobile';
 
 type AuthenticatedRoutesProps = {
   isLoggedIn: boolean;
@@ -22,11 +24,11 @@ const AuthenticatedRoutes = ({
   rerenderSignal,
   setRerenderSignal,
 }: AuthenticatedRoutesProps) => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const dispatch = useAppDispatch()
 
   // Function to check if the window width corresponds to mobile
   const checkMobile = () => {
-    setIsMobile(window.innerWidth <= 768);
+    dispatch(setIsMobile(window.innerWidth <= 768));
   };
 
   // Add event listener for window resize
@@ -72,7 +74,7 @@ const AuthenticatedRoutes = ({
           path="/user"
           element={
             isLoggedIn ? (
-              <UserSettings isMobile={isMobile} />
+              <UserSettings/>
             ) : (
               <Navigate to="/" replace />
             )
@@ -82,7 +84,7 @@ const AuthenticatedRoutes = ({
           path="/invitations"
           element={
             isLoggedIn ? (
-              <UserInvitations isMobile={isMobile} />
+              <UserInvitations/>
             ) : (
               <Navigate to="/" replace />
             )
@@ -105,7 +107,6 @@ const AuthenticatedRoutes = ({
               <Unauthorized />
             ) : (
               <Table
-                isMobile={isMobile}
                 rerenderSignal={rerenderSignal}
                 setRerenderSignal={setRerenderSignal}
               ></Table>

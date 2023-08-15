@@ -1,8 +1,9 @@
 import React from "react";
 import AddTable from "./AddTable";
 import EditTable from "./EditTable";
-
 import { ColumnType, User, TableType } from "./Types";
+import { useAppSelector } from "../redux/hooks";
+import { isMobileValue } from "../redux/isMobile";
 
 interface SetProps {
   user: User;
@@ -11,7 +12,6 @@ interface SetProps {
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   currentTable: string;
   setCurrentTable: React.Dispatch<string>;
-  isMobile: boolean;
 }
 
 const Set: React.FC<SetProps> = ({
@@ -21,8 +21,9 @@ const Set: React.FC<SetProps> = ({
   setRerenderSignal,
   currentTable,
   setCurrentTable,
-  isMobile,
 }) => {
+  const isMobile = useAppSelector(isMobileValue)
+
   const switchTable = (tableId: string, columns: ColumnType[]) => {
     setColumns(columns);
     setCurrentTable(tableId);
@@ -53,7 +54,6 @@ const Set: React.FC<SetProps> = ({
                 tables={tables}
                 setCurrentTable={setCurrentTable}
                 setColumns={setColumns}
-                isMobile={isMobile}
               ></EditTable>
             </div>
           );

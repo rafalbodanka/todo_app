@@ -9,6 +9,8 @@ import {
   PopoverContent,
   Tooltip,
 } from "@material-tailwind/react";
+import { useAppSelector } from "../redux/hooks";
+import { isMobileValue } from "../redux/isMobile";
 
 interface TaskProps {
   task: TaskType;
@@ -18,7 +20,6 @@ interface TaskProps {
   setIsDraggingPossible: React.Dispatch<React.SetStateAction<boolean>>;
   currentTableId: string;
   responsibleUsers: User[];
-  isMobile: boolean;
 }
 
 const Task: React.FC<TaskProps> = ({
@@ -28,8 +29,9 @@ const Task: React.FC<TaskProps> = ({
   isDraggingPossible,
   setIsDraggingPossible,
   currentTableId,
-  isMobile,
 }) => {
+  const isMobile = useAppSelector(isMobileValue)
+
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [responsibleUsers, setResponsibleUsers] = useState(
     task.responsibleUsers
@@ -163,7 +165,6 @@ const Task: React.FC<TaskProps> = ({
             currentTableId={currentTableId}
             responsibleUsers={responsibleUsers}
             setResponsibleUsers={setResponsibleUsers}
-            isMobile={isMobile}
           />
         )}
       </div>
