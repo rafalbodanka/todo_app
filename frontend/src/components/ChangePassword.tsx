@@ -2,12 +2,13 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Button, Input } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
+import { useAppSelector } from '../redux/hooks';
+import { selectUser } from "../redux/user";
 
-type ChangePasswordProps = {
-  userId: string;
-};
+const ChangePassword = () => {
+  const user = useAppSelector(selectUser);
+  const userId = user._id;
 
-const ChangePassword: React.FC<ChangePasswordProps> = ({ userId }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmedNewPassword, setConfirmedNewPassword] = useState("");

@@ -8,7 +8,6 @@ import axios from "axios";
 
 type EstimationProps = {
   task: TaskType;
-  isMobile: boolean;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -22,38 +21,12 @@ const calculateFinishDate = (initialDate: Date, days: number | null) => {
 
 const Estimation: React.FC<EstimationProps> = ({
   task,
-  isMobile,
   setRerenderSignal,
 }) => {
+
   const [isEstimated, setIsEstimated] = useState(task.isEstimated);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [toBeFinishedDate, setToBeFinishedDate] = useState(() => {
-    const toBeFinishedDate = calculateFinishDate(
-      new Date(task.updatedAt),
-      Number(task.difficulty)
-    );
-    return new Date(toBeFinishedDate);
-  });
-
-  // Function to format the date as "Sunday, July 2, 2023"
-  const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return date.toLocaleDateString(undefined, options);
-  };
-
-  // const handleSliderChange = (value: number) => {
-  //   console.log(value);
-  //   setDifficulty(value);
-  //   setToBeFinishedDate(
-  //     calculateFinishDate(new Date(task.updatedAt), difficulty)
-  //   );
-  // };
 
   const handleToggleEstimation = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -99,7 +72,6 @@ const Estimation: React.FC<EstimationProps> = ({
               setRerenderSignal={setRerenderSignal}
             ></DifficultySlider>
             <EstimationDateRangePicker
-              isMobile={isMobile}
               task={task}
               setRerenderSignal={setRerenderSignal}
             ></EstimationDateRangePicker>

@@ -45,6 +45,22 @@ export type TaskType = {
   endDate: Date;
 };
 
+export type Invitation = {
+  createdAt: string;
+  invitee: string;
+  inviteeEmail: string;
+  inviter: string;
+  inviterEmail: string;
+  inviterFirstName: string;
+  inviterLastName: string;
+  status: string;
+  tableId: string;
+  tableName: string;
+  updatedAt: string;
+  __v: number;
+  _id: string;
+}
+
 export type Filters = {
   isEstimated: string[];
   difficulty: string[];
@@ -52,3 +68,7 @@ export type Filters = {
   finishStatus: string[];
   [key: string]: string[]; // Index signature for dynamic access
 };
+
+export type UiState = {
+  isMobile: boolean;
+}

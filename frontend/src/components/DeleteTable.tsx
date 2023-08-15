@@ -96,7 +96,7 @@ const DeleteTable: React.FC<DeleteTableProps> = ({
       </div>
       {isDeleteModalOpen && (
         <div
-          className="w-screen h-screen bg-black bg-opacity-30 absolute top-0 left-0 flex justify-center items-center z-10"
+          className="w-screen h-screen bg-black bg-opacity-30 fixed top-0 left-0 flex justify-center items-center z-10"
           onClick={closeDeleteTableModal}
         >
           <div className="bg-white rounded-md text-black">
@@ -124,7 +124,7 @@ const DeleteTable: React.FC<DeleteTableProps> = ({
         </div>
       )}
       {isDeleteResponseModalOpen && (
-        <div className="w-screen h-screen bg-black bg-opacity-30 absolute top-0 left-0 flex justify-center items-center z-10">
+        <div className="w-screen h-screen bg-black bg-opacity-30 fixed top-0 left-0 flex justify-center items-center z-10">
           <div className="bg-white rounded-md">
             <div className="p-6 text-center text-black">
               <p>{deleteModalMessage}</p>

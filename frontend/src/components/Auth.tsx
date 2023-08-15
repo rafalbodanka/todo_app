@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
-  Link,
   useLocation,
   useNavigate,
 } from "react-router-dom";
 import axios from "axios";
-import { User } from "./Types";
+import { useAppDispatch } from '../redux/hooks';
+import { setUserData } from "../redux/user";
 
 type AuthProps = {
   children: React.ReactNode;
-  setUser: React.Dispatch<React.SetStateAction<User>>;
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const Auth: React.FC<AuthProps> = ({
   children,
-  setUser,
   isLoggedIn,
   setIsLoggedIn,
 }) => {
+  const dispatch = useAppDispatch();
+
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
@@ -65,7 +65,7 @@ const Auth: React.FC<AuthProps> = ({
         });
         if (response.status === 200) {
           setIsLoggedIn(true);
-          setUser({
+          dispatch(setUserData({
             _id: response.data.id,
             email: response.data.email,
             firstName: response.data.firstName,
@@ -74,7 +74,7 @@ const Auth: React.FC<AuthProps> = ({
             userIconId: response.data.iconId,
             createdAt: response.data.createdAt,
             updatedAt: response.data.updatedAt,
-          });
+          }));
         }
       } catch (err) {
         setIsLoggedIn(false);

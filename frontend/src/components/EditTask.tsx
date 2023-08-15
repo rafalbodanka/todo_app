@@ -10,6 +10,8 @@ import {
 } from "@material-tailwind/react";
 import CloseIcon from "@rsuite/icons/Close";
 import MoreIcon from "@rsuite/icons/More";
+import { useAppSelector } from "../redux/hooks";
+import { isMobileValue } from "../redux/isMobile";
 
 interface EditTaskProps {
   task: TaskType;
@@ -20,7 +22,6 @@ interface EditTaskProps {
   currentTableId: string;
   responsibleUsers: User[];
   setResponsibleUsers: React.Dispatch<React.SetStateAction<User[]>>;
-  isMobile: boolean;
 }
 
 const EditTask: React.FC<EditTaskProps> = ({
@@ -32,8 +33,9 @@ const EditTask: React.FC<EditTaskProps> = ({
   currentTableId,
   responsibleUsers,
   setResponsibleUsers,
-  isMobile,
 }) => {
+  const isMobile = useAppSelector(isMobileValue)
+
   const [isDeleteTaskModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteTaskModalMessage, setDeleteTaskModalMessage] = useState("");
   const [newTaskTitle, setNewTaskTitle] = useState(task.title);
@@ -270,7 +272,6 @@ const EditTask: React.FC<EditTaskProps> = ({
                 ></input>
                 <Estimation
                   task={task}
-                  isMobile={isMobile}
                   setRerenderSignal={setRerenderSignal}
                 ></Estimation>
                 <p className="font-400 mt-4">Notes</p>
@@ -287,7 +288,6 @@ const EditTask: React.FC<EditTaskProps> = ({
                 setResponsibleUsers={setResponsibleUsers}
                 currentTableId={currentTableId}
                 task={task}
-                isMobile={isMobile}
               ></EditTaskAssignUser>
             </div>
           </div>

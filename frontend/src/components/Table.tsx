@@ -4,22 +4,23 @@ import Set from "./Set";
 import Column from "./Column";
 import UserNav from "./UserNav";
 import { ColumnType, Filters, User } from "./Types";
-import FunnelIcon from "@rsuite/icons/Funnel";
 import ColumnFilter from "./ColumnFilter";
+import { useAppSelector } from "../redux/hooks";
+import { selectUser } from "../redux/user";
+import { isMobileValue } from "../redux/isMobile";
 
 interface TableProps {
-  user: User;
   rerenderSignal: boolean;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
-  isMobile: boolean;
 }
 
 const Table: React.FC<TableProps> = ({
-  user,
   rerenderSignal,
   setRerenderSignal,
-  isMobile,
 }) => {
+  const user: User = useAppSelector(selectUser);
+  const isMobile = useAppSelector(isMobileValue)
+
   const [columns, setColumns] = useState<ColumnType[]>([]);
   const [currentTable, setCurrentTable] = useState("");
   const [tables, setTables] = useState([]);
@@ -27,7 +28,7 @@ const Table: React.FC<TableProps> = ({
   const [filters, setFilters] = useState<Filters>({
     isEstimated: [], // ["", "true", "false"]
     difficulty: [], // ["easy", "medium", "hard"]
-    assignment: [], // e.g. ["user._id"]
+    assignment: [], // ["user._id"]
     finishStatus: [], // ["exceeded", "today", "in-progress", "planned"]
   });
 
@@ -76,13 +77,11 @@ const Table: React.FC<TableProps> = ({
             <div className="lg:col-span-6 lg:items-end order-2 overflow-x-auto scrollbar-thin p-2">
               <div className="scrollable-container whitespace-nowrap h-full">
                 <Set
-                  user={user}
                   tables={tables}
                   setColumns={setColumns}
                   setRerenderSignal={setRerenderSignal}
                   currentTable={currentTable}
                   setCurrentTable={setCurrentTable}
-                  isMobile={isMobile}
                 ></Set>
               </div>
             </div>
@@ -96,14 +95,13 @@ const Table: React.FC<TableProps> = ({
                   setSearchValue={setSearchValue}
                 ></ColumnFilter>
               </div>
-              <div>{user.email && <UserNav user={user}></UserNav>}</div>
+              <div>{user.email && <UserNav></UserNav>}</div>
             </div>
           </div>
         </div>
         {currentTable && (
           <div className="flex max-w-screen overflow-x-auto scrollbar-thin lg:mt-0 mt-4">
             <Column
-              isMobile={isMobile}
               columns={columns}
               setColumns={setColumns}
               setRerenderSignal={setRerenderSignal}

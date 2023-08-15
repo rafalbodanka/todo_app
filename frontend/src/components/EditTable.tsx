@@ -12,28 +12,28 @@ import TablePermissions from "./TablePermissions";
 import { ColumnType, User, TableType } from "./Types";
 import CloseIcon from "@rsuite/icons/Close";
 import MoreIcon from "@rsuite/icons/More";
+import { useAppSelector } from "../redux/hooks";
+import { selectUser } from "../redux/user";
 
 type EditTableProps = {
-  user: User;
   table: TableType;
   currentTable: string;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
   tables: TableType[];
   setCurrentTable: React.Dispatch<string>;
   setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>;
-  isMobile: boolean;
 };
 
 const EditTable: React.FC<EditTableProps> = ({
-  user,
   table,
   currentTable,
   setRerenderSignal,
   tables,
   setCurrentTable,
   setColumns,
-  isMobile,
 }) => {
+  const user = useAppSelector(selectUser)
+
   const [isEditTableModalOpen, setIsEditTableOpen] = useState(false);
   const [EditTableModalMessage, setEditTableModalMessage] = useState("");
   const [prevTableName, setPrevTableName] = useState(table.title);
@@ -176,14 +176,12 @@ const EditTable: React.FC<EditTableProps> = ({
                 {(isAdmin || canInvite) && (
                   <InviteUser
                     tableMembers={tableMembers}
-                    user={user}
                     tableId={table._id}
                     tableName={table.title}
                   ></InviteUser>
                 )}
               </div>
               <TablePermissions
-                user={user}
                 isAdmin={isAdmin}
                 setIsAdmin={setIsAdmin}
                 canInvite={canInvite}
@@ -193,7 +191,6 @@ const EditTable: React.FC<EditTableProps> = ({
                 tableUsersIds={table.users}
                 setTableMembers={setTableMembers}
                 setRerenderSignal={setRerenderSignal}
-                isMobile={isMobile}
               ></TablePermissions>
             </div>
           </div>

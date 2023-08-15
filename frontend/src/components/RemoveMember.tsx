@@ -7,9 +7,10 @@ import {
   PopoverHandler,
 } from "@material-tailwind/react";
 import { User, Member } from "./Types";
+import { useAppSelector } from "../redux/hooks";
+import { selectUser } from "../redux/user";
 
 type RemoveMemberProps = {
-  user: User;
   currentUser: User;
   members: Member[];
   memberId: string;
@@ -25,7 +26,6 @@ type RemoveMemberProps = {
 };
 
 const RemoveMember: React.FC<RemoveMemberProps> = ({
-  user,
   currentUser,
   members,
   memberId,
@@ -39,6 +39,7 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
   setMembersRerenderSignal,
   setRerenderSignal,
 }) => {
+  const user = useAppSelector(selectUser)
   const [openPopover, setOpenPopover] = React.useState(false);
   const [isRemovePossible, setIsRemovePossible] = useState(true);
   const [isLastLeavingUser, setIsLastLeavingUser] = useState(false);
