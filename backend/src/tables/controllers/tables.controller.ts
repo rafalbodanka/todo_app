@@ -173,7 +173,7 @@ export class TablesController {
         data: result,
       });
     } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      return res.status(HttpStatus.NOT_FOUND).json({
         message: 'Failed to change permissions',
         error: error.message,
       });

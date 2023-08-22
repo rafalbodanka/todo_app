@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task, Column, Table } from '../tables.model';
 import * as mongoose from 'mongoose';
+import { TablesService } from './tables.service';
 
 @Injectable()
 export class TasksService {
@@ -10,8 +11,9 @@ export class TasksService {
     @InjectModel('task') private readonly taskModel: Model<Task>,
     @InjectModel('column') private readonly columnModel: Model<Column>,
     @InjectModel('table') private readonly tableModel: Model<Table>,
+    private readonly tablesService: TablesService,
   ) {}
-  async insertTask(title: string, taskId: string): Promise<Task> {
+  async insertTask(title: string, taskId: string, tableId: string): Promise<Table> {
     try {
       // Creating new column
       const newTask = new this.taskModel({
@@ -27,7 +29,9 @@ export class TasksService {
       column.pendingTasks.unshift(newTask._id);
       await column.save();
 
-      return newTask;
+      const currentTable = await this.tablesService.getCurrentTable(tableId)
+
+      return currentTable;
     } catch (error) {
       throw error;
     }
@@ -90,7 +94,8 @@ export class TasksService {
     taskId: string,
     taskCompleted: boolean,
     taskColumn: string,
-  ): Promise<boolean> {
+    currentTableId: string,
+  ): Promise<Table | boolean> {
     const task = await this.taskModel.findOne({ _id: taskId });
 
     // Return false if no task with given id
@@ -205,7 +210,10 @@ export class TasksService {
     await task.save();
     await column.save();
     !isTheSameColumn && (await destinationColumn.save());
-    return true;
+
+    // Return current table state
+    const currentTable = this.tablesService.getCurrentTable(currentTableId)
+    return currentTable;
   }
 
   async updateNotes(taskId: string, newNotes: string): Promise<boolean> {

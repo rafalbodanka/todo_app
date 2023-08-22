@@ -26,19 +26,20 @@ export class TasksController {
     // we pass only title, because complete status is false by default
     @Body('title') title: string,
     @Body('columnId') columnId: string,
+    @Body('tableId') tableId: string,
   ) {
-    const result = await this.tasksService.insertTask(title, columnId);
+    const result = await this.tasksService.insertTask(title, columnId, tableId);
 
     return {
       msg: 'Task successfully created',
-      title: result.title,
+      data: result,
     };
   }
 
   //rename task
   @UseGuards(AuthenticatedGuard)
   @Post('/:id/name')
-  async renameTable(
+  async renameTask(
     @Param('id') id: string,
     @Request() req,
     @Body('newTitle') newTitle: string,
@@ -82,12 +83,14 @@ export class TasksController {
     @Param('id') id: string,
     @Body('taskCompleted') taskCompleted: boolean,
     @Body('taskColumn') taskColumn: string,
+    @Body('currentTableId') currentTableId: string,
     @Res() res,
   ) {
     const result = await this.tasksService.toggleTaskStatus(
       id,
       taskCompleted,
       taskColumn,
+      currentTableId,
     );
 
     if (result) {

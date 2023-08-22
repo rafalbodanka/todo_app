@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Column, Table, Task } from '../tables.model';
 import { TasksService } from './tasks.service';
 import * as mongoose from 'mongoose';
+import { TablesService } from './tables.service';
 
 @Injectable()
 export class ColumnsService {
@@ -11,9 +12,10 @@ export class ColumnsService {
     @InjectModel('column') private readonly columnModel: Model<Column>,
     @InjectModel('table') private readonly tableModel: Model<Table>,
     @InjectModel('task') private readonly taskModel: Model<Task>,
+    private readonly tablesService: TablesService,
     private readonly tasksService: TasksService,
   ) {}
-  async insertColumn(title: string, tableId: string): Promise<Column> {
+  async insertColumn(title: string, tableId: string): Promise<Table> {
     try {
       // Creating new column
       const newColumn = new this.columnModel({
@@ -31,7 +33,10 @@ export class ColumnsService {
       table.columns.push(newColumn._id);
       await table.save();
 
-      return newColumn;
+      //get current table state
+      const currentTable = await this.tablesService.getCurrentTable(tableId)
+
+      return currentTable;
     } catch (error) {
       throw error;
     }
@@ -54,7 +59,7 @@ export class ColumnsService {
     return true;
   }
 
-  async deleteColumn(columnId: string): Promise<boolean> {
+  async deleteColumn(columnId: string): Promise<Table | boolean> {
     const column = await this.columnModel.findOne({ _id: columnId });
 
     // Return false if no column with given id
@@ -78,7 +83,11 @@ export class ColumnsService {
     if (!parentTable) {
       throw new Error('Parent table not found');
     }
-    return true;
+
+    //get current table state
+    const currentTable = await this.tablesService.getCurrentTable(parentTable._id)
+
+    return currentTable;
   }
 
   //show/hide completed tasks
@@ -109,7 +118,8 @@ export class ColumnsService {
     destinationIndex: string,
     completed: boolean,
     changeStatus: boolean,
-  ): Promise<boolean> {
+    tableId: string
+  ): Promise<Table | boolean> {
     // Find the task being moved
     const task = await this.taskModel.findById(movedtaskId);
     if (!task) {
@@ -213,7 +223,7 @@ export class ColumnsService {
         }),
       ]);
     }
-
-    return true;
+    const currentTable = this.tablesService.getCurrentTable(tableId)
+    return currentTable;
   }
 }

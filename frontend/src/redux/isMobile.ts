@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from './store'
-import type { UiState } from '../components/Types'
+import type { UiState } from '../components/utils/Types'
 
 const initialState: UiState = {
     isMobile: window.innerWidth <= 768,
