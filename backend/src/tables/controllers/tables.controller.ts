@@ -97,18 +97,11 @@ export class TablesController {
     @Request() req,
     @Res() res,
   ) {
-    const result = await this.tablesService.removeMember(id, memberId);
-
-    if (result) {
-      return res.status(HttpStatus.OK).json({
-        message: 'Member removed successfully',
-        data: result,
-      });
-    } else {
-      return res.status(HttpStatus.NOT_FOUND).json({
-        message: 'Member not found',
-      });
-    }
+    const result = await this.tablesService.removeMember(id, memberId, req.user._id);
+    
+    return res.status(HttpStatus.OK).json({
+      data: result,
+    });
   }
 
   //get table members

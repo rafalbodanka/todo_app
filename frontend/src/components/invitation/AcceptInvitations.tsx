@@ -30,7 +30,7 @@ const AcceptInvitation: React.FC<AcceptInvitationProps> = ({
       );
     } catch (err) {
     } finally {
-      setInvitationsRerenderSignal(!invitationsRerenderSignal);
+      setInvitationsRerenderSignal((prevSignal) => !prevSignal);
     }
   };
   return (

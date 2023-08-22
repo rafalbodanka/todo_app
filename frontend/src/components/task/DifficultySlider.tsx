@@ -3,6 +3,9 @@ import Slider from "@mui/material/Slider";
 import { TaskType } from "../utils/Types";
 import ConnectionErrorModal from "../utils/ConnectionErrorModal";
 import axios from "axios";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import { selectColumns, setColumns } from "../../redux/currentTable";
+import _ from "lodash";
 
 type DifficultySliderProps = {
   task: TaskType;
@@ -13,6 +16,8 @@ const DifficultySlider: React.FC<DifficultySliderProps> = ({
   task,
   setRerenderSignal,
 }) => {
+  const columns = useAppSelector(selectColumns)
+  const dispatch = useAppDispatch()
   const [difficulty, setDifficulty] = useState(task.difficulty);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -42,7 +47,30 @@ const DifficultySlider: React.FC<DifficultySliderProps> = ({
   const { description, textColor } = getDifficultyDescription(difficulty);
 
   const handleDifficultyUpdate = async () => {
-    console.log(difficulty);
+    // apply local changes
+    const taskId = task._id
+    const updatedColumns = _.cloneDeep(columns).map(column => {
+      if (task.completed) {
+        column.completedTasks.map(task => {
+          if (task._id === taskId) {
+            task.difficulty = difficulty
+          }
+        return task
+        })
+      }
+      if (!task.completed) {
+        column.pendingTasks.map(task => {
+          if (task._id === taskId) {
+            task.difficulty = difficulty
+          }
+        return task
+        })
+      }
+      return column
+    })
+    dispatch(setColumns(updatedColumns))
+
+    // update task's state in database
     try {
       const response = await axios.patch(
         `http://localhost:5000/tasks/${task._id}/difficulty`,
@@ -57,7 +85,6 @@ const DifficultySlider: React.FC<DifficultySliderProps> = ({
       );
     } catch (err) {
       setIsError(true);
-      console.log(err);
     } finally {
       setRerenderSignal((prevSignal) => !prevSignal);
     }

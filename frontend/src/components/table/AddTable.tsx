@@ -70,7 +70,6 @@ const AddTable: React.FC<AddTableProps> = ({ setRerenderSignal, switchTable }) =
         }
       );
       if (response.status === 201) {
-        console.log(response)
         setInputValue("");
         setShowInput(false);
         setRerenderSignal((prevSignal) => !prevSignal);

@@ -5,14 +5,18 @@ import { TaskType } from "../utils/Types";
 import { DateRange } from "rsuite/esm/DateRangePicker/types";
 import ConnectionErrorModal from "../utils/ConnectionErrorModal";
 import axios from "axios";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { isMobileValue } from "../../redux/isMobile";
+import { selectColumns, setColumns } from "../../redux/currentTable";
+import _ from "lodash"
 
 const EstimationDateRangePicker: React.FC<{
   task: TaskType;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ task, setRerenderSignal }) => {
   const isMobile = useAppSelector(isMobileValue)
+  const columns = useAppSelector(selectColumns)
+  const dispatch = useAppDispatch()
 
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -38,6 +42,31 @@ const EstimationDateRangePicker: React.FC<{
 
     const [startDate, endDate] = event;
     setDisplayDate(event);
+    // apply date range for task locally
+    const taskId = task._id
+    const updatedColumns = _.cloneDeep(columns).map(column => {
+      if (task.completed) {
+        column.completedTasks.map(task => {
+          if (task._id === taskId) {
+            task.startDate = startDate.toString()
+            task.endDate = endDate.toString()
+          }
+          return task
+        })
+      }
+      if (!task.completed) {
+        column.pendingTasks.map(task => {
+          if (task._id === taskId) {
+            task.startDate = startDate.toString()
+            task.endDate = endDate.toString()
+          }
+          return task
+        })
+      }
+      return column
+    })
+    dispatch(setColumns(updatedColumns))
+    // update date range in database
     try {
       const response = await axios.patch(
         `http://localhost:5000/tasks/${task._id}/date-range`,
@@ -62,9 +91,12 @@ const EstimationDateRangePicker: React.FC<{
   return (
     <div>
       <div className="relative">
-        {task.endDate && task.endDate > currentDate ? (
-          <p className="text-red-400">Task duration exceeded</p>
+        {task.endDate && new Date(task.endDate).setHours(0, 0, 0, 0) < currentDate.setHours(0, 0, 0, 0) ? (
+          <p className="text-red-400">Task completion date exceeded</p>
         ) : (
+          task.endDate && new Date(task.endDate).setHours(0, 0, 0, 0) === currentDate.setHours(0, 0, 0, 0) ? (
+            <p>Task completion date ends today</p>
+          ) :
           <p>Task duration</p>
         )}
         <DateRangePicker

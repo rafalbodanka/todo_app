@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from './store'
-import type { TableType, ColumnType } from '../components/utils/Types';
+import type { TableType, ColumnType, TaskType } from '../components/utils/Types';
 
 // Define the initial state using that type
 const initialState: TableType = {
