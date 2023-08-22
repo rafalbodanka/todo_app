@@ -9,6 +9,7 @@ import {
   UseGuards,
   Request,
   Delete,
+  Res,
 } from '@nestjs/common';
 import { AuthenticatedGuard } from 'src/auth/authenticated.guard';
 import { InvitationsService } from './invitations.service';
@@ -25,6 +26,7 @@ export class InvitationsController {
     @Body('inviterId') inviterId: string,
     @Body('tableId') tableId: string,
     @Body('tableName') tableName: string,
+    @Res() res,
   ) {
     try {
       const result = await this.invitationsService.inviteUser(
@@ -34,12 +36,14 @@ export class InvitationsController {
         tableName,
       );
 
-      return {
-        result,
-        msg: 'User invited successfully.',
-      };
+      return res.status(HttpStatus.OK).json({
+        message: 'User invited successfully.',
+        data: result,
+      });
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: error.message
+      });
     }
   }
 

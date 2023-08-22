@@ -61,7 +61,7 @@ export class TablesService {
     return userTable;
   }
 
-  async removeMember(tableId: string, memberId: string): Promise<boolean> {
+  async removeMember(tableId: string, memberId: string): Promise<Table | boolean> {
     try {
       const table = await this.tableModel.findByIdAndUpdate(
         tableId,
@@ -86,7 +86,7 @@ export class TablesService {
         );
       }
 
-      return true;
+      return table;
     } catch (error) {
       throw error;
     }
@@ -236,4 +236,36 @@ export class TablesService {
     // Delete associated tasks
     await this.taskModel.deleteMany({ column: columnId }).exec();
   }
+
+  async getCurrentTable(tableId: string): Promise<Table> {
+    //get current table state
+    const currentTable = await this.tableModel
+    .findById(tableId)
+    .populate({
+      path: 'columns',
+      populate: [
+        {
+          path: 'pendingTasks',
+          model: 'task',
+          populate: {
+            path: 'responsibleUsers',
+            model: 'user',
+            select: '-password -id',
+          },
+        },
+        {
+          path: 'completedTasks',
+          model: 'task',
+          populate: {
+            path: 'responsibleUsers',
+            model: 'user',
+            select: '-password -id',
+          },
+        },
+      ],
+      model: 'column',
+    })
+    .exec();
+    return currentTable;
+  }        
 }

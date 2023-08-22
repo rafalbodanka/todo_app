@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "./Login";
-import Register from "./Register";
-import UserSettings from "./UserSettings";
-import Auth from "./Auth";
-import Unauthorized from "./Unauthorized";
-import ChangePassword from "./ChangePassword";
-import UserInvitations from "./UserInvitations";
-import Table from "./Table";
+import Login from "./auth/Login";
+import Register from "./auth/Register";
+import UserSettings from "./user/UserSettings";
+import Auth from "./auth/Auth";
+import Unauthorized from "./auth/Unauthorized";
+import ChangePassword from "./user/ChangePassword";
+import UserInvitations from "./invitation/UserInvitations";
+import Main from "./Main";
 import { useAppDispatch } from "../redux/hooks";
 import { setIsMobile } from '../redux/isMobile';
 
@@ -104,10 +104,10 @@ const AuthenticatedRoutes = ({
             !isLoggedIn ? (
               <Unauthorized />
             ) : (
-              <Table
+              <Main
                 rerenderSignal={rerenderSignal}
                 setRerenderSignal={setRerenderSignal}
-              ></Table>
+              ></Main>
             )
           }
         ></Route>
