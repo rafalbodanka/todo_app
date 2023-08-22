@@ -113,8 +113,10 @@ This project utilizes most of all the following libraries, frameworks, and resou
 ### Frontend
 
 - [React](https://reactjs.org/): A JavaScript library for building user interfaces.
+- [Redux Toolkit](https://redux-toolkit.js.org/): A toolset for efficient Redux development
 - [Material-UI](https://material-ui.com/): A popular UI component library for React.
 - [Tailwind CSS](https://tailwindcss.com/): A utility-first CSS framework for rapidly building custom user interfaces.
 - [Axios](https://axios-http.com/): A promise-based HTTP client for making API requests.
+- [React Suite](https://rsuitejs.com/): A suite of React components.
 
 Please refer to the documentation or official websites of these resources for more information on how they were used in this project.
