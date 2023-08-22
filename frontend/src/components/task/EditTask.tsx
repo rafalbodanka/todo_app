@@ -10,8 +10,9 @@ import {
 } from "@material-tailwind/react";
 import CloseIcon from "@rsuite/icons/Close";
 import MoreIcon from "@rsuite/icons/More";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { isMobileValue } from "../../redux/isMobile";
+import { setCurrentTable } from "../../redux/currentTable";
 
 interface EditTaskProps {
   task: TaskType;
@@ -35,7 +36,7 @@ const EditTask: React.FC<EditTaskProps> = ({
   setResponsibleUsers,
 }) => {
   const isMobile = useAppSelector(isMobileValue)
-
+  const dispatch = useAppDispatch()
   const [isDeleteTaskModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteTaskModalMessage, setDeleteTaskModalMessage] = useState("");
   const [newTaskTitle, setNewTaskTitle] = useState(task.title);
@@ -69,7 +70,7 @@ const EditTask: React.FC<EditTaskProps> = ({
     setNewTaskTitle(event.target.value);
   };
 
-  const setTaskTitle = async (newTitle: string, taskId: string) => {
+  const setTaskTitle = async (newTitle: string, taskId: string, tableId: string) => {
     if (prevTaskTitle === newTaskTitle) {
       return;
     }
@@ -78,6 +79,7 @@ const EditTask: React.FC<EditTaskProps> = ({
         `http://localhost:5000/tasks/${taskId}/name`,
         {
           newTitle: newTitle,
+          tableId: tableId,
         },
         {
           withCredentials: true,
@@ -89,12 +91,10 @@ const EditTask: React.FC<EditTaskProps> = ({
       );
       if (response.status === 200) {
         setPrevTaskTitle(newTaskTitle);
-        setRerenderSignal((prevSignal) => !prevSignal);
+        dispatch(setCurrentTable(response.data.data))
       }
     } catch (err: any) {
-      if (err.response && err.response.status === 404) {
-      } else {
-      }
+      console.log(err)
     }
   };
 
@@ -190,7 +190,7 @@ const EditTask: React.FC<EditTaskProps> = ({
             closeEditTaskModal(event);
             if (event.currentTarget === event.target) {
               updateNotes(task._id, newTaskNotes);
-              setTaskTitle(newTaskTitle, task._id);
+              setTaskTitle(newTaskTitle, task._id, currentTableId);
             }
           }}
         >
@@ -267,7 +267,7 @@ const EditTask: React.FC<EditTaskProps> = ({
                       event.currentTarget.blur();
                     }
                   }}
-                  onBlur={() => setTaskTitle(newTaskTitle, task._id)}
+                  onBlur={() => setTaskTitle(newTaskTitle, task._id, currentTableId)}
                   className="shadow appearance-none border border-gray-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                 ></input>
                 <Estimation

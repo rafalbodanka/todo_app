@@ -37,7 +37,7 @@ export class TasksService {
     }
   }
 
-  async renameTask(taskId: string, newTitle: string): Promise<boolean> {
+  async renameTask(taskId: string, newTitle: string, tableId: string): Promise<Table> {
     const task = await this.taskModel.findOneAndUpdate(
       {
         _id: taskId,
@@ -47,11 +47,8 @@ export class TasksService {
       },
     );
 
-    // Return false if no task with given id or user is unauthorized
-    if (!task) {
-      return false;
-    }
-    return true;
+    const currentTable = this.tablesService.getCurrentTable(tableId)
+    return currentTable;
   }
 
   async deleteTask(taskId: string): Promise<boolean> {

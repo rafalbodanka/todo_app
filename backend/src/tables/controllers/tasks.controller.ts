@@ -43,21 +43,15 @@ export class TasksController {
     @Param('id') id: string,
     @Request() req,
     @Body('newTitle') newTitle: string,
+    @Body('tableId') tableId: string,
     @Res() res,
   ) {
     const userId: mongoose.Types.ObjectId = req.user.id;
-    const result = await this.tasksService.renameTask(id, newTitle);
+    const result = await this.tasksService.renameTask(id, newTitle, tableId);
 
-    if (result) {
-      return res.status(HttpStatus.OK).json({
-        message: 'Task renamed successfully',
-        data: result,
-      });
-    } else {
-      return res.status(HttpStatus.NOT_FOUND).json({
-        message: 'Task not found',
-      });
-    }
+    return res.status(HttpStatus.OK).json({
+      data: result,
+    });
   }
 
   @UseGuards(AuthenticatedGuard)
