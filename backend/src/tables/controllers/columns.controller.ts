@@ -28,7 +28,7 @@ export class ColumnsController {
 
     return {
       msg: 'Column created successfully',
-      title: result.title,
+      data: result,
     };
   }
 
@@ -110,6 +110,7 @@ export class ColumnsController {
     @Body('destinationIndex') destinationIndex: string,
     @Body('completed') completed: boolean,
     @Body('changeStatus') changeStatus: boolean,
+    @Body('tableId') tableId: string,
     @Res() res,
   ) {
     const result = await this.columnsService.moveTaskWithinColumn(
@@ -119,6 +120,7 @@ export class ColumnsController {
       destinationIndex,
       completed,
       changeStatus,
+      tableId,
     );
 
     if (result) {

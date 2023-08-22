@@ -1,37 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "./Login";
-import Register from "./Register";
-import UserSettings from "./UserSettings";
-import Auth from "./Auth";
-import Unauthorized from "./Unauthorized";
-import ChangePassword from "./ChangePassword";
-import UserInvitations from "./UserInvitations";
-import Table from "./Table";
-import { User } from "./Types";
+import Login from "./auth/Login";
+import Register from "./auth/Register";
+import UserSettings from "./user/UserSettings";
+import Auth from "./auth/Auth";
+import Unauthorized from "./auth/Unauthorized";
+import ChangePassword from "./user/ChangePassword";
+import UserInvitations from "./invitation/UserInvitations";
+import Main from "./Main";
+import { useAppDispatch } from "../redux/hooks";
+import { setIsMobile } from '../redux/isMobile';
 
 type AuthenticatedRoutesProps = {
-  user: User;
-  setUser: React.Dispatch<React.SetStateAction<User>>;
-  isLoggedIn: boolean;
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   rerenderSignal: boolean;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const AuthenticatedRoutes = ({
-  user,
-  setUser,
-  isLoggedIn,
-  setIsLoggedIn,
   rerenderSignal,
   setRerenderSignal,
 }: AuthenticatedRoutesProps) => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const dispatch = useAppDispatch()
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Function to check if the window width corresponds to mobile
   const checkMobile = () => {
-    setIsMobile(window.innerWidth <= 768);
+    dispatch(setIsMobile(window.innerWidth <= 768));
   };
 
   // Add event listener for window resize
@@ -55,7 +50,6 @@ const AuthenticatedRoutes = ({
 
   return (
     <Auth
-      setUser={setUser}
       isLoggedIn={isLoggedIn}
       setIsLoggedIn={setIsLoggedIn}
     >
@@ -78,7 +72,7 @@ const AuthenticatedRoutes = ({
           path="/user"
           element={
             isLoggedIn ? (
-              <UserSettings user={user} isMobile={isMobile} />
+              <UserSettings/>
             ) : (
               <Navigate to="/" replace />
             )
@@ -88,7 +82,7 @@ const AuthenticatedRoutes = ({
           path="/invitations"
           element={
             isLoggedIn ? (
-              <UserInvitations isMobile={isMobile} />
+              <UserInvitations/>
             ) : (
               <Navigate to="/" replace />
             )
@@ -98,7 +92,7 @@ const AuthenticatedRoutes = ({
           path="/changepassword"
           element={
             isLoggedIn ? (
-              <ChangePassword userId={user._id} />
+              <ChangePassword />
             ) : (
               <Navigate to="/" replace />
             )
@@ -110,12 +104,10 @@ const AuthenticatedRoutes = ({
             !isLoggedIn ? (
               <Unauthorized />
             ) : (
-              <Table
-                isMobile={isMobile}
-                user={user}
+              <Main
                 rerenderSignal={rerenderSignal}
                 setRerenderSignal={setRerenderSignal}
-              ></Table>
+              ></Main>
             )
           }
         ></Route>
