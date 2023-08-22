@@ -98,7 +98,7 @@ export class InvitationsService {
   }
 
   //Accept invitation
-  async acceptInvitation(invitationId: string, userId: string): Promise<Table> {
+  async acceptInvitation(invitationId: string, userId: string): Promise<Table | {msg: string}> {
     try {
       // Find the invitation
       const invitation = await this.invitationModel
@@ -106,7 +106,7 @@ export class InvitationsService {
         .exec();
 
       if (!invitation) {
-        throw new Error('Invitation not found');
+        return {msg: 'Invitation not found'};
       }
 
       // Find the invited user
@@ -115,18 +115,14 @@ export class InvitationsService {
         .exec();
 
       if (!invitedUser) {
-        throw new Error('Invited user not found');
+        return {msg: 'Invited user not found'};
       }
-
-      // Update the invitation status
-      // invitation.status = 'accepted';
-      // await invitation.save();
 
       // Add the invited user to the table's users array
       const table = await this.tableModel.findById(invitation.tableId).exec();
 
       if (!table) {
-        throw new Error('Table not found');
+        return {msg: 'Table not found'};
       }
 
       table.users.push({
@@ -142,7 +138,7 @@ export class InvitationsService {
       });
 
       if (!deletedInvitation) {
-        throw new Error('Invitation not found');
+        return {msg: 'Invitation not found'}
       }
 
       return table;
@@ -186,7 +182,7 @@ export class InvitationsService {
       );
 
       if (!deletedInvitation) {
-        throw new Error('Invitation not found');
+        return {msg: 'Invitation not found'}
       }
     } catch (error) {
       throw error;

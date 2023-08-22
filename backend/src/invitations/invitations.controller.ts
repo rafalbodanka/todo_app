@@ -61,7 +61,6 @@ export class InvitationsController {
 
     return {
       result,
-      msg: 'Invitation accepted successfully.',
     };
   }
 
@@ -71,10 +70,7 @@ export class InvitationsController {
   async cancelInvitation(@Param('id') invitationId: string) {
     const result = await this.invitationsService.cancelInvitation(invitationId);
 
-    return {
-      result,
-      msg: 'Invitation cancelled successfully.',
-    };
+    return result
   }
 
   //Get inviter's invitations

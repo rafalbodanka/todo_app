@@ -96,9 +96,8 @@ const Task: React.FC<TaskProps> = ({
         }
       }
     })
-
     dispatch(setColumns(updatedColumns))
-    
+  
     // axios reguest to apply change
     try {
       const response = await axios.post(
@@ -112,20 +111,9 @@ const Task: React.FC<TaskProps> = ({
           },
         }
       );
-        console.log(response)
-      if (response.status === 200) {
-        setRerenderSignal((prevSignal) => !prevSignal);
-        console.log(response.data.data)
-        dispatch(setCurrentTable(response.data.data))
-      }
-    } catch (err: any) {
-      if (err.response && err.response.status === 404) {
-        throw new Error("Task not found");
-      } else {
-        throw err;
-      }
-    }
-  };
+      dispatch(setCurrentTable(response.data.data))
+    } catch (err: any) {};
+    };
 
   return (
     <div className="task relative" onClick={openEditTaskModal}>

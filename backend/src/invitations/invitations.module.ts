@@ -5,6 +5,7 @@ import { TableSchema } from 'src/tables/tables.model';
 import { UserSchema } from 'src/users/users.model';
 import { InvitationSchema } from './invitations.model';
 import { InvitationsService } from './invitations.service';
+import { UsersService } from 'src/users/users.service';
 
 @Module({
   imports: [

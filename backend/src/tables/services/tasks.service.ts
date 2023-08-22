@@ -51,12 +51,13 @@ export class TasksService {
     return currentTable;
   }
 
-  async deleteTask(taskId: string): Promise<boolean> {
+  async deleteTask(taskId: string, tableId: string): Promise<Table> {
     const task = await this.taskModel.findOne({ _id: taskId });
 
     // Return false if no task with given id
     if (!task) {
-      return false;
+      const currentTable = await this.tablesService.getCurrentTable(tableId)
+      return currentTable;
     }
     // Get task's column id
     const columnId = task.column;
@@ -84,7 +85,9 @@ export class TasksService {
     // Delete the task
     await task.deleteOne();
 
-    return true;
+    const currentTable = await this.tablesService.getCurrentTable(tableId)
+
+    return currentTable;
   }
 
   async toggleTaskStatus(
@@ -213,16 +216,9 @@ export class TasksService {
     return currentTable;
   }
 
-  async updateNotes(taskId: string, newNotes: string): Promise<boolean> {
+  async updateNotes(taskId: string, newNotes: string, tableId: string): Promise<Table> {
     // Check if the length exceeds the maximum allowed
-    const maxLength = 500;
-    if (newNotes.length > maxLength) {
-      throw new Error(
-        `Notes length exceeds the maximum allowed (${maxLength} characters).`,
-      );
-    }
-
-    const task = await this.taskModel.findOneAndUpdate(
+    await this.taskModel.findOneAndUpdate(
       {
         _id: taskId,
       },
@@ -231,11 +227,8 @@ export class TasksService {
       },
       { new: true },
     );
-
-    if (!task) {
-      throw new Error('Task not found');
-    }
-    return true;
+    const currentTable = this.tablesService.getCurrentTable(tableId)
+    return currentTable;
   }
 
   async getResponsibleUsers(

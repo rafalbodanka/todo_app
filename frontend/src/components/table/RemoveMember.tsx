@@ -7,9 +7,12 @@ import {
   PopoverHandler,
 } from "@material-tailwind/react";
 import { User, Member } from "../utils/Types";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppSelector,  useAppDispatch } from "../../redux/hooks";
 import { selectUser } from "../../redux/user";
+import { selectTables, setTables } from "../../redux/tables";
+import { setCurrentTable } from "../../redux/currentTable";
 import crossMark from "../../images/icon-cross-mark.png"
+
 
 type RemoveMemberProps = {
   currentUser: User;
@@ -40,7 +43,8 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
   setMembersRerenderSignal,
   setRerenderSignal,
 }) => {
-  const user = useAppSelector(selectUser)
+  const tables = useAppSelector(selectTables)
+  const dispatch = useAppDispatch()
   const [openPopover, setOpenPopover] = React.useState(false);
   const [isRemovePossible, setIsRemovePossible] = useState(true);
   const [isLastLeavingUser, setIsLastLeavingUser] = useState(false);
@@ -85,24 +89,21 @@ const RemoveMember: React.FC<RemoveMemberProps> = ({
       );
 
       if (response.status === 200) {
-        console.log(response)
+        if (isLastLeavingUser && tables.length === 1) {
+          dispatch(setTables(response.data.data));
+        }
+        if (tables.length > 1) {
+          dispatch(setCurrentTable(tables[0]))
+        }
       }
-    } catch (err: any) {
-      if (err.response && err.response.status === 404) {
-        throw new Error("Table not found");
-      } else {
-        throw err;
-      }
-    } finally {
-      if (isLastLeavingUser) {
-        window.location.reload();
-      } else {
+    } catch (err: any) {} finally {
+      if (!isLastLeavingUser) {
         setMembersRerenderSignal((prevSignal) => !prevSignal);
         setRerenderSignal((prevSignal) => !prevSignal);
       }
+      }
       closeRemoveMemberModal();
     }
-  };
 
   return (
     <Popover open={openPopover} handler={setOpenPopover} placement="top">

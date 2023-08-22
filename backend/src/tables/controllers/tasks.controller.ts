@@ -56,19 +56,12 @@ export class TasksController {
 
   @UseGuards(AuthenticatedGuard)
   @Post('/:id/delete')
-  async deleteTask(@Param('id') id: string, @Res() res) {
-    const result = await this.tasksService.deleteTask(id);
+  async deleteTask(@Param('id') id: string, @Res() res, @Body('tableId') tableId: string) {
+    const result = await this.tasksService.deleteTask(id, tableId);
 
-    if (result) {
-      return res.status(HttpStatus.OK).json({
-        message: 'Task deleted successfully',
-        data: result,
-      });
-    } else {
-      return res.status(HttpStatus.NOT_FOUND).json({
-        message: 'Task not found',
-      });
-    }
+    return res.status(HttpStatus.OK).json({
+      data: result,
+    });
   }
 
   @UseGuards(AuthenticatedGuard)
@@ -87,16 +80,9 @@ export class TasksController {
       currentTableId,
     );
 
-    if (result) {
-      return res.status(HttpStatus.OK).json({
-        message: 'Task status changed successfully',
-        data: result,
-      });
-    } else {
-      return res.status(HttpStatus.NOT_FOUND).json({
-        message: 'Task not found',
-      });
-    }
+    return res.status(HttpStatus.OK).json({
+      data: result,
+    });
   }
 
   @UseGuards(AuthenticatedGuard)
@@ -104,21 +90,14 @@ export class TasksController {
   async updateNotes(
     @Param('id') id: string,
     @Body('newNotes') newNotes: string,
+    @Body('tableId') tableId: string,
     @Res() res,
   ) {
-    try {
-      const result = await this.tasksService.updateNotes(id, newNotes);
+    const result = await this.tasksService.updateNotes(id, newNotes, tableId);
 
-      return res.status(HttpStatus.OK).json({
-        message: 'Task notes updated successfully',
-        data: result,
-      });
-    } catch (error) {
-      return res.status(HttpStatus.NOT_FOUND).json({
-        message: 'Task not found',
-        error: error.message,
-      });
-    }
+    return res.status(HttpStatus.OK).json({
+      data: result,
+    });
   }
 
   @UseGuards(AuthenticatedGuard)

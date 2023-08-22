@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Table, Column, Task } from '../tables.model';
 import * as mongoose from 'mongoose';
+import { Invitation } from 'src/invitations/invitations.model';
 
 @Injectable()
 export class TablesService {
@@ -10,6 +11,7 @@ export class TablesService {
     @InjectModel('table') private readonly tableModel: Model<Table>,
     @InjectModel('column') private readonly columnModel: Model<Column>,
     @InjectModel('task') private readonly taskModel: Model<Task>,
+    @InjectModel('invitation') private readonly invitationModel: Model<Invitation>
   ) {}
   async insertTable(
     title: string,
@@ -61,7 +63,7 @@ export class TablesService {
     return userTable;
   }
 
-  async removeMember(tableId: string, memberId: string): Promise<Table | boolean> {
+  async removeMember(tableId: string, memberId: string, userId: mongoose.Types.ObjectId): Promise<Table | Table[] | boolean> {
     try {
       const table = await this.tableModel.findByIdAndUpdate(
         tableId,
@@ -78,6 +80,8 @@ export class TablesService {
       if (table.users.length === 0) {
         // Call the deleteTable method passing the tableId
         await this.deleteTable(tableId);
+        const userTables = this.getUserTables(userId)
+        return userTables
       } else {
         // Update the responsibleUsers array in each task
         await this.taskModel.updateMany(
@@ -133,7 +137,17 @@ export class TablesService {
       }),
     );
 
-    return true;
+    // Delete associated invitations
+    try {
+      // Find all invitations with the specified tableId
+      const invitationsToDelete = await this.invitationModel.find({ tableId: tableId });
+  
+      // Delete all found invitations
+      await Promise.all(invitationsToDelete.map(invitation => invitation.deleteOne()));
+    } catch (error) {
+      throw error;
+    }
+    return true
   }
 
   //testing tables

@@ -94,7 +94,6 @@ const EditTask: React.FC<EditTaskProps> = ({
         dispatch(setCurrentTable(response.data.data))
       }
     } catch (err: any) {
-      console.log(err)
     }
   };
 
@@ -106,7 +105,7 @@ const EditTask: React.FC<EditTaskProps> = ({
     setNewTaskNotes(event.target.value);
   };
 
-  const updateNotes = async (taskId: string, newNotes: string) => {
+  const updateNotes = async (taskId: string, newNotes: string, tableId: string) => {
     if (prevTaskNotes === newNotes) {
       return;
     }
@@ -118,6 +117,7 @@ const EditTask: React.FC<EditTaskProps> = ({
         `http://localhost:5000/tasks/${taskId}/notes`,
         {
           newNotes: formattedNotes,
+          tableId: currentTableId,
         },
         {
           withCredentials: true,
@@ -129,7 +129,7 @@ const EditTask: React.FC<EditTaskProps> = ({
       );
       if (response.status === 200) {
         setPrevTaskNotes(newTaskNotes);
-        setRerenderSignal((prevSignal) => !prevSignal);
+        dispatch(setCurrentTable(response.data.data))
       }
     } catch (err: any) {
       if (err.response && err.response.status === 404) {
@@ -144,11 +144,11 @@ const EditTask: React.FC<EditTaskProps> = ({
     setIsDeleteModalOpen(true);
   };
 
-  const handleDelete = async (taskId: string) => {
+  const handleDelete = async (taskId: string, tableId: string) => {
     try {
       const response = await axios.post(
         `http://localhost:5000/tasks/${taskId}/delete`,
-        {},
+        { tableId: tableId },
         {
           withCredentials: true,
           headers: {
@@ -157,9 +157,8 @@ const EditTask: React.FC<EditTaskProps> = ({
           },
         }
       );
-
       if (response.status === 200) {
-        setRerenderSignal((prevSignal) => !prevSignal);
+        dispatch(setCurrentTable(response.data.data))
         setIsEditTaskModalOpen(false);
       }
     } catch (err: any) {}
@@ -189,7 +188,7 @@ const EditTask: React.FC<EditTaskProps> = ({
           onMouseDown={(event) => {
             closeEditTaskModal(event);
             if (event.currentTarget === event.target) {
-              updateNotes(task._id, newTaskNotes);
+              updateNotes(task._id, newTaskNotes, currentTableId);
               setTaskTitle(newTaskTitle, task._id, currentTableId);
             }
           }}
@@ -279,7 +278,7 @@ const EditTask: React.FC<EditTaskProps> = ({
                   value={newTaskNotes}
                   maxLength={500}
                   onChange={(event) => handleNotesOnChange(event, task._id)}
-                  onBlur={() => updateNotes(task._id, newTaskNotes)}
+                  onBlur={() => updateNotes(task._id, newTaskNotes, currentTableId)}
                   className="shadow appearance-none border border-gray-500 rounded w-full h-24 py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline resize-none"
                 ></textarea>
               </div>
@@ -309,7 +308,7 @@ const EditTask: React.FC<EditTaskProps> = ({
                     className="bg-purple-900 p-2 pl-6 pr-6 rounded-md mt-4"
                     onClick={(e) => {
                       e.preventDefault();
-                      handleDelete(task._id);
+                      handleDelete(task._id, currentTableId);
                     }}
                   >
                     Yes
