@@ -41,8 +41,6 @@ const EstimationDateRangePicker: React.FC<{
     if (!event) return;
 
     const [startDate, endDate] = event;
-    console.log(startDate, endDate)
-    console.log(task.startDate)
     setDisplayDate(event);
     // apply date range for task locally
     const taskId = task._id
@@ -50,8 +48,8 @@ const EstimationDateRangePicker: React.FC<{
       if (task.completed) {
         column.completedTasks.map(task => {
           if (task._id === taskId) {
-            task.startDate = startDate
-            task.endDate = endDate
+            task.startDate = startDate.toString()
+            task.endDate = endDate.toString()
           }
           return task
         })
@@ -59,8 +57,8 @@ const EstimationDateRangePicker: React.FC<{
       if (!task.completed) {
         column.pendingTasks.map(task => {
           if (task._id === taskId) {
-            task.startDate = startDate
-            task.endDate = endDate
+            task.startDate = startDate.toString()
+            task.endDate = endDate.toString()
           }
           return task
         })
@@ -93,9 +91,12 @@ const EstimationDateRangePicker: React.FC<{
   return (
     <div>
       <div className="relative">
-        {task.endDate && task.endDate > currentDate ? (
-          <p className="text-red-400">Task duration exceeded</p>
+        {task.endDate && new Date(task.endDate).setHours(0, 0, 0, 0) < currentDate.setHours(0, 0, 0, 0) ? (
+          <p className="text-red-400">Task completion date exceeded</p>
         ) : (
+          task.endDate && new Date(task.endDate).setHours(0, 0, 0, 0) === currentDate.setHours(0, 0, 0, 0) ? (
+            <p>Task completion date ends today</p>
+          ) :
           <p>Task duration</p>
         )}
         <DateRangePicker
