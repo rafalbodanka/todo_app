@@ -117,9 +117,10 @@ export class UsersController {
 
   //Get / logout
   @Get('/logout')
+  @HttpCode(200)
   logout(@Request() req): any {
     req.session.destroy();
-    return { msg: 'The user session has ended' };
+    return { HttpCode: 200, msg: 'The user session has ended' };
   }
 
   // testing query
