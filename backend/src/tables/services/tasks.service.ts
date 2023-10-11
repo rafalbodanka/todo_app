@@ -14,6 +14,8 @@ export class TasksService {
     private readonly tablesService: TablesService,
   ) {}
   async insertTask(title: string, taskId: string, tableId: string): Promise<Table> {
+
+    console.log(title, taskId, tableId)
     try {
       // Creating new column
       const newTask = new this.taskModel({
@@ -247,7 +249,7 @@ export class TasksService {
         .populate({
           path: 'users.user',
           model: 'user',
-          select: '-password -id',
+          select: '-password',
         })
         .select('users')
         .exec();
@@ -356,5 +358,73 @@ export class TasksService {
       throw new Error('Task not found');
     }
     return true;
+  }
+
+  async getTaskData(
+    taskId: string,
+  ): Promise<Task> {
+    const task = (await this.taskModel.findById(taskId))
+      .populate({
+        path: "responsibleUsers",
+        model: 'user',
+        select: '-password',
+      })
+
+    return task;
+  }
+
+  async updateTaskData(
+    taskId: string,
+    newTask: Task,
+    currentTableId: string
+  ): Promise<Table> {
+
+    const task = await this.taskModel.findById(taskId)
+    if (task.completed !== newTask.completed) {
+      await this.toggleTaskStatus(taskId, task.completed, newTask.column.toString(), currentTableId)
+    }
+
+    await this.taskModel.findOneAndUpdate(
+      {_id: taskId},
+      {
+        title: newTask.title,
+        notes: newTask.notes,
+        column: newTask.column,
+        difficulty: newTask.difficulty,
+        isEstimated: newTask.isEstimated,
+        startDate: newTask.startDate,
+        endDate: newTask.endDate,
+        responsibleUsers: newTask.responsibleUsers,
+      },
+      { new: true }
+      )
+
+      const currentTable = await this.tableModel.findById(currentTableId)
+      .populate({
+        path: 'columns',
+        populate: [
+          {
+            path: 'pendingTasks',
+            model: 'task',
+            populate: {
+              path: 'responsibleUsers',
+              model: 'user',
+              select: '-password',
+            },
+          },
+          {
+            path: 'completedTasks',
+            model: 'task',
+            populate: {
+              path: 'responsibleUsers',
+              model: 'user',
+              select: '-password',
+            },
+          },
+        ],
+        model: 'column',
+      })
+
+    return currentTable;
   }
 }

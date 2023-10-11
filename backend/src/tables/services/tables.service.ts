@@ -43,7 +43,7 @@ export class TablesService {
             populate: {
               path: 'responsibleUsers',
               model: 'user',
-              select: '-password -id',
+              select: '-password',
             },
           },
           {
@@ -52,7 +52,7 @@ export class TablesService {
             populate: {
               path: 'responsibleUsers',
               model: 'user',
-              select: '-password -id',
+              select: '-password',
             },
           },
         ],
@@ -185,7 +185,7 @@ export class TablesService {
       .populate({
         path: 'users.user',
         model: 'user',
-        select: '-password -id', // Exclude the 'password' field
+        select: '-password',
       })
       .select('users')
       .exec();
@@ -264,7 +264,7 @@ export class TablesService {
           populate: {
             path: 'responsibleUsers',
             model: 'user',
-            select: '-password -id',
+            select: '-password',
           },
         },
         {
@@ -273,7 +273,7 @@ export class TablesService {
           populate: {
             path: 'responsibleUsers',
             model: 'user',
-            select: '-password -id',
+            select: '-password',
           },
         },
       ],

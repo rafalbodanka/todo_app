@@ -128,4 +128,8 @@ export interface Task extends Document {
   completed: boolean;
   column: mongoose.Types.ObjectId;
   responsibleUsers: mongoose.Types.ObjectId[];
+  difficulty: number;
+  isEstimated: boolean;
+  startDate: Date;
+  endDate: Date;
 }
