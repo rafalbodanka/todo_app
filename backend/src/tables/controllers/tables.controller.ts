@@ -173,6 +173,28 @@ export class TablesController {
     }
   }
 
+  @UseGuards(AuthenticatedGuard)
+  @Get('/:id')
+  async getTableData(
+    @Param('id') tableId: string,
+    @Res() res,
+  ) {
+    try {
+      const result = await this.tablesService.getCurrentTable(
+        tableId,
+      );
+      return res.status(HttpStatus.OK).json({
+        message: 'Data fetched successfully',
+        data: result,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Failed to fetch table data',
+        error: error.message,
+      });
+    }
+  }
+
   //testing tables
   @Get('/alltables')
   async getAllTables(@Res() res) {

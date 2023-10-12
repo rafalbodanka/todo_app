@@ -15,7 +15,6 @@ export class TasksService {
   ) {}
   async insertTask(title: string, taskId: string, tableId: string): Promise<Table> {
 
-    console.log(title, taskId, tableId)
     try {
       // Creating new column
       const newTask = new this.taskModel({

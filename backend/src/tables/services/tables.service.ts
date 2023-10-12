@@ -5,6 +5,11 @@ import { Table, Column, Task } from '../tables.model';
 import * as mongoose from 'mongoose';
 import { Invitation } from 'src/invitations/invitations.model';
 
+type Member = {
+  user: mongoose.Schema.Types.ObjectId,
+  permission: String,
+}
+
 @Injectable()
 export class TablesService {
   constructor(
@@ -63,7 +68,7 @@ export class TablesService {
     return userTable;
   }
 
-  async removeMember(tableId: string, memberId: string, userId: mongoose.Types.ObjectId): Promise<Table | Table[] | boolean> {
+  async removeMember(tableId: string, memberId: string, userId: mongoose.Types.ObjectId): Promise<Table[] | Member[]> {
     try {
       const table = await this.tableModel.findByIdAndUpdate(
         tableId,
@@ -71,9 +76,9 @@ export class TablesService {
         { new: true },
       );
 
-      // Return false if no table with given id or user is unauthorized
+      // Return false if no table with given id
       if (!table) {
-        return false;
+        throw new Error("Table not found")
       }
 
       // Check if the updated table has no more users
@@ -90,7 +95,9 @@ export class TablesService {
         );
       }
 
-      return table;
+      const members = await this.getTableMembers(tableId)
+
+      return members
     } catch (error) {
       throw error;
     }
