@@ -74,7 +74,7 @@ export class TablesController {
   @Post('/delete/:id')
   async deleteTable(@Param('id') id: string, @Request() req, @Res() res) {
     const userId: mongoose.Types.ObjectId = req.user.id;
-    const result = await this.tablesService.deleteTable(id);
+    const result = await this.tablesService.deleteTable(id, userId);
 
     if (result) {
       return res.status(HttpStatus.OK).json({

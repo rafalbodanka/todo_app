@@ -21,7 +21,7 @@ export class TablesService {
   async insertTable(
     title: string,
     user: mongoose.Types.ObjectId,
-  ): Promise<Table> {
+  ): Promise<Table[]> {
     try {
       // Creating new set
       const newTable = new this.tableModel({
@@ -30,7 +30,8 @@ export class TablesService {
         users: [{ user: user, permission: 'admin' }],
       });
       await newTable.save();
-      return newTable;
+      const userTables = await this.getUserTables(user)
+      return userTables;
     } catch (error) {
       throw error;
     }
@@ -84,7 +85,7 @@ export class TablesService {
       // Check if the updated table has no more users
       if (table.users.length === 0) {
         // Call the deleteTable method passing the tableId
-        await this.deleteTable(tableId);
+        await this.deleteTable(tableId, userId);
         const userTables = this.getUserTables(userId)
         return userTables
       } else {
@@ -107,7 +108,7 @@ export class TablesService {
     tableId: string,
     userId: string,
     newTitle: string,
-  ): Promise<boolean> {
+  ): Promise<Table> {
     const table = await this.tableModel.findOneAndUpdate(
       {
         _id: tableId,
@@ -119,19 +120,21 @@ export class TablesService {
 
     // Return false if no table with given id or user is unauthorized
     if (!table) {
-      return false;
+      throw new Error("Table not found")
     }
-    return true;
+    
+    const currentUserTable = await this.getCurrentTable(tableId)
+    return currentUserTable;
   }
 
-  async deleteTable(tableId: string): Promise<boolean> {
+  async deleteTable(tableId: string, userId: mongoose.Types.ObjectId): Promise<Table[]> {
     const table = await this.tableModel.findOne({
       _id: tableId,
     });
 
     // Return false if no table with given id or user is unauthorized
     if (!table) {
-      return false;
+      throw new Error('Table not found');
     }
 
     // Delete the table
@@ -154,7 +157,9 @@ export class TablesService {
     } catch (error) {
       throw error;
     }
-    return true
+    
+    const userTables = await this.getUserTables(userId)
+    return userTables
   }
 
   //testing tables
