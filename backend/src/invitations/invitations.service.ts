@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Invitation } from './invitations.model';
 import { User } from 'src/users/users.model';
 import { Table } from 'src/tables/tables.model';
 import { HttpException, HttpStatus } from '@nestjs/common';
-
 import * as mongoose from 'mongoose';
+import { TablesService } from 'src/tables/services/tables.service';
 
 @Injectable()
 export class InvitationsService {
@@ -17,6 +17,8 @@ export class InvitationsService {
     private readonly userModel: Model<User>,
     @InjectModel('table')
     private readonly tableModel: Model<Table>,
+    @Inject(TablesService)
+    private readonly TablesService: TablesService,
   ) {}
   async inviteUser(
     inviteeEmail: string,
@@ -99,7 +101,7 @@ export class InvitationsService {
   }
 
   //Accept invitation
-  async acceptInvitation(invitationId: string, userId: string): Promise<Invitation[]> {
+  async acceptInvitation(invitationId: string, userId: string): Promise<{receivedInvitations: Invitation[], userTables: Table[]}> {
     try {
       // Find the invitation
       const invitation = await this.invitationModel
@@ -143,8 +145,9 @@ export class InvitationsService {
       }
 
       const receivedInvitations = await this.getInviteesInvitations(userId)
+      const userTables = await this.TablesService.getUserTables(new mongoose.Types.ObjectId(userId))
 
-      return receivedInvitations;
+      return {receivedInvitations, userTables};
     } catch (error) {
       throw error;
     }
