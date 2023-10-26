@@ -22,6 +22,7 @@ const TaskCheckbox: React.FC<TaskCheckboxProps> = ({ task }) => {
 
   return (
     <img
+      alt={`${task._id} checkbox`}
       className="w-6 max-h-6"
       src= {imageUrl}
     />

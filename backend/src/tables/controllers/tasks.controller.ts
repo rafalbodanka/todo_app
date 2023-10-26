@@ -15,6 +15,7 @@ import {
 import * as mongoose from 'mongoose';
 import { AuthenticatedGuard } from 'src/auth/authenticated.guard';
 import { TasksService } from '../services/tasks.service';
+import { Task } from '../tables.model';
 
 @Controller('tasks')
 export class TasksController {
@@ -43,38 +44,25 @@ export class TasksController {
     @Param('id') id: string,
     @Request() req,
     @Body('newTitle') newTitle: string,
+    @Body('tableId') tableId: string,
     @Res() res,
   ) {
     const userId: mongoose.Types.ObjectId = req.user.id;
-    const result = await this.tasksService.renameTask(id, newTitle);
+    const result = await this.tasksService.renameTask(id, newTitle, tableId);
 
-    if (result) {
-      return res.status(HttpStatus.OK).json({
-        message: 'Task renamed successfully',
-        data: result,
-      });
-    } else {
-      return res.status(HttpStatus.NOT_FOUND).json({
-        message: 'Task not found',
-      });
-    }
+    return res.status(HttpStatus.OK).json({
+      data: result,
+    });
   }
 
   @UseGuards(AuthenticatedGuard)
   @Post('/:id/delete')
-  async deleteTask(@Param('id') id: string, @Res() res) {
-    const result = await this.tasksService.deleteTask(id);
+  async deleteTask(@Param('id') id: string, @Res() res, @Body('tableId') tableId: string) {
+    const result = await this.tasksService.deleteTask(id, tableId);
 
-    if (result) {
-      return res.status(HttpStatus.OK).json({
-        message: 'Task deleted successfully',
-        data: result,
-      });
-    } else {
-      return res.status(HttpStatus.NOT_FOUND).json({
-        message: 'Task not found',
-      });
-    }
+    return res.status(HttpStatus.OK).json({
+      data: result,
+    });
   }
 
   @UseGuards(AuthenticatedGuard)
@@ -93,16 +81,9 @@ export class TasksController {
       currentTableId,
     );
 
-    if (result) {
-      return res.status(HttpStatus.OK).json({
-        message: 'Task status changed successfully',
-        data: result,
-      });
-    } else {
-      return res.status(HttpStatus.NOT_FOUND).json({
-        message: 'Task not found',
-      });
-    }
+    return res.status(HttpStatus.OK).json({
+      data: result,
+    });
   }
 
   @UseGuards(AuthenticatedGuard)
@@ -110,21 +91,14 @@ export class TasksController {
   async updateNotes(
     @Param('id') id: string,
     @Body('newNotes') newNotes: string,
+    @Body('tableId') tableId: string,
     @Res() res,
   ) {
-    try {
-      const result = await this.tasksService.updateNotes(id, newNotes);
+    const result = await this.tasksService.updateNotes(id, newNotes, tableId);
 
-      return res.status(HttpStatus.OK).json({
-        message: 'Task notes updated successfully',
-        data: result,
-      });
-    } catch (error) {
-      return res.status(HttpStatus.NOT_FOUND).json({
-        message: 'Task not found',
-        error: error.message,
-      });
-    }
+    return res.status(HttpStatus.OK).json({
+      data: result,
+    });
   }
 
   @UseGuards(AuthenticatedGuard)
@@ -248,6 +222,50 @@ export class TasksController {
     if (result) {
       return res.status(HttpStatus.OK).json({
         message: 'Task date range updated successfully',
+        data: result,
+      });
+    } else {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Task not found',
+      });
+    }
+  }
+
+  //retrieve task data
+  @UseGuards(AuthenticatedGuard)
+  @Get('/:id')
+  async getTaskData(
+    @Param('id') id: string,
+    @Res() res,
+  ) {
+    const result = await this.tasksService.getTaskData(id);
+
+    if (result) {
+      return res.status(HttpStatus.OK).json({
+        message: 'Task retrieved succesfully',
+        data: result,
+      });
+    } else {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Task not found',
+      });
+    }
+  }
+
+  //update task data
+  @UseGuards(AuthenticatedGuard)
+  @Patch('/:id/update')
+  async updateTaskData(
+    @Param('id') id: string,
+    @Body('task') task: Task,
+    @Body('currentTableId') currentTableId: string,
+    @Res() res,
+  ) {
+    const result = await this.tasksService.updateTaskData(id, task, currentTableId);
+
+    if (result) {
+      return res.status(HttpStatus.OK).json({
+        message: 'Task updated succesfully',
         data: result,
       });
     } else {

@@ -5,7 +5,9 @@ import DifficultySlider from "./DifficultySlider";
 import EstimationDateRangePicker from "./EstimationDateRangePicker";
 import ConnectionErrorModal from "../utils/ConnectionErrorModal";
 import axios from "axios";
-
+import _ from 'lodash'
+import { selectColumns, setColumns } from "../../redux/currentTable";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 type EstimationProps = {
   task: TaskType;
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,7 +25,8 @@ const Estimation: React.FC<EstimationProps> = ({
   task,
   setRerenderSignal,
 }) => {
-
+  const columns = useAppSelector(selectColumns)
+  const dispatch = useAppDispatch()
   const [isEstimated, setIsEstimated] = useState(task.isEstimated);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -32,7 +35,28 @@ const Estimation: React.FC<EstimationProps> = ({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setIsEstimated(event.target.checked);
-
+    // apply local changes to redux state
+    const taskId = task._id
+    const updatedColumns = _.cloneDeep(columns).map(column => {
+      if (task.completed) {
+        column.completedTasks.map(task => {
+          if (task._id === taskId) {
+            task.isEstimated = event.target.checked
+          }
+          return task
+        })
+      }
+      if (!task.completed) {
+        column.pendingTasks.map(task => {
+          if (task._id === taskId) {
+            task.isEstimated = event.target.checked
+          }
+          return task
+        })
+      }
+      return column
+    })
+    dispatch(setColumns(updatedColumns))
     try {
       const response = await axios.patch(
         `http://localhost:5000/tasks/${task._id}/estimation`,

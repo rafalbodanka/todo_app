@@ -21,8 +21,6 @@ const Auth: React.FC<AuthProps> = ({
   const dispatch = useAppDispatch();
 
   const [isLoading, setIsLoading] = useState(true);
-  const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     // Check user's login status

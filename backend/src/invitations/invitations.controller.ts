@@ -53,28 +53,42 @@ export class InvitationsController {
   async acceptInvitation(
     @Param('id') invitationId: string,
     @Body('userId') userId: string,
+    @Res() res,
   ) {
-    const result = await this.invitationsService.acceptInvitation(
-      invitationId,
-      userId,
-    );
-
-    return {
-      result,
-      msg: 'Invitation accepted successfully.',
-    };
+    try {
+      const result = await this.invitationsService.acceptInvitation(invitationId, userId);
+      return res.status(HttpStatus.OK).json({
+        message: 'Invitation accepted succesfully',
+        data: result,
+    })
+    } catch (error) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: error.message
+      });
+    }
   }
 
   //Cancel Invitation
   @UseGuards(AuthenticatedGuard)
-  @Delete('/:id/cancel')
-  async cancelInvitation(@Param('id') invitationId: string) {
-    const result = await this.invitationsService.cancelInvitation(invitationId);
-
-    return {
-      result,
-      msg: 'Invitation cancelled successfully.',
-    };
+  @Post('/:id/cancel')
+  async cancelInvitation(
+    @Param('id') invitationId: string,
+    @Body('type') type: 'cancel' | 'reject',
+    @Request() req,
+    @Res() res,
+    ) {
+    const userId = req.user.id 
+    try {
+      const result = await this.invitationsService.cancelInvitation(invitationId, userId, type);
+      return res.status(HttpStatus.OK).json({
+        message: 'Invitation cancelled succesfully',
+        data: result,
+    })
+    } catch (error) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: error.message
+      });
+    }
   }
 
   //Get inviter's invitations

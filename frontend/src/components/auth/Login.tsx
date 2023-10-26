@@ -130,6 +130,7 @@ const Login: React.FC<LoginProps> = ({ setIsLoggedIn }) => {
             onMouseEnter={handleEmailInputMouseEnter}
             onMouseLeave={handleEmailInputMouseLeave}
           >
+            <label htmlFor="email" className="hidden">email</label>
             <input
               id="email"
               autoComplete="email"
@@ -159,6 +160,7 @@ const Login: React.FC<LoginProps> = ({ setIsLoggedIn }) => {
             onMouseEnter={handlePasswordInputMouseEnter}
             onMouseLeave={handlePasswordInputMouseLeave}
           >
+            <label htmlFor="password" className="hidden">password</label>
             <input
               id="password"
               type="password"

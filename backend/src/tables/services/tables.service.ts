@@ -3,6 +3,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Table, Column, Task } from '../tables.model';
 import * as mongoose from 'mongoose';
+import { Invitation } from 'src/invitations/invitations.model';
+
+type Member = {
+  user: mongoose.Schema.Types.ObjectId,
+  permission: String,
+}
 
 @Injectable()
 export class TablesService {
@@ -10,11 +16,12 @@ export class TablesService {
     @InjectModel('table') private readonly tableModel: Model<Table>,
     @InjectModel('column') private readonly columnModel: Model<Column>,
     @InjectModel('task') private readonly taskModel: Model<Task>,
+    @InjectModel('invitation') private readonly invitationModel: Model<Invitation>
   ) {}
   async insertTable(
     title: string,
     user: mongoose.Types.ObjectId,
-  ): Promise<Table> {
+  ): Promise<Table[]> {
     try {
       // Creating new set
       const newTable = new this.tableModel({
@@ -23,7 +30,8 @@ export class TablesService {
         users: [{ user: user, permission: 'admin' }],
       });
       await newTable.save();
-      return newTable;
+      const userTables = await this.getUserTables(user)
+      return userTables;
     } catch (error) {
       throw error;
     }
@@ -41,7 +49,7 @@ export class TablesService {
             populate: {
               path: 'responsibleUsers',
               model: 'user',
-              select: '-password -id',
+              select: '-password',
             },
           },
           {
@@ -50,7 +58,7 @@ export class TablesService {
             populate: {
               path: 'responsibleUsers',
               model: 'user',
-              select: '-password -id',
+              select: '-password',
             },
           },
         ],
@@ -61,7 +69,7 @@ export class TablesService {
     return userTable;
   }
 
-  async removeMember(tableId: string, memberId: string): Promise<Table | boolean> {
+  async removeMember(tableId: string, memberId: string, userId: mongoose.Types.ObjectId): Promise<Table[] | Member[]> {
     try {
       const table = await this.tableModel.findByIdAndUpdate(
         tableId,
@@ -69,15 +77,17 @@ export class TablesService {
         { new: true },
       );
 
-      // Return false if no table with given id or user is unauthorized
+      // Return false if no table with given id
       if (!table) {
-        return false;
+        throw new Error("Table not found")
       }
 
       // Check if the updated table has no more users
       if (table.users.length === 0) {
         // Call the deleteTable method passing the tableId
-        await this.deleteTable(tableId);
+        await this.deleteTable(tableId, userId);
+        const userTables = this.getUserTables(userId)
+        return userTables
       } else {
         // Update the responsibleUsers array in each task
         await this.taskModel.updateMany(
@@ -86,7 +96,9 @@ export class TablesService {
         );
       }
 
-      return table;
+      const members = await this.getTableMembers(tableId)
+
+      return members
     } catch (error) {
       throw error;
     }
@@ -96,7 +108,7 @@ export class TablesService {
     tableId: string,
     userId: string,
     newTitle: string,
-  ): Promise<boolean> {
+  ): Promise<Table> {
     const table = await this.tableModel.findOneAndUpdate(
       {
         _id: tableId,
@@ -108,19 +120,21 @@ export class TablesService {
 
     // Return false if no table with given id or user is unauthorized
     if (!table) {
-      return false;
+      throw new Error("Table not found")
     }
-    return true;
+    
+    const currentUserTable = await this.getCurrentTable(tableId)
+    return currentUserTable;
   }
 
-  async deleteTable(tableId: string): Promise<boolean> {
+  async deleteTable(tableId: string, userId: mongoose.Types.ObjectId): Promise<Table[]> {
     const table = await this.tableModel.findOne({
       _id: tableId,
     });
 
     // Return false if no table with given id or user is unauthorized
     if (!table) {
-      return false;
+      throw new Error('Table not found');
     }
 
     // Delete the table
@@ -133,7 +147,19 @@ export class TablesService {
       }),
     );
 
-    return true;
+    // Delete associated invitations
+    try {
+      // Find all invitations with the specified tableId
+      const invitationsToDelete = await this.invitationModel.find({ tableId: tableId });
+  
+      // Delete all found invitations
+      await Promise.all(invitationsToDelete.map(invitation => invitation.deleteOne()));
+    } catch (error) {
+      throw error;
+    }
+    
+    const userTables = await this.getUserTables(userId)
+    return userTables
   }
 
   //testing tables
@@ -171,7 +197,7 @@ export class TablesService {
       .populate({
         path: 'users.user',
         model: 'user',
-        select: '-password -id', // Exclude the 'password' field
+        select: '-password',
       })
       .select('users')
       .exec();
@@ -250,7 +276,7 @@ export class TablesService {
           populate: {
             path: 'responsibleUsers',
             model: 'user',
-            select: '-password -id',
+            select: '-password',
           },
         },
         {
@@ -259,7 +285,7 @@ export class TablesService {
           populate: {
             path: 'responsibleUsers',
             model: 'user',
-            select: '-password -id',
+            select: '-password',
           },
         },
       ],

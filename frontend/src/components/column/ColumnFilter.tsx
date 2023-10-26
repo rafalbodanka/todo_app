@@ -325,7 +325,7 @@ const ColumnFilter: React.FC<ColumnFilterProps> = ({
                   >
                     <div className="flex gap-2 items-center">
                       <Avatar
-                        src={`../../images/userIcons/${member.user.userIconId}.svg`}
+                        src={`/userIcons/${member.user.userIconId}.svg`}
                         alt={`${member.user.firstName} ${member.user.lastName} icon`}
                         size="sm"
                       />

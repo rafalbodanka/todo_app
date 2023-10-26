@@ -14,6 +14,7 @@ export class TasksService {
     private readonly tablesService: TablesService,
   ) {}
   async insertTask(title: string, taskId: string, tableId: string): Promise<Table> {
+
     try {
       // Creating new column
       const newTask = new this.taskModel({
@@ -37,7 +38,7 @@ export class TasksService {
     }
   }
 
-  async renameTask(taskId: string, newTitle: string): Promise<boolean> {
+  async renameTask(taskId: string, newTitle: string, tableId: string): Promise<Table> {
     const task = await this.taskModel.findOneAndUpdate(
       {
         _id: taskId,
@@ -47,19 +48,17 @@ export class TasksService {
       },
     );
 
-    // Return false if no task with given id or user is unauthorized
-    if (!task) {
-      return false;
-    }
-    return true;
+    const currentTable = this.tablesService.getCurrentTable(tableId)
+    return currentTable;
   }
 
-  async deleteTask(taskId: string): Promise<boolean> {
+  async deleteTask(taskId: string, tableId: string): Promise<Table> {
     const task = await this.taskModel.findOne({ _id: taskId });
 
     // Return false if no task with given id
     if (!task) {
-      return false;
+      const currentTable = await this.tablesService.getCurrentTable(tableId)
+      return currentTable;
     }
     // Get task's column id
     const columnId = task.column;
@@ -87,7 +86,9 @@ export class TasksService {
     // Delete the task
     await task.deleteOne();
 
-    return true;
+    const currentTable = await this.tablesService.getCurrentTable(tableId)
+
+    return currentTable;
   }
 
   async toggleTaskStatus(
@@ -216,16 +217,9 @@ export class TasksService {
     return currentTable;
   }
 
-  async updateNotes(taskId: string, newNotes: string): Promise<boolean> {
+  async updateNotes(taskId: string, newNotes: string, tableId: string): Promise<Table> {
     // Check if the length exceeds the maximum allowed
-    const maxLength = 500;
-    if (newNotes.length > maxLength) {
-      throw new Error(
-        `Notes length exceeds the maximum allowed (${maxLength} characters).`,
-      );
-    }
-
-    const task = await this.taskModel.findOneAndUpdate(
+    await this.taskModel.findOneAndUpdate(
       {
         _id: taskId,
       },
@@ -234,11 +228,8 @@ export class TasksService {
       },
       { new: true },
     );
-
-    if (!task) {
-      throw new Error('Task not found');
-    }
-    return true;
+    const currentTable = this.tablesService.getCurrentTable(tableId)
+    return currentTable;
   }
 
   async getResponsibleUsers(
@@ -257,7 +248,7 @@ export class TasksService {
         .populate({
           path: 'users.user',
           model: 'user',
-          select: '-password -id',
+          select: '-password',
         })
         .select('users')
         .exec();
@@ -366,5 +357,73 @@ export class TasksService {
       throw new Error('Task not found');
     }
     return true;
+  }
+
+  async getTaskData(
+    taskId: string,
+  ): Promise<Task> {
+    const task = (await this.taskModel.findById(taskId))
+      .populate({
+        path: "responsibleUsers",
+        model: 'user',
+        select: '-password',
+      })
+
+    return task;
+  }
+
+  async updateTaskData(
+    taskId: string,
+    newTask: Task,
+    currentTableId: string
+  ): Promise<Table> {
+
+    const task = await this.taskModel.findById(taskId)
+    if (task.completed !== newTask.completed) {
+      await this.toggleTaskStatus(taskId, task.completed, newTask.column.toString(), currentTableId)
+    }
+
+    await this.taskModel.findOneAndUpdate(
+      {_id: taskId},
+      {
+        title: newTask.title,
+        notes: newTask.notes,
+        column: newTask.column,
+        difficulty: newTask.difficulty,
+        isEstimated: newTask.isEstimated,
+        startDate: newTask.startDate,
+        endDate: newTask.endDate,
+        responsibleUsers: newTask.responsibleUsers,
+      },
+      { new: true }
+      )
+
+      const currentTable = await this.tableModel.findById(currentTableId)
+      .populate({
+        path: 'columns',
+        populate: [
+          {
+            path: 'pendingTasks',
+            model: 'task',
+            populate: {
+              path: 'responsibleUsers',
+              model: 'user',
+              select: '-password',
+            },
+          },
+          {
+            path: 'completedTasks',
+            model: 'task',
+            populate: {
+              path: 'responsibleUsers',
+              model: 'user',
+              select: '-password',
+            },
+          },
+        ],
+        model: 'column',
+      })
+
+    return currentTable;
   }
 }

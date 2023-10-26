@@ -41,8 +41,11 @@ export type TaskType = {
   responsibleUsers: User[];
   isEstimated: boolean;
   difficulty: number;
-  startDate: Date;
-  endDate: Date;
+  // startDate and endDate for Redux purposes are
+  // stored as strings in frontend app
+  // because Date objects are non serializable
+  startDate: string;
+  endDate: string;
 };
 
 export type Invitation = {
