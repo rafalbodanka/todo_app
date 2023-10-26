@@ -15,6 +15,7 @@ import {
 import * as mongoose from 'mongoose';
 import { AuthenticatedGuard } from 'src/auth/authenticated.guard';
 import { TasksService } from '../services/tasks.service';
+import { Task } from '../tables.model';
 
 @Controller('tasks')
 export class TasksController {
@@ -221,6 +222,50 @@ export class TasksController {
     if (result) {
       return res.status(HttpStatus.OK).json({
         message: 'Task date range updated successfully',
+        data: result,
+      });
+    } else {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Task not found',
+      });
+    }
+  }
+
+  //retrieve task data
+  @UseGuards(AuthenticatedGuard)
+  @Get('/:id')
+  async getTaskData(
+    @Param('id') id: string,
+    @Res() res,
+  ) {
+    const result = await this.tasksService.getTaskData(id);
+
+    if (result) {
+      return res.status(HttpStatus.OK).json({
+        message: 'Task retrieved succesfully',
+        data: result,
+      });
+    } else {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'Task not found',
+      });
+    }
+  }
+
+  //update task data
+  @UseGuards(AuthenticatedGuard)
+  @Patch('/:id/update')
+  async updateTaskData(
+    @Param('id') id: string,
+    @Body('task') task: Task,
+    @Body('currentTableId') currentTableId: string,
+    @Res() res,
+  ) {
+    const result = await this.tasksService.updateTaskData(id, task, currentTableId);
+
+    if (result) {
+      return res.status(HttpStatus.OK).json({
+        message: 'Task updated succesfully',
         data: result,
       });
     } else {

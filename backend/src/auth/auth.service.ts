@@ -20,6 +20,6 @@ export class AuthService {
         email: user.email,
       };
     }
-    return null;
+    return null
   }
 }

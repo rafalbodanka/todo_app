@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Invitation } from './invitations.model';
 import { User } from 'src/users/users.model';
 import { Table } from 'src/tables/tables.model';
-
+import { HttpException, HttpStatus } from '@nestjs/common';
 import * as mongoose from 'mongoose';
+import { TablesService } from 'src/tables/services/tables.service';
 
 @Injectable()
 export class InvitationsService {
@@ -16,6 +17,8 @@ export class InvitationsService {
     private readonly userModel: Model<User>,
     @InjectModel('table')
     private readonly tableModel: Model<Table>,
+    @Inject(TablesService)
+    private readonly TablesService: TablesService,
   ) {}
   async inviteUser(
     inviteeEmail: string,
@@ -98,7 +101,7 @@ export class InvitationsService {
   }
 
   //Accept invitation
-  async acceptInvitation(invitationId: string, userId: string): Promise<Table | {msg: string}> {
+  async acceptInvitation(invitationId: string, userId: string): Promise<{receivedInvitations: Invitation[], userTables: Table[]}> {
     try {
       // Find the invitation
       const invitation = await this.invitationModel
@@ -106,8 +109,8 @@ export class InvitationsService {
         .exec();
 
       if (!invitation) {
-        return {msg: 'Invitation not found'};
-      }
+        throw new Error('Invitation not found')
+      };
 
       // Find the invited user
       const invitedUser = await this.userModel
@@ -115,14 +118,14 @@ export class InvitationsService {
         .exec();
 
       if (!invitedUser) {
-        return {msg: 'Invited user not found'};
+        throw new Error('Invited user not found');
       }
 
       // Add the invited user to the table's users array
       const table = await this.tableModel.findById(invitation.tableId).exec();
 
       if (!table) {
-        return {msg: 'Table not found'};
+        throw new Error('Table not found');
       }
 
       table.users.push({
@@ -138,10 +141,13 @@ export class InvitationsService {
       });
 
       if (!deletedInvitation) {
-        return {msg: 'Invitation not found'}
+        throw new Error('Invitation not found')
       }
 
-      return table;
+      const receivedInvitations = await this.getInviteesInvitations(userId)
+      const userTables = await this.TablesService.getUserTables(new mongoose.Types.ObjectId(userId))
+
+      return {receivedInvitations, userTables};
     } catch (error) {
       throw error;
     }
@@ -174,7 +180,7 @@ export class InvitationsService {
 
   // we are not storing cancelled invitations
   // async cancelInvitation/rejectInvitation - the same behaviour at the moment
-  async cancelInvitation(invitationId: string) {
+  async cancelInvitation(invitationId: string, userId: string, type: 'cancel' | 'reject'): Promise<Invitation[]> {
     try {
       // Delete the invitation entry from the database
       const deletedInvitation = await this.invitationModel.findByIdAndDelete(
@@ -182,10 +188,18 @@ export class InvitationsService {
       );
 
       if (!deletedInvitation) {
-        return {msg: 'Invitation not found'}
+        throw new HttpException('Invitation not found', HttpStatus.NOT_FOUND);
       }
     } catch (error) {
       throw error;
+    }
+    if (type === 'cancel') {
+      const receivedInvitations = await this.getInvitersInvitations(userId)
+      return receivedInvitations;
+      // type "reject"
+    } else {
+      const receivedInvitations = await this.getInviteesInvitations(userId)
+      return receivedInvitations;
     }
   }
 }

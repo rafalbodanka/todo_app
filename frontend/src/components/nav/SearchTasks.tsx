@@ -22,7 +22,6 @@ const SearchTasks: React.FC<SearchTasksProps> = ({
   const clearInput = () => {
     setSearchValue("")
     setPrevSearchValue("")
-    console.log(input)
     input.current!.querySelector('input')!.value = "";
   }
 

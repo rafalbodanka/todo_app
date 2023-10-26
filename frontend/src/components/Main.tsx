@@ -73,7 +73,7 @@ const Main: React.FC<TableProps> = ({
 
   useEffect(() => {
     getUserSet();
-  }, [user, rerenderSignal]);
+  }, [user]);
 
   return (
     <div>
