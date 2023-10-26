@@ -4,6 +4,7 @@ import { Button } from "@material-tailwind/react";
 import { ColumnType, TableType } from "../utils/Types";
 import { useAppDispatch } from "../../redux/hooks";
 import { setCurrentTable, setColumns } from "../../redux/currentTable";
+import { setTables } from "../../redux/tables";
 
 type DeleteTableProps = {
   tableId: string;
@@ -69,12 +70,15 @@ const DeleteTable: React.FC<DeleteTableProps> = ({
           },
         }
       );
-
       if (response.status === 200) {
+        const tables = response.data.data
+        dispatch(setTables(tables))
+        tables.length > 1 &&
+        dispatch(setCurrentTable(tables[0]))
         setDeleteModalMessage("Table deleted succesfully");
         setIsDeleteResponseModalOpen(true);
         setDeleteModalAction(true);
-        if (tables.length === 1) {
+        if (tables.length === 0) {
           setColumns([])
         }
       }
