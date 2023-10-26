@@ -111,7 +111,6 @@ const Task: React.FC<TaskProps> = ({
           },
         }
       );
-      console.log(response)
       dispatch(setCurrentTable(response.data.data))
     } catch (err: any) {};
     };

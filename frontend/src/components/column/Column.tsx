@@ -241,7 +241,7 @@ const Column: React.FC<ColumnProps> = ({
   return (
     <>
       <DragDropContext onDragEnd={handleOnDragEnd}>
-        {columns.map((column) => (
+        {columns?.map((column) => (
           <div key={column._id} className="tasks_container">
             <div className="relative">
               <div className="flex justify-between">

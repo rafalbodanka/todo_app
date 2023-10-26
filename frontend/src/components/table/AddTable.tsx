@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAppDispatch } from "../../redux/hooks";
 import { setCurrentTable } from "../../redux/currentTable";
 import { TableType } from "../utils/Types";
+import { setTables } from "../../redux/tables";
 
 interface AddTableProps {
   setRerenderSignal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -73,8 +74,8 @@ const AddTable: React.FC<AddTableProps> = ({ setRerenderSignal, switchTable }) =
         setInputValue("");
         setShowInput(false);
         setRerenderSignal((prevSignal) => !prevSignal);
-        dispatch(setCurrentTable(response.data.data))
-        switchTable(response.data.data)
+        dispatch(setTables(response.data.data))
+        switchTable(response.data.data[response.data.data.length - 1])
       }
     } catch (error) {
       throw error;
